@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <frc/EigenCore.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
+#include <wpimath/MathShared.h>
 
 namespace CowLib
 {
