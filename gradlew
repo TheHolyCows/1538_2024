@@ -198,7 +198,6 @@ if "$cygwin" || "$msys" ; then
     done
 fi
 
-
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
@@ -245,5 +244,8 @@ eval "set -- $(
         sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
         tr '\n' ' '
     )" '"$@"'
+
+# must add some custom commands here because exec will not return here
+./1538_tools/generate_constants_file.py -s ./src -c cbot_constants.ini
 
 exec "$JAVACMD" "$@"
