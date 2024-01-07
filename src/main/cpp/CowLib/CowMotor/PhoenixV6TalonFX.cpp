@@ -168,7 +168,7 @@ namespace CowMotor
 
     int PhoenixV6TalonFX::SetSensorPosition(double turns)
     {
-        return m_Talon->SetRotorPosition(units::turn_t{ turns });
+        return m_Talon->SetPosition(units::turn_t{ turns });
     }
 
     void PhoenixV6TalonFX::SetNeutralMode(CowMotor::NeutralMode mode)
