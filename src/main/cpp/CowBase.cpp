@@ -1,7 +1,8 @@
 #include "CowBase.h"
 
 CowBase::CowBase()
-    : m_ControlBoard(new CowControlBoard()),
+    : TimedRobot(10_ms),  // set robot duty cycle
+      m_ControlBoard(new CowControlBoard()),
       m_OpController(new OperatorController(m_ControlBoard)),
       m_AutoController(new AutoModeController()),
       m_Constants(CowConstants::GetInstance())
@@ -17,7 +18,6 @@ CowBase::CowBase()
     // init gyro
     CowPigeon::GetInstance();
 
-    // SetPeriod(HZ(ROBOT_HZ));
     // GetWatchdog().SetEnabled(false);
     printf("Done constructing CowBase!\n");
 }
@@ -137,5 +137,6 @@ void CowBase::TeleopPeriodic()
 
 int main()
 {
+    
     return frc::StartRobot<CowBase>();
 }
