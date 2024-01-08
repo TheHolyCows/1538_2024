@@ -27,12 +27,6 @@ namespace CowLib
     {
         switch (motorType)
         {
-            case CowMotor::PHOENIX_PRO:
-                // m_GenericMotor = new CowMotor::PhoenixProTalonFX(id,bus);
-                break;
-            case CowMotor::PHOENIX_V5:
-                m_GenericMotor = new CowMotor::PhoenixV5TalonFX(id,bus);
-                break;
             case CowMotor::PHOENIX_V6:
                 m_GenericMotor = new CowMotor::PhoenixV6TalonFX(id,bus);
                 break;

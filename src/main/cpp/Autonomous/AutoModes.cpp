@@ -29,6 +29,7 @@ AutoModes::AutoModes()
     };
 
     m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1",4_fps,5,true,true));
+    m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2",4_fps,5,true,false));
 
 
     m_Iterator = m_Modes.begin();
