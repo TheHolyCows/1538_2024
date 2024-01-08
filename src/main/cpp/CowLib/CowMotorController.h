@@ -7,8 +7,9 @@
 
 #include "CowMotor/CowMotorUtils.h"
 #include "CowMotor/GenericCowMotor.h"
+// #include "CowMotor/PhoenixProTalonFX.h"
 #include "CowMotor/PhoenixV6TalonFX.h"
-#include <ctre/phoenix6/controls/MotionMagicTorqueCurrentFOC.hpp>
+#include "CowMotor/PhoenixV5TalonFX.h"
 
 #include <variant>
 
@@ -26,6 +27,200 @@ namespace CowLib
         void InitializeInternalMotor(int id, CowMotor::MotorType, std::string bus);
 
     public:
+        struct PercentOutput
+        {
+            // Percent of total motor output (-1 to 1)
+            double PercentOut;
+
+            double GetSetpoint() { return PercentOut; }
+
+            ctre::phoenix6::controls::DutyCycleOut ToControlRequest() { return { PercentOut }; }
+        };
+
+        struct VoltageOutput
+        {
+            // Voltage to set the motor to
+            double Voltage;
+
+            double GetSetpoint() { return Voltage; }
+
+            ctre::phoenix6::controls::VoltageOut ToControlRequest() { return { units::volt_t{ Voltage } }; }
+        };
+
+        struct TorqueCurrentOutput
+        {
+            // Motor current in amps
+            double Current;
+
+            // Max absolute output of the motor controller (0 to 1)
+            double MaxOutput = 1;
+
+            // Deadband in amps. Deadband of 1 means the motor will stop quickly when set to 0
+            double Deadband = 1;
+
+            double GetSetpoint() { return Current; }
+
+            ctre::phoenix6::controls::TorqueCurrentFOC ToControlRequest()
+            {
+                return { units::ampere_t{ Current }, MaxOutput, units::ampere_t{ Deadband }, false };
+            }
+        };
+
+        struct PositionPercentOutput
+        {
+            // Position in turns
+            double Position;
+
+            // Feedforward in percent of total motor output (-1 to 1)
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Position; }
+
+            ctre::phoenix6::controls::PositionDutyCycle ToControlRequest()
+            {
+                return { units::turn_t{ Position }, true, FeedForward, 0, false };
+            }
+        };
+
+        struct PositionVoltage
+        {
+            // Position in turns
+            double Position;
+
+            // Feedforward in volts
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Position; }
+
+            ctre::phoenix6::controls::PositionVoltage ToControlRequest()
+            {
+                return { units::turn_t{ Position }, true, units::volt_t{ FeedForward }, 0, false };
+            }
+        };
+
+        struct PositionTorqueCurrent
+        {
+            // Position in turns
+            double Position;
+
+            // Feedforward in amps
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Position; }
+
+            ctre::phoenix6::controls::PositionTorqueCurrentFOC ToControlRequest()
+            {
+                return { units::turn_t{ Position }, units::ampere_t{ FeedForward }, 0, false };
+            }
+        };
+
+        struct VelocityPercentOutput
+        {
+            // Velocity in turns per second
+            double Velocity;
+
+            // Feedforward in percent of total motor output (-1 to 1)
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Velocity; }
+
+            ctre::phoenix6::controls::VelocityDutyCycle ToControlRequest()
+            {
+                return { units::turns_per_second_t{ Velocity }, true, FeedForward, 0, false };
+            }
+        };
+
+        struct VelocityVoltage
+        {
+            // Velocity in turns per second
+            double Velocity;
+
+            // Feedforward in volts
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Velocity; }
+
+            ctre::phoenix6::controls::VelocityVoltage ToControlRequest()
+            {
+                return { units::turns_per_second_t{ Velocity }, true, units::volt_t{ FeedForward }, 0, false };
+            }
+        };
+
+        struct VelocityTorqueCurrent
+        {
+            // Velocity in turns per second
+            double Velocity;
+
+            // Feedforward in amps
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Velocity; }
+
+            ctre::phoenix6::controls::VelocityTorqueCurrentFOC ToControlRequest()
+            {
+                return { units::turns_per_second_t{ Velocity }, units::ampere_t{ FeedForward }, 0, false };
+            }
+        };
+
+        struct MotionMagicPercentOutput
+        {
+            // Position in turns
+            double Position;
+
+            // Feedforward in percent of total motor output (-1 to 1)
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Position; }
+
+            ctre::phoenix6::controls::MotionMagicDutyCycle ToControlRequest()
+            {
+                return { units::turn_t{ Position }, true, FeedForward, 0, false };
+            }
+        };
+
+        struct MotionMagicVoltage
+        {
+            // Position in turns
+            double Position;
+
+            // Feedforward in volts
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Position; }
+
+            ctre::phoenix6::controls::MotionMagicVoltage ToControlRequest()
+            {
+                return { units::turn_t{ Position }, true, units::volt_t{ FeedForward }, 0, false };
+            }
+        };
+
+        struct MotionMagicTorqueCurrent
+        {
+            // Position in turns
+            double Position;
+
+            // Feedforward in amps
+            double FeedForward = 0;
+
+            double GetSetpoint() { return Position; }
+
+            ctre::phoenix6::controls::MotionMagicTorqueCurrentFOC ToControlRequest()
+            {
+                return { units::turn_t{ Position }, FeedForward, 0, false };
+            }
+        };
+
+        struct Follower
+        {
+            // ID of the motor to follow
+            int LeaderID;
+
+            // Whether to invert the motor against the leader
+            bool Invert = false;
+
+            ctre::phoenix6::controls::Follower ToControlRequest() { return { LeaderID, Invert }; }
+        };
+
         enum NeutralMode
         {
             COAST,

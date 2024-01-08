@@ -13,6 +13,7 @@
 #include "../../CowLib/CowMotor/CowMotorUtils.h"
 #include "PivotInterface.h"
 
+#include <ctre/Phoenix.h>
 #include <memory>
 
 class Pivot : public PivotInterface

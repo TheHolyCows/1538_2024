@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <frc/EigenCore.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
-#include <wpimath/MathShared.h>
 
 namespace CowLib
 {
@@ -72,7 +71,7 @@ namespace CowLib
 
         //     m_ForwardKinematics = m_InverseKinematics.householderQr();
 
-        //     std::numbers::MathSharedStore::ReportUsage(std::numbers::MathUsageId::kKinematics_SwerveDrive, 1);
+        //     wpi::math::MathSharedStore::ReportUsage(wpi::math::MathUsageId::kKinematics_SwerveDrive, 1);
         // }
 
         std::array<CowLib::ExtendedWPISwerveModuleState, NumModules>

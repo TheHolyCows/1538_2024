@@ -12,7 +12,7 @@
 
 Telescope::Telescope(const int MotorId)
 {
-    m_TelescopeMotor = std::make_shared<CowLib::CowMotorController>(MotorId, CowMotor::PHOENIX_V6);
+    m_TelescopeMotor.reset(new CowLib::CowMotorController(MotorId, CowMotor::PHOENIX_PRO));
     m_TelescopeMotor->SetNeutralMode(CowMotor::BRAKE);
 
     ResetConstants();

@@ -1,20 +1,20 @@
-#include "PhoenixV6TalonFX.h"
+#include "PhoenixProTalonFX.h"
 
 namespace CowMotor
 {
-    PhoenixV6TalonFX::PhoenixV6TalonFX(int id, std::string bus)
+    PhoenixProTalonFX::PhoenixProTalonFX(int id, std::string bus)
     {
-        m_Talon = new ctre::phoenix6::hardware::TalonFX(id, std::move(bus));
+        m_Talon = new ctre::phoenixpro::hardware::TalonFX(id, std::move(bus));
         m_Setpoint          = 0;
         m_UseFOC            = true;
         m_OverrideBrakeMode = false;
         m_OutputDirection = 1;
 
         // I think this just zeroes out the config so we start fresh each time
-        ApplyConfig(ctre::phoenix6::configs::TalonFXConfiguration{});
+        ApplyConfig(ctre::phoenixpro::configs::TalonFXConfiguration{});
     }
 
-    PhoenixV6TalonFX::~PhoenixV6TalonFX()
+    PhoenixProTalonFX::~PhoenixProTalonFX()
     {
         delete m_Talon;
     }
@@ -23,7 +23,7 @@ namespace CowMotor
      * motor control requests
      **/
 
-    void PhoenixV6TalonFX::Set(std::variant<PercentOutput,
+    void PhoenixProTalonFX::Set(std::variant<PercentOutput,
                                               VoltageOutput,
                                               PositionPercentOutput,
                                               PositionVoltage,
@@ -49,7 +49,7 @@ namespace CowMotor
             request);
     }
 
-    void PhoenixV6TalonFX::Set(std::variant<TorqueCurrentOutput,
+    void PhoenixProTalonFX::Set(std::variant<TorqueCurrentOutput,
                                               PositionTorqueCurrent,
                                               VelocityTorqueCurrent,
                                               MotionMagicTorqueCurrent> request)
@@ -67,7 +67,7 @@ namespace CowMotor
             request);
     }
 
-    void PhoenixV6TalonFX::Set(Follower request)
+    void PhoenixProTalonFX::Set(Follower request)
     {
         m_Talon->SetControl(request.ToControlRequest());
         m_Setpoint = request.LeaderID;
@@ -77,20 +77,20 @@ namespace CowMotor
      * configuration
      **/
 
-    void PhoenixV6TalonFX::UseFOC(bool useFOC)
+    void PhoenixProTalonFX::UseFOC(bool useFOC)
     {
         m_UseFOC = useFOC;
     }
     
-    void PhoenixV6TalonFX::OverrideBrakeMode(bool overrideBrakeMode)
+    void PhoenixProTalonFX::OverrideBrakeMode(bool overrideBrakeMode)
     {
         m_OverrideBrakeMode = overrideBrakeMode;
     }
     
-    void PhoenixV6TalonFX::ApplyConfig(std::variant<ctre::phoenix6::configs::TalonFXConfiguration,
-                                                      ctre::phoenix6::configs::Slot0Configs,
-                                                      ctre::phoenix6::configs::MotionMagicConfigs,
-                                                      ctre::phoenix6::configs::MotorOutputConfigs> config)
+    void PhoenixProTalonFX::ApplyConfig(std::variant<ctre::phoenixpro::configs::TalonFXConfiguration,
+                                                      ctre::phoenixpro::configs::Slot0Configs,
+                                                      ctre::phoenixpro::configs::MotionMagicConfigs,
+                                                      ctre::phoenixpro::configs::MotorOutputConfigs> config)
     {
         auto &configuator = m_Talon->GetConfigurator();
 
@@ -111,51 +111,51 @@ namespace CowMotor
      * getters
      **/
 
-    double PhoenixV6TalonFX::GetSetpoint()
+    double PhoenixProTalonFX::GetSetpoint()
     {
         return m_Setpoint;
     }
 
-    double PhoenixV6TalonFX::GetPosition()
+    double PhoenixProTalonFX::GetPosition()
     {
         return m_Talon->GetPosition().Refresh().GetValue().value();
     }
     
-    double PhoenixV6TalonFX::GetVelocity()
+    double PhoenixProTalonFX::GetVelocity()
     {
         return m_Talon->GetVelocity().Refresh().GetValue().value();
     }
 
-    double PhoenixV6TalonFX::GetTemp()
+    double PhoenixProTalonFX::GetTemp()
     {
         return m_Talon->GetDeviceTemp().Refresh().GetValue().value();
     }
 
-    double PhoenixV6TalonFX::GetInverted()
+    double PhoenixProTalonFX::GetInverted()
     {
         return m_Talon->GetInverted();
     }
     
-    double PhoenixV6TalonFX::GetTorqueCurrent()
+    double PhoenixProTalonFX::GetTorqueCurrent()
     {
         return m_Talon->GetTorqueCurrent().GetValue().value();
     }
     
-    double PhoenixV6TalonFX::GetRefreshTorqueCurrent()
+    double PhoenixProTalonFX::GetRefreshTorqueCurrent()
     {
         return m_Talon->GetTorqueCurrent().Refresh().GetValue().value();
     }
 
-    CowMotor::NeutralMode PhoenixV6TalonFX::GetNeutralMode()
+    CowMotor::NeutralMode PhoenixProTalonFX::GetNeutralMode()
     {
-        auto config = ctre::phoenix6::configs::MotorOutputConfigs{};
+        auto config = ctre::phoenixpro::configs::MotorOutputConfigs{};
         m_Talon->GetConfigurator().Refresh(config);
 
         switch (config.NeutralMode.value)
         {
-        case ctre::phoenix6::signals::NeutralModeValue::Coast :
+        case ctre::phoenixpro::signals::NeutralModeValue::Coast :
             return COAST;
-        case ctre::phoenix6::signals::NeutralModeValue::Brake :
+        case ctre::phoenixpro::signals::NeutralModeValue::Brake :
             return BRAKE;
         default :
             return COAST;
@@ -166,23 +166,23 @@ namespace CowMotor
      * setters
      **/
 
-    int PhoenixV6TalonFX::SetSensorPosition(double turns)
+    int PhoenixProTalonFX::SetSensorPosition(double turns)
     {
         return m_Talon->SetRotorPosition(units::turn_t{ turns });
     }
 
-    void PhoenixV6TalonFX::SetNeutralMode(CowMotor::NeutralMode mode)
+    void PhoenixProTalonFX::SetNeutralMode(CowMotor::NeutralMode mode)
     {
-        auto config = ctre::phoenix6::configs::MotorOutputConfigs{};
+        auto config = ctre::phoenixpro::configs::MotorOutputConfigs{};
         m_Talon->GetConfigurator().Refresh(config);
 
         switch (mode)
         {
         case COAST :
-            config.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+            config.NeutralMode = ctre::phoenixpro::signals::NeutralModeValue::Coast;
             break;
         case BRAKE :
-            config.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+            config.NeutralMode = ctre::phoenixpro::signals::NeutralModeValue::Brake;
             break;
         default :
             break;
@@ -193,9 +193,9 @@ namespace CowMotor
         m_Talon->GetConfigurator().Apply(config);
     }
 
-    void PhoenixV6TalonFX::SetPID(double p, double i, double d, double f)
+    void PhoenixProTalonFX::SetPID(double p, double i, double d, double f)
     {
-        auto config = ctre::phoenix6::configs::Slot0Configs{};
+        auto config = ctre::phoenixpro::configs::Slot0Configs{};
 
         config.kP = p;
         config.kI = i;
@@ -205,9 +205,9 @@ namespace CowMotor
         ApplyConfig(config);
     }
 
-    void PhoenixV6TalonFX::SetMotionMagic(double velocity, double acceleration)
+    void PhoenixProTalonFX::SetMotionMagic(double velocity, double acceleration)
     {
-        auto config = ctre::phoenix6::configs::MotionMagicConfigs{};
+        auto config = ctre::phoenixpro::configs::MotionMagicConfigs{};
 
         config.MotionMagicCruiseVelocity = velocity;
         config.MotionMagicAcceleration   = acceleration;
@@ -215,12 +215,12 @@ namespace CowMotor
         ApplyConfig(config);
     }
     
-    void PhoenixV6TalonFX::SetInverted(bool inverted)
+    void PhoenixProTalonFX::SetInverted(bool inverted)
     {
         m_Talon->SetInverted(inverted);
     }
 
-    void PhoenixV6TalonFX::SetReversed(bool reversed)
+    void PhoenixProTalonFX::SetReversed(bool reversed)
     {
         if (reversed)
         {
