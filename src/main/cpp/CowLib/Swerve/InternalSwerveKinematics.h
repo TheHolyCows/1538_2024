@@ -47,6 +47,8 @@ namespace CowLib
             }
 
             m_ForwardKinematics = m_InverseKinematics.householderQr();
+
+            wpi::math::MathSharedStore::ReportUsage(wpi::math::MathUsageId::kKinematics_SwerveDrive, 1);
         }
 
         // This constructor gives linker errors
