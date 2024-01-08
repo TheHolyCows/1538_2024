@@ -11,7 +11,7 @@
 
 Pivot::Pivot(const int motorID)
 {
-    m_PivotMotor = new CowLib::CowMotorController(motorID,CowMotor::PHOENIX_V5,"cowbus");
+    m_PivotMotor = new CowLib::CowMotorController(motorID,CowMotor::PHOENIX_V6,"cowbus");
     m_PivotMotor->SetNeutralMode(CowMotor::BRAKE);
 
     m_TargetAngle = 0;
