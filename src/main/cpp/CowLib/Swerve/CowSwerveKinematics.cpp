@@ -26,7 +26,7 @@ namespace CowLib
 
     CowSwerveKinematics::~CowSwerveKinematics()
     {
-        delete m_Kinematics;
+        // delete m_Kinematics;
     }
 
     /**
