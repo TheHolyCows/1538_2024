@@ -20,6 +20,7 @@
 #include "Subsystems/Arm.h"
 #include "Subsystems/ArmState.h"
 #include "Subsystems/Vision.h"
+#include "Subsystems/Testbench.h"
 
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
@@ -32,6 +33,8 @@ class CowRobot
 public:
     // Drive Motors
     SwerveDrive *m_Drivetrain;
+
+    Testbench *m_Testbench;
 
 private:
 
