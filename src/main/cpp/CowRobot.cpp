@@ -35,7 +35,7 @@ CowRobot::CowRobot()
     // m_Drivetrain->ResetEncoders();
 
     // m_DriveController = new SwerveDriveController(*m_Drivetrain);
-    m_Testbench = new Testbench(1, 2);
+    m_Testbench = new Testbench(1, 2, 3, 4, 5);
 }
 
 /**
@@ -47,13 +47,13 @@ void CowRobot::Reset()
 
     m_PreviousGyroError = 0;
 
-    m_Drivetrain->ResetConstants();
-    m_DriveController->ResetConstants();
+    // m_Drivetrain->ResetConstants();
+    // m_DriveController->ResetConstants();
     // m_Controller->ResetConstants(); TODO: error
 
     // Vision::GetInstance()->Reset();
 
-    CowLib::CowLogger::GetInstance()->Reset();
+    // CowLib::CowLogger::GetInstance()->Reset();
 }
 
 /**
@@ -78,19 +78,20 @@ void CowRobot::PrintToDS()
 // Please call this once per update cycle.
 void CowRobot::Handle()
 {
-    m_MatchTime = CowLib::CowTimer::GetFPGATimestamp() - m_StartTime;
+    // m_MatchTime = CowLib::CowTimer::GetFPGATimestamp() - m_StartTime;
 
-    if (m_Controller == nullptr)
-    {
-        printf("No controller for CowRobot!!\n");
-        return;
-    }
+    // if (m_Controller == nullptr)
+    // {
+    //     printf("No controller for CowRobot!!\n");
+    //     return;
+    // }
 
     m_Controller->Handle(this);
-    m_Drivetrain->Handle();
+    m_Testbench->Handle();
+    // m_Drivetrain->Handle();
 
     // logger code below should have checks for debug mode before sending out data
-    CowLib::CowLogger::GetInstance()->Handle();
+    // CowLib::CowLogger::GetInstance()->Handle();
     // log the following every 200 ms
     // if (m_DSUpdateCount % 15 == 0)
     // {
@@ -113,7 +114,7 @@ void CowRobot::Handle()
     // bool direction = (zVal - m_PrevZ) > 0 ? true : false;
     // m_PrevZ = zVal;
 
-    PrintToDS();
+    // PrintToDS();
 
     // double xAccel = m_Accelerometer->GetX();
     // // frc::SmartDashboard::PutNumber("x accel", xAccel);

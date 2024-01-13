@@ -41,11 +41,17 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Testbench->SetMotor1(CONSTANT("TESTBENCH_MOTOR_1"));
         bot->m_Testbench->SetMotor2(CONSTANT("TESTBENCH_MOTOR_2"));
+        bot->m_Testbench->SetMotor3(CONSTANT("TESTBENCH_MOTOR_3"));
+        bot->m_Testbench->SetMotor4(CONSTANT("TESTBENCH_MOTOR_4"));
+        bot->m_Testbench->SetMotor5(CONSTANT("TESTBENCH_MOTOR_5"));
     }
     else
     {
         bot->m_Testbench->SetMotor1(0);
         bot->m_Testbench->SetMotor2(0);
+        bot->m_Testbench->SetMotor3(0);
+        bot->m_Testbench->SetMotor4(0);
+        bot->m_Testbench->SetMotor5(0);
     }
 
     if (m_CB->GetDriveButton(8))

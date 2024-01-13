@@ -45,9 +45,9 @@ void CowBase::DisabledInit()
     CowConstants::GetInstance()->RestoreData();
     printf("DISABLED INIT -------------------\n");
 
-    m_Bot->GetDriveController()->ResetHeadingLock();
+    // m_Bot->GetDriveController()->ResetHeadingLock();
 
-    m_Bot->GetDrivetrain()->SetBrakeMode(true);
+    // m_Bot->GetDrivetrain()->SetBrakeMode(true);
 }
 
 void CowBase::AutonomousInit()
@@ -70,14 +70,14 @@ void CowBase::AutonomousInit()
 
 void CowBase::TeleopInit()
 {
-    m_Bot->GetDrivetrain()->SetBrakeMode(false);
+    // m_Bot->GetDrivetrain()->SetBrakeMode(false);
 
-    m_Bot->StartTime();
-    // m_Bot->GetGyro()->FinalizeCalibration();
-    std::cout << "setting controller " << m_OpController << std::endl;
+    // m_Bot->StartTime();
+    // // m_Bot->GetGyro()->FinalizeCalibration();
+    // std::cout << "setting controller " << m_OpController << std::endl;
     m_Bot->SetController(m_OpController);
-    std::cout << "controller set successfully" << std::endl;
-    // m_Bot->GetArm()->SetBrakeMode(); TODO: add back in
+    // std::cout << "controller set successfully" << std::endl;
+    // // m_Bot->GetArm()->SetBrakeMode(); TODO: add back in
 }
 
 void CowBase::DisabledPeriodic()
