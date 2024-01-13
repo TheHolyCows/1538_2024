@@ -83,7 +83,7 @@ void CowBase::TeleopInit()
 void CowBase::DisabledPeriodic()
 {
     // log motor info
-    // CowLib::CowLogger::GetInstance()->Handle();
+    CowLib::CowLogger::GetInstance()->Handle();
 
     // m_Bot->GyroHandleCalibration();
 
@@ -119,8 +119,8 @@ void CowBase::DisabledPeriodic()
 
     if (m_DisabledCount++ % 35 == 0)
     {
-        // m_Alliance = frc::DriverStation::GetAlliance();
-        // CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
+        m_Alliance = frc::DriverStation::Alliance::kRed;
+        CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
         m_DisabledCount = 1;
     }
 }
