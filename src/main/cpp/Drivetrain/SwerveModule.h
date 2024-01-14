@@ -5,7 +5,7 @@
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowCANCoder.h"
 #include "../CowLib/CowLogger.h"
-#include "../CowLib/CowMotorController.h"
+#include "../CowLib/CowMotor/TalonFX.h"
 #include "../CowLib/Swerve/CowSwerveKinematics.h"
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
@@ -28,11 +28,11 @@ class SwerveModule : public SwerveModuleInterface
 private:
     double m_PreviousAngle;
 
-    std::unique_ptr<CowLib::CowMotorController> m_DriveMotor;
-    std::unique_ptr<CowLib::CowMotorController> m_RotationMotor;
+    std::unique_ptr<CowMotor::TalonFX> m_DriveMotor;
+    std::unique_ptr<CowMotor::TalonFX> m_RotationMotor;
 
-    CowMotor::PercentOutput m_DriveControlRequest;
-    CowMotor::PositionPercentOutput m_RotationControlRequest;
+    CowMotor::Control::DutyCycle m_DriveControlRequest;
+    CowMotor::Control::PositionDutyCycle m_RotationControlRequest;
 
     std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
 

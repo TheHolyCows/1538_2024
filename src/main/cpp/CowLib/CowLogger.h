@@ -10,7 +10,7 @@
 
 #include "../CowConstants.h"
 #include "../CowPigeon.h"
-#include "CowMotorController.h"
+#include "CowMotor/GenericMotorController.h"
 
 #include <algorithm>
 #include <arpa/inet.h>
@@ -59,7 +59,7 @@ namespace CowLib
 
         const static int REGISTERED_MOTORS_MAX = 24;
 
-        void RegisterMotor(uint32_t, CowLib::CowMotorController *);
+        void RegisterMotor(uint32_t, CowMotor::GenericMotorController *);
         static void LogAutoMode(frc::DriverStation::Alliance, const char *);
         static void LogGyro(CowPigeon *);
         static void LogPose(double, double, double);
@@ -91,7 +91,7 @@ namespace CowLib
         uint32_t m_LogServerIP;
 
         // assuming we don't have more than 24 motors ever
-        CowLib::CowMotorController *m_RegisteredMotors[REGISTERED_MOTORS_MAX];
+        CowMotor::GenericMotorController *m_RegisteredMotors[REGISTERED_MOTORS_MAX];
 
         struct CowLogHdr
         {

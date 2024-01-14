@@ -2,7 +2,6 @@
 #define __SWERVE_DRIVE_H__
 
 #include "../CowConstants.h"
-#include "../CowLib/CowMotorController.h"
 #include "../CowLib/CowPID.h"
 #include "../CowLib/Swerve/CowSwerveKinematics.h"
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"

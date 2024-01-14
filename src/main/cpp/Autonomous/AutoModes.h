@@ -11,7 +11,7 @@
 #include "Commands/RaceCommand.h"
 #include "Commands/SeriesCommand.h"
 #include "Commands/SwerveTrajectoryCommand.h"
-#include "Commands/VisionAlignCommand.h"
+// #include "Commands/VisionAlignCommand.h"
 #include "Commands/WaitCommand.h"
 #include "Commands/ParallelCommand.h"
 

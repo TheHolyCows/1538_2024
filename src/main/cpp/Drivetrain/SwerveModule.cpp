@@ -11,15 +11,18 @@ SwerveModule::SwerveModule(const int id,
                            const double encoderOffset)
     : SwerveModuleInterface(id, encoderOffset)
 {
-    m_DriveMotor    = std::make_unique<CowLib::CowMotorController>(driveMotor, CowMotor::PHOENIX_V6, "cowdrive");
-    m_RotationMotor = std::make_unique<CowLib::CowMotorController>(rotationMotor, CowMotor::PHOENIX_V6, "cowdrive");
+    m_DriveMotor    = std::make_unique<CowMotor::TalonFX>(driveMotor, "cowdrive");
+    m_RotationMotor = std::make_unique<CowMotor::TalonFX>(driveMotor, "cowdrive");
     m_Encoder       = std::make_unique<CowLib::CowCANCoder>(encoderId);
 
-    m_DriveControlRequest = { 0 };
-    m_DriveMotor->OverrideBrakeMode(true);
+    m_RotationMotor->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
 
-    m_RotationMotor->SetInverted(true);
-    m_RotationControlRequest = { 0 };
+    m_DriveControlRequest.EnableFOC = true;
+    m_DriveControlRequest.DutyCycle = 0;
+
+    m_RotationControlRequest.EnableFOC = true;
+    m_RotationControlRequest.Position = 0;
+    m_RotationControlRequest.FeedForward = 0;
 
     m_PreviousAngle = 0;
 
@@ -43,7 +46,7 @@ void SwerveModule::SetTargetState(CowLib::CowSwerveModuleState state, bool force
 
     double percentOutput = optimized.velocity / CONSTANT("SWERVE_MAX_SPEED");
 
-    m_DriveControlRequest.PercentOut = percentOutput;
+    m_DriveControlRequest.DutyCycle = percentOutput;
 
     // Don't rotate for low speeds - unless we are e-braking
     double targetAngle;
@@ -77,7 +80,7 @@ void SwerveModule::SetTargetState(CowLib::CowSwerveModuleState state, bool force
 
 void SwerveModule::ResetConstants()
 {
-    m_RotationMotor->SetPID(CONSTANT("SWERVE_ANGLE_P"), CONSTANT("SWERVE_ANGLE_I"), CONSTANT("SWERVE_ANGLE_D"));
+    m_RotationMotor->ConfigPID(CONSTANT("SWERVE_ANGLE_P"), CONSTANT("SWERVE_ANGLE_I"), CONSTANT("SWERVE_ANGLE_D"));
 
     // Percent output so not used
     // m_DriveMotor->SetPID(CONSTANT("SWERVE_DRIVE_P"),
@@ -93,12 +96,12 @@ void SwerveModule::ResetEncoders()
 
     // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_ERR, "mod %n abs pos to set %f", m_Id, absolutePosition);
 
-    m_RotationMotor->SetSensorPosition(absolutePosition);
+    m_RotationMotor->SetEncoderPosition(absolutePosition);
 
     int errCode;
     do
     {
-        errCode = m_DriveMotor->SetSensorPosition(0);
+        errCode = std::get<ctre::phoenix::StatusCode>(m_DriveMotor->SetEncoderPosition(0));
         if (errCode != 0)
         {
             CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_ERR, "err code %d", errCode);
@@ -144,10 +147,10 @@ void SwerveModule::SetBrakeMode(bool brakeMode)
 
     if (m_BrakeMode)
     {
-        m_DriveMotor->SetNeutralMode(CowMotor::BRAKE);
+        m_DriveMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     }
     else
     {
-        m_DriveMotor->SetNeutralMode(CowMotor::COAST);
+        m_DriveMotor->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
     }
 }

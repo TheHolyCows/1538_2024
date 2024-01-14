@@ -87,7 +87,7 @@ namespace CowLib
      * CowLogger::RegisterMotor
      * saves motor info to an array for use by the motor and PID debug logging functions
      */
-    void CowLogger::RegisterMotor(uint32_t motorId, CowLib::CowMotorController *motorController)
+    void CowLogger::RegisterMotor(uint32_t motorId, CowMotor::GenericMotorController *motorController)
     {
         if (m_Instance == NULL)
         {
