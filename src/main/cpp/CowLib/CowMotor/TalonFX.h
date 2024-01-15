@@ -14,29 +14,29 @@ namespace CowMotor
     class TalonFX : public GenericMotorController
     {
     private:
-        struct SynchronizedStatusSignals
+        struct SynchronizedSignals
         {
-            std::reference_wrapper<ctre::phoenix6::StatusSignal<units::angle::turn_t>> Position;
-            std::reference_wrapper<ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t>> Velocity;
-            std::reference_wrapper<ctre::phoenix6::StatusSignal<units::angular_acceleration::turns_per_second_squared_t>> Acceleration;
+            ctre::phoenix6::StatusSignal<units::angle::turn_t> *Position;
+            ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> *Velocity;
+            ctre::phoenix6::StatusSignal<units::angular_acceleration::turns_per_second_squared_t> *Acceleration;
         };
 
-        struct UnsynchronizedStatusSignals
+        struct UnsynchronizedSignals
         {
-            std::reference_wrapper<ctre::phoenix6::StatusSignal<units::celsius_t>> Temperature;
+            ctre::phoenix6::StatusSignal<units::celsius_t> *Temperature;
         };
 
         ctre::phoenix6::hardware::TalonFX m_Talon;
         ctre::phoenix6::configs::MotorOutputConfigs m_MotorOutputConfig;
 
-        SynchronizedStatusSignals m_SynchronizedStatusSignals;
-        UnsynchronizedStatusSignals m_UnsynchronizedStatusSignals;
+        SynchronizedSignals m_SynchronizedSignals;
+        UnsynchronizedSignals m_UnsynchronizedSignals;
 
     public:
         TalonFX(int id, std::string bus);
 
-        std::vector<std::reference_wrapper<ctre::phoenix6::BaseStatusSignal>> GetSynchronizedStatusSignals();
-        std::vector<std::reference_wrapper<ctre::phoenix6::BaseStatusSignal>> GetUnsynchronizedStatusSignals();
+        std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+        std::vector<ctre::phoenix6::BaseStatusSignal*> GetUnsynchronizedSignals();
 
         Status ConfigNeutralMode(NeutralMode neutralMode) override;
         Status ConfigPositivePolarity(Direction positivePolarity) override;

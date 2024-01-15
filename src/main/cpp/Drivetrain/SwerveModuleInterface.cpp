@@ -10,6 +10,11 @@ SwerveModuleInterface::SwerveModuleInterface(const int id, const double encoderO
 {
 }
 
+std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveModuleInterface::GetSynchronizedSignals()
+{
+    return std::vector<ctre::phoenix6::BaseStatusSignal*>();
+}
+
 double SwerveModuleInterface::PlaceInAppropriate0To360Scope(double scopeReference, double newAngle)
 {
     double lowerBound;

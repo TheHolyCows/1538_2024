@@ -85,6 +85,9 @@ void CowRobot::Handle()
         return;
     }
 
+    // Synchronize and sample time-critical sensors
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(10_ms, m_Drivetrain->GetSynchronizedSignals());
+
     m_Controller->Handle(this);
     m_Drivetrain->Handle();
 

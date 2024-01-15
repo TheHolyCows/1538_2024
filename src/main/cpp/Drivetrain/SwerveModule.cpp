@@ -12,15 +12,15 @@ SwerveModule::SwerveModule(const int id,
     : SwerveModuleInterface(id, encoderOffset)
 {
     m_DriveMotor    = std::make_unique<CowMotor::TalonFX>(driveMotor, "cowdrive");
-    m_RotationMotor = std::make_unique<CowMotor::TalonFX>(driveMotor, "cowdrive");
+    m_RotationMotor = std::make_unique<CowMotor::TalonFX>(rotationMotor, "cowdrive");
     m_Encoder       = std::make_unique<CowLib::CowCANCoder>(encoderId);
 
     m_RotationMotor->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
 
-    m_DriveControlRequest.EnableFOC = true;
+    m_DriveControlRequest.EnableFOC = false;
     m_DriveControlRequest.DutyCycle = 0;
 
-    m_RotationControlRequest.EnableFOC = true;
+    m_RotationControlRequest.EnableFOC = false;
     m_RotationControlRequest.Position = 0;
     m_RotationControlRequest.FeedForward = 0;
 
@@ -38,6 +38,18 @@ SwerveModule::SwerveModule(const int id,
                               m_RotationMotor->GetPosition());
     // frc::SmartDashboard::PutNumber("swerve/module " + std::to_string(m_Id) + "/absolute encoder angle",
     // m_Encoder->GetAbsolutePosition());
+}
+
+std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveModule::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> driveMotorSignals = m_DriveMotor->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> rotationMotorSignals = m_RotationMotor->GetSynchronizedSignals();
+
+    signals.insert(signals.end(), driveMotorSignals.begin(), driveMotorSignals.end());
+    signals.insert(signals.end(), driveMotorSignals.begin(), driveMotorSignals.end());
+
+    return signals;
 }
 
 void SwerveModule::SetTargetState(CowLib::CowSwerveModuleState state, bool force)

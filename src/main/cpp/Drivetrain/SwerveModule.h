@@ -55,6 +55,8 @@ public:
                  const int encoderId,
                  const double encoderOffset);
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+
     /**
      * @brief Sets the desired module state to the given state after optimizing
      * @param state Target state

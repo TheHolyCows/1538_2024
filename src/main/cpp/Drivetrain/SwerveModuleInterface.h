@@ -3,6 +3,8 @@
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
 
+#include <ctre/phoenix6/StatusSignal.hpp>
+
 class SwerveModuleInterface
 {
 protected:
@@ -38,6 +40,8 @@ public:
     SwerveModuleInterface(const int id, const double encoderOffset);
 
     virtual ~SwerveModuleInterface() = default;
+
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
     inline int GetID() const { return m_Id; }
 

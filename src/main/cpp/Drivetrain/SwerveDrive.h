@@ -60,6 +60,8 @@ public:
     SwerveDrive(ModuleConstants constants[4], double wheelBase);
     ~SwerveDrive();
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+
     void SetVelocity(double x,
                      double y,
                      double rotation,

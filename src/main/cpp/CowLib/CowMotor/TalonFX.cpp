@@ -10,37 +10,37 @@ namespace CowMotor
     TalonFX::TalonFX(int id, std::string bus)
         : m_Talon(id, bus),
           m_MotorOutputConfig({}),
-          m_SynchronizedStatusSignals({
-              .Position = m_Talon.GetPosition(),
-              .Velocity = m_Talon.GetVelocity(),
-              .Acceleration = m_Talon.GetAcceleration()
+          m_SynchronizedSignals({
+              .Position = &m_Talon.GetPosition(),
+              .Velocity = &m_Talon.GetVelocity(),
+              .Acceleration = &m_Talon.GetAcceleration()
           }),
-          m_UnsynchronizedStatusSignals({
-              .Temperature = m_Talon.GetDeviceTemp()
+          m_UnsynchronizedSignals({
+              .Temperature = &m_Talon.GetDeviceTemp()
           })
     {
         ctre::phoenix6::configs::TalonFXConfigurator &configurator = m_Talon.GetConfigurator();
         configurator.Refresh(m_MotorOutputConfig);
     }
 
-    std::vector<std::reference_wrapper<ctre::phoenix6::BaseStatusSignal>> TalonFX::GetSynchronizedStatusSignals()
+    std::vector<ctre::phoenix6::BaseStatusSignal*> TalonFX::GetSynchronizedSignals()
     {
-        std::vector<std::reference_wrapper<ctre::phoenix6::BaseStatusSignal>> statusSignals = {
-            m_SynchronizedStatusSignals.Position,
-            m_SynchronizedStatusSignals.Velocity,
-            m_SynchronizedStatusSignals.Acceleration
+        std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
+            m_SynchronizedSignals.Position,
+            m_SynchronizedSignals.Velocity,
+            m_SynchronizedSignals.Acceleration
         };
 
-        return statusSignals;
+        return signals;
     }
 
-    std::vector<std::reference_wrapper<ctre::phoenix6::BaseStatusSignal>> TalonFX::GetUnsynchronizedStatusSignals()
+    std::vector<ctre::phoenix6::BaseStatusSignal*> TalonFX::GetUnsynchronizedSignals()
     {
-        std::vector<std::reference_wrapper<ctre::phoenix6::BaseStatusSignal>> statusSignals = {
-            m_UnsynchronizedStatusSignals.Temperature
+        std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
+            m_UnsynchronizedSignals.Temperature
         };
 
-        return statusSignals;
+        return signals;
     }
 
     Status TalonFX::ConfigNeutralMode(NeutralMode neutralMode)
@@ -193,24 +193,23 @@ namespace CowMotor
 
     double TalonFX::GetPosition()
     {
-        return m_SynchronizedStatusSignals.Position.get().GetValue().value();
+        return m_SynchronizedSignals.Position->GetValue().value();
     }
 
     double TalonFX::GetVelocity()
     {
-        return m_SynchronizedStatusSignals.Velocity.get().GetValue().value();
+        return m_SynchronizedSignals.Velocity->GetValue().value();
     }
 
     double TalonFX::GetAcceleration()
     {
-        return m_SynchronizedStatusSignals.Acceleration.get().GetValue().value();
+        return m_SynchronizedSignals.Acceleration->GetValue().value();
     }
 
     double TalonFX::GetTemperature()
     {
-        ctre::phoenix6::StatusSignal<units::celsius_t> &statusSignal = m_UnsynchronizedStatusSignals.Temperature.get();
-        statusSignal.Refresh();
-        return statusSignal.GetValue().value();
+        m_UnsynchronizedSignals.Temperature->Refresh();
+        return m_UnsynchronizedSignals.Temperature->GetValue().value();
     }
 
     Status TalonFX::SetEncoderPosition(double value)

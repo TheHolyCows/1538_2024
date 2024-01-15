@@ -59,6 +59,19 @@ SwerveDrive::~SwerveDrive()
     // delete m_VisionPIDController;
 }
 
+std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveDrive::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+
+    for (auto module : m_Modules)
+    {
+        std::vector<ctre::phoenix6::BaseStatusSignal*> moduleSignals = module->GetSynchronizedSignals();
+        signals.insert(signals.end(), moduleSignals.begin(), moduleSignals.end());
+    }
+
+    return signals;
+}
+
 /**
  * @brief Sets drive velocity
  *
