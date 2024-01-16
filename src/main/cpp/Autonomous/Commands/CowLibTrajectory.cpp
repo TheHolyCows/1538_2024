@@ -91,8 +91,8 @@ std::vector<PathPlannerTrajectory::State> CowLibTrajectory::generateStates(
 				t = 0.0;
 			}
 
-			state.targetHolonomicRotation = (prevRotationTargetRot
-					+ (nextTarget.getTarget() - prevRotationTargetRot)) * t;
+			state.targetHolonomicRotation = GeometryUtil::rotationLerp(prevRotationTargetRot, nextTarget.getTarget(), t);
+			std::cout << "idx: " << i << " rotation target: " << state.targetHolonomicRotation.Degrees().value() << std::endl;
 		}
 
 		state.position = path->getPoint(i).position;
