@@ -9,10 +9,10 @@
       "prevControl": null,
       "nextControl": {
         "x": 6.487945779711004,
-        "y": 6.045939089832387
+        "y": 5.004348895127189
       },
       "isLocked": false,
-      "linkedName": "drive1-1_end"
+      "linkedName": null
     },
     {
       "anchor": {

@@ -28,8 +28,10 @@ AutoModes::AutoModes()
                                      new SeriesCommand(series) });
     };
 
-    m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1",6.9_fps,6_fps_sq,frc::Rotation2d(0_deg),true,true));
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2",2_fps,5_fps_sq,true,false));
+    m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1",4_fps,8_fps_sq,frc::Rotation2d(0_deg),true,true));
+    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 8_fps, 5_fps_sq,
+    //                                                                     frc::Rotation2d(0_deg),
+    //                                                                     true, false));
 
 
     m_Iterator = m_Modes.begin();

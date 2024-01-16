@@ -8,6 +8,7 @@
 #include <frc/Filesystem.h>
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/path/PathPlannerTrajectory.h>
+#include "CowLibTrajectory.h"
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 #include <string>
 #include <vector>
@@ -44,12 +45,14 @@ public:
     void Finish(CowRobot *robot) override;
 
     frc::Pose2d GetStartingPose();
+    
+    frc::Rotation2d GetEndRot();
 
 private:
     CowLib::CowTimer *m_Timer;
 
     std::shared_ptr<pathplanner::PathPlannerPath> m_Path;
-    std::shared_ptr<pathplanner::PathPlannerTrajectory> m_Trajectory;
+    std::shared_ptr<pathplanner::CowLibTrajectory> m_Trajectory;
     pathplanner::PPHolonomicDriveController *m_HolonomicController;
 
     double m_TotalTime;
