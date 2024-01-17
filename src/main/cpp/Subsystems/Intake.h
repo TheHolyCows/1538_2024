@@ -1,3 +1,10 @@
+//==================================================
+// Copyright (C) 2024 Team 1538 / The Holy Cows
+// Intake.h
+// author: Kiran/Dustin/Jon
+// created on: 2024-1-16
+//==================================================
+
 #pragma once
 
 #include <iostream>
