@@ -48,7 +48,7 @@ void SwerveModule::SetTargetState(CowLib::CowSwerveModuleState state, bool force
     // Don't rotate for low speeds - unless we are e-braking
     double targetAngle;
 
-    if (!force && fabs(optimized.velocity) <= CONSTANT("SWERVE_MAX_SPEED") * 0.01)
+    if (!force && fabs(optimized.velocity) <= CONSTANT("SWERVE_MIN_ROT_SPEED"))
     {
         targetAngle = m_PreviousAngle;
     }
