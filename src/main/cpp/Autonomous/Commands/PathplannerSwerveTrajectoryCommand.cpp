@@ -43,7 +43,7 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     std::cout << data["previewStartingState"] << std::endl;
     if (!data["previewStartingState"].is_null())
     {
-        start_rot = units::degree_t(data["previewStartingState"]["rotation"]); // TODO: check NULL?
+        start_rot = units::degree_t(data["previewStartingState"]["rotation"]);
     }
     
     units::degree_t end_rot = units::degree_t(data["goalEndState"]["rotation"]);
@@ -61,7 +61,7 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     m_HolonomicController = new pathplanner::PPHolonomicDriveController(
         pathplanner::PIDConstants{ CONSTANT("AUTO_DRIVE_P"), CONSTANT("AUTO_DRIVE_I"), CONSTANT("AUTO_DRIVE_D") },
         pathplanner::PIDConstants{ CONSTANT("AUTO_ROTATION_P"), CONSTANT("AUTO_ROTATION_I"), CONSTANT("AUTO_ROTATION_D") },
-        units::meters_per_second_t(18_fps),
+        21_fps,
         units::meter_t(units::length::foot_t(CONSTANT("AUTO_DRIVE_BASE_RADIUS"))),
         0.01_s);
     m_HolonomicController->setEnabled(true);
@@ -69,9 +69,7 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     frc::ChassisSpeeds startingSpeeds = frc::ChassisSpeeds { 0_mps, 0_mps, 0_rad_per_s};
 
     // need pose/speeds at end of last path to create trajectory, may need to pass in from constructor if compute time is bad
-    m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path,
-                                                                        startingSpeeds,
-                                                                        m_StartRotation);
+    m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, startingSpeeds, m_StartRotation);
 }
 
 PathplannerSwerveTrajectoryCommand::~PathplannerSwerveTrajectoryCommand()
