@@ -46,6 +46,7 @@ void SwerveModule::SetTargetState(CowLib::CowSwerveModuleState state, bool force
     m_DriveControlRequest.PercentOut = percentOutput;
 
     // Don't rotate for low speeds - unless we are e-braking
+    // may want to lower this value when in teleop
     double targetAngle;
 
     if (!force && fabs(optimized.velocity) <= CONSTANT("SWERVE_MIN_ROT_SPEED"))
