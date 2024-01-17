@@ -61,7 +61,7 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     m_HolonomicController = new pathplanner::PPHolonomicDriveController(
         pathplanner::PIDConstants{ CONSTANT("AUTO_DRIVE_P"), CONSTANT("AUTO_DRIVE_I"), CONSTANT("AUTO_DRIVE_D") },
         pathplanner::PIDConstants{ CONSTANT("AUTO_ROTATION_P"), CONSTANT("AUTO_ROTATION_I"), CONSTANT("AUTO_ROTATION_D") },
-        21_fps,
+        18.5_fps,
         units::meter_t(units::length::foot_t(CONSTANT("AUTO_DRIVE_BASE_RADIUS"))),
         0.01_s);
     m_HolonomicController->setEnabled(true);
@@ -88,18 +88,21 @@ void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
     CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"starting new path");
 
     // m_Trajectory = std::make_shared<CowLibTrajectory>(m_Path,
-    //                                                                     robot->GetDrivetrain()->GetChassisSpeeds(),
-    //                                                                     frc::Rotation2d(units::degree_t(robot->GetDrivetrain()->GetPoseRot())));
-    
+                                            // robot->GetDrivetrain()->GetChassisSpeeds(),
+                                            // frc::Rotation2d(units::degree_t(robot->GetDrivetrain()->GetPoseRot())));
+    frc::Pose2d curPose = robot->GetDrivetrain()->GetPose();
+    frc::ChassisSpeeds curSpeeds = robot->GetDrivetrain()->GetChassisSpeeds();
+
     if (m_ResetOdometry)
     {
-        frc::Pose2d curPose = robot->GetDrivetrain()->GetPose();
         robot->GetDrivetrain()->ResetOdometry(m_StartPose);
         CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"cur pose: x:%lf y:%lf rot:%lf",curPose.X(), curPose.Y(), curPose.Rotation().Degrees());
         CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"target pose: x:%lf y:%lf rot:%lf",m_StartPose.X(), m_StartPose.Y(), m_StartPose.Rotation().Degrees());
     }
 
     m_TotalTime = m_Trajectory->getTotalTime().value();
+
+    m_HolonomicController->reset(curPose,curSpeeds);
 
     // std::vector<pathplanner::PathPlannerTrajectory::EventMarker> markers = m_Trajectory.getMarkers();
 
@@ -146,7 +149,7 @@ void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
 
     pathplanner::PathPlannerTrajectory::State targetState
         = m_Trajectory->sample(units::second_t{ m_Timer->Get() });
-    // targetState = targetState.reverse();
+    targetState = targetState.reverse();
     
     // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"cur pose: x:%lf y:%lf rot:%lf",currentPose.X(), currentPose.Y(), currentPose.Rotation().Degrees());
     // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"target pose: x:%lf y:%lf rot:%lf",targetState.getTargetHolonomicPose().X(), targetState.getTargetHolonomicPose().Y(), targetState.getTargetHolonomicPose().Rotation().Degrees());
