@@ -29,7 +29,7 @@ AutoModes::AutoModes()
     };
 
     m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1",6_fps,8_fps_sq,frc::Rotation2d(0_deg),true,true));
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 8_fps, 5_fps_sq,
+    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 6_fps, 8_fps_sq,
     //                                                                     frc::Rotation2d(0_deg),
     //                                                                     true, false));
 

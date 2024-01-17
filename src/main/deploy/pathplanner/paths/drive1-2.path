@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.487945779711004,
-        "y": 6.004348895127189
+        "x": 1.937129747957413,
+        "y": 6.448984786207419
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.487945779711004,
-        "y": 5.004348895127189
+        "x": 1.937129747957413,
+        "y": 5.448984786207419
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "drive1-1_end"
     },
     {
       "anchor": {
@@ -21,14 +21,20 @@
       },
       "prevControl": {
         "x": 6.54,
-        "y": 3.736601541685586
+        "y": 3.8085548391364363
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": -90.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0,
+    "rotation": -90.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 90.0,
+    "rotation": -90.0,
     "velocity": 0
   },
   "useDefaultConstraints": false
