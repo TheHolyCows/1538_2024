@@ -29,9 +29,9 @@ AutoModes::AutoModes()
     };
 
     m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1",6_fps,8_fps_sq,frc::Rotation2d(0_deg),true,true));
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 6_fps, 8_fps_sq,
-    //                                                                     frc::Rotation2d(0_deg),
-    //                                                                     true, false));
+    m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 6_fps, 8_fps_sq,
+                                                                        frc::Rotation2d(0_deg),
+                                                                        true, false));
 
 
     m_Iterator = m_Modes.begin();

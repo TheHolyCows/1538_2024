@@ -92,7 +92,7 @@ std::vector<PathPlannerTrajectory::State> CowLibTrajectory::generateStates(
 			}
 
 			state.targetHolonomicRotation = GeometryUtil::rotationLerp(prevRotationTargetRot, nextTarget.getTarget(), t);
-			// std::cout << "idx: " << i << " rotation target: " << state.targetHolonomicRotation.Degrees().value() << std::endl;
+			
 		}
 
 		state.position = path->getPoint(i).position;
@@ -130,6 +130,7 @@ std::vector<PathPlannerTrajectory::State> CowLibTrajectory::generateStates(
 		}
 
 		states.push_back(state);
+		// std::cout << "idx: " << i << " accel: " << state.acceleration() << " vel: " << state.velocity() << " rot: " << state.targetHolonomicRotation.Degrees()() <<  std::endl;
 	}
 
 	// Second pass. Handles linear deceleration

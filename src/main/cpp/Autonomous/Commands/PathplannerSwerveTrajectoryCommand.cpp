@@ -40,7 +40,7 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     auto end_pose = data["waypoints"][data["waypoints"].size() - 1]["anchor"];
 
     units::degree_t start_rot = 0_deg;
-    std::cout << data["previewStartingState"] << std::endl;
+    
     if (!data["previewStartingState"].is_null())
     {
         start_rot = units::degree_t(data["previewStartingState"]["rotation"]);
