@@ -22,6 +22,7 @@
 #include "Subsystems/Vision.h"
 #include "Subsystems/Shooter.h"
 #include "Subsystems/Intake.h"
+#include "Subsystems/Elevator.h"
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/PowerDistribution.h>
@@ -35,6 +36,7 @@ public:
     SwerveDrive *m_Drivetrain;
     Shooter *m_Shooter;
     Intake *m_Intake;
+    Elevator *m_Elevator;
 
 private:
 
@@ -86,6 +88,8 @@ public:
     void Handle();
 
     void DoNothing(void);
+
+    void ClimbSM(void);
 };
 
 

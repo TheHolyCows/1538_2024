@@ -8,6 +8,8 @@ Elevator::Elevator(const int MotorId)
     m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(MotorId, CowMotor::PHOENIX_V6);
     m_ElevatorMotor->SetNeutralMode(CowMotor::BRAKE);
 
+    m_ClimberState = ST_DEFAULT;
+
     ResetConstants();
 }
 

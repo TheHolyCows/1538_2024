@@ -22,6 +22,14 @@ public:
         RETRACTING,
     };
 
+    enum CLIMB_STATE {
+        ST_EXTEND,
+        ST_RETRACT,
+        ST_DEFAULT,
+    };
+
+    CLIMB_STATE m_ClimberState;
+
     Elevator(const int MotorId);
 
     /**
