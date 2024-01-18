@@ -21,7 +21,6 @@
 #include "Subsystems/ArmState.h"
 #include "Subsystems/Vision.h"
 #include "Subsystems/Shooter.h"
-#include "Subsystems/Intake.h"
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/PowerDistribution.h>
@@ -34,7 +33,6 @@ public:
     // Drive Motors
     SwerveDrive *m_Drivetrain;
     Shooter *m_Shooter;
-    Intake *m_Intake;
 
 private:
 

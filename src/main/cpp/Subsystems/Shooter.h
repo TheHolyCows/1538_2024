@@ -9,24 +9,32 @@
 
 #include <iostream>
 #include "../CowLib/CowMotorController.h"
+#include "../Cowconstants.h"
 
 class Shooter
 {
 public:
 
-    Shooter (int motorID1, int motorID2);
+    Shooter (int shooterID1, int shooterID2, int intakeID1, int intakeID2);
+    void ResetConstants();
+    void SetShooter (double percent);
+    void SetIntake (double percent);
+    double GetShooterVelocity();
+    double GetIntakeVelocity();
+    double GetMeanShooterCurrent();
+    double GetTotalShooterCurrent();
+    double GetMeanIntakeCurrent();
+    double GetTotalIntakeCurrent();
     void Handle();
-    void Set (double percent);
-    void ResetConstants(double kp, double ki, double kd, double ff);
-    double GetVelocity();
-    double GetMeanCurrent();
-    double GetTotalCurrent();
-
+    
 private:
 
-    CowLib::CowMotorController *m_Motor1;
-    CowLib::CowMotorController *m_Motor2;
-    CowMotor::PercentOutput m_Motor1ControlRequest{ 0 };
-    CowMotor::PercentOutput m_Motor2ControlRequest{ 0 };
-
+    CowLib::CowMotorController *m_Shooter1;
+    CowLib::CowMotorController *m_Shooter2;
+    CowLib::CowMotorController *m_Intake1;
+    CowLib::CowMotorController *m_Intake2;
+    CowMotor::PercentOutput m_Shooter1ControlRequest{ 0 };
+    CowMotor::PercentOutput m_Shooter2ControlRequest{ 0 };
+    CowMotor::PercentOutput m_Intake1ControlRequest{ 0 };
+    CowMotor::PercentOutput m_Intake2ControlRequest{ 0 };
 };
