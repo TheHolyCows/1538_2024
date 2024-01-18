@@ -1,61 +1,101 @@
 #include "Shooter.h"
 
-Shooter::Shooter(int motorID1, int motorID2) 
+Shooter::Shooter(int shooterID1, int shooterID2, int intakeID1, int intakeID2) 
 {
 
-    m_Motor1  = new CowLib::CowMotorController(motorID1, CowMotor::PHOENIX_V6);
-    m_Motor2  = new CowLib::CowMotorController(motorID2, CowMotor::PHOENIX_V6);
-    m_Motor1->SetNeutralMode(CowMotor::COAST);
-    m_Motor2->SetNeutralMode(CowMotor::COAST);
+    m_Shooter1  = new CowLib::CowMotorController(shooterID1, CowMotor::PHOENIX_V6);
+    m_Shooter2  = new CowLib::CowMotorController(shooterID2, CowMotor::PHOENIX_V6);
+    m_Shooter1->SetNeutralMode(CowMotor::COAST);
+    m_Shooter2->SetNeutralMode(CowMotor::COAST);
+    m_Intake1  = new CowLib::CowMotorController(intakeID1, CowMotor::PHOENIX_V6);
+    m_Intake2  = new CowLib::CowMotorController(intakeID2, CowMotor::PHOENIX_V6);
+    m_Intake1->SetNeutralMode(CowMotor::COAST);
+    m_Intake2->SetNeutralMode(CowMotor::COAST);
 
 }
 
-void Shooter::Set(double percent)
+void Shooter::SetShooter(double percent)
 {
 
-    m_Motor1ControlRequest.PercentOut = percent;
-    m_Motor1ControlRequest.PercentOut = percent;
+    m_Shooter1ControlRequest.PercentOut = percent;
+    m_Shooter2ControlRequest.PercentOut = percent;
 
+}
+
+void Shooter::SetIntake(double percent)
+{
+
+    m_Intake1ControlRequest.PercentOut = percent;
+    m_Intake2ControlRequest.PercentOut = percent;
+
+}
+
+void Shooter::ResetConstants()
+{
+    m_Shooter1->SetPID(CONSTANT("SHOOTER_P"), CONSTANT("SHOOTER_I"), CONSTANT("SHOOTER_D"));
+    m_Shooter2->SetPID(CONSTANT("SHOOTER_P"), CONSTANT("SHOOTER_I"), CONSTANT("SHOOTER_D"));
+    m_Intake1->SetPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
+    m_Intake2->SetPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
+}
+
+double Shooter::GetShooterVelocity()
+{
+    double velocity = (m_Shooter1->GetVelocity() +  m_Shooter2->GetVelocity()) / 2;
+    return velocity;
+}
+
+double Shooter::GetIntakeVelocity()
+{
+    double velocity = (m_Intake1->GetVelocity() +  m_Intake2->GetVelocity()) / 2;
+    return velocity;
+}
+
+double Shooter::GetMeanShooterCurrent()
+{
+    double mcurrent = (m_Shooter1->GetTorqueCurrent() + m_Shooter2->GetTorqueCurrent()) / 2;
+    return mcurrent;
+}
+
+double Shooter::GetTotalShooterCurrent()
+{
+    double tcurrent = m_Shooter1->GetTorqueCurrent() + m_Shooter2->GetTorqueCurrent();
+    return tcurrent;
+}
+
+double Shooter::GetMeanIntakeCurrent()
+{
+    double mcurrent = (m_Intake1->GetTorqueCurrent() + m_Intake2->GetTorqueCurrent()) / 2;
+    return mcurrent;
+}
+
+double Shooter::GetTotalIntakeCurrent()
+{
+    double tcurrent = m_Intake1->GetTorqueCurrent() + m_Intake2->GetTorqueCurrent();
+    return tcurrent;
 }
 
 void Shooter::Handle()
 {
 
-    if(m_Motor1)
+    if(m_Shooter1)
     {
-        m_Motor1->Set(m_Motor1ControlRequest);
+        m_Shooter1->Set(m_Shooter1ControlRequest);
     }
 
-    if(m_Motor2)
+    if(m_Shooter2)
     {
-        m_Motor2->Set(m_Motor2ControlRequest);
+        m_Shooter2->Set(m_Shooter2ControlRequest);
     }
 
+    if(m_Intake1)
+    {
+        m_Intake1->Set(m_Intake1ControlRequest);
+    }
 
+    if(m_Intake2)
+    {
+        m_Intake2->Set(m_Intake2ControlRequest);
+    }
 
-}
-
-void Shooter::ResetConstants(double kp, double ki, double kd, double ff)
-{
-    m_Motor1->SetPID(kp, ki, kd, ff = 0.0);
-    m_Motor2->SetPID(kp, ki, kd, ff = 0.0);
-}
-
-double Shooter::GetVelocity()
-{
-    double velocity = (m_Motor1->GetVelocity() +  m_Motor2->GetVelocity()) / 2;
-    return velocity;
-}
-
-double Shooter::GetMeanCurrent()
-{
-    double mcurrent = (m_Motor1->GetTorqueCurrent() + m_Motor2->GetTorqueCurrent()) / 2;
-    return mcurrent;
-}
-
-double Shooter::GetTotalCurrent()
-{
-    double tcurrent = m_Motor1->GetTorqueCurrent() + m_Motor2->GetTorqueCurrent();
-    return tcurrent;
 }
    
