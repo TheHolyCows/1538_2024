@@ -10,6 +10,8 @@
 #include "../CowConstants.h"
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowMotorController.h"
+#include <frc/trajectory/TrapezoidProfile.h>
+#include <units/velocity.h>
 
 #include <memory>
 #include <iostream>
@@ -28,9 +30,9 @@ public:
         ST_DEFAULT,
     };
 
-    CLIMB_STATE m_ClimberState;
+    Elevator(const int motorID);
 
-    Elevator(const int MotorId);
+    CLIMB_STATE m_ClimberState;
 
     /**
      * sets variable in current position request to pos
@@ -65,6 +67,4 @@ private:
     CowMotor::MotionMagicPercentOutput m_MotorRequest = { 0 };
 
     PIDSet m_PrevPIDSet = RETRACTING;
-
-//     CowMotor::PercentOutput m_MotorRequest = {0};
 };

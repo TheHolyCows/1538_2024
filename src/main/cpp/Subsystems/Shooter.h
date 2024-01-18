@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <iostream>
 #include "../CowLib/CowMotorController.h"
 #include "../Cowconstants.h"
 
@@ -15,7 +14,7 @@ class Shooter
 {
 public:
 
-    Shooter (int shooterID1, int shooterID2, int intakeID1, int intakeID2);
+    Shooter (const int shooterID1, const int shooterID2, const int intakeID1, const int intakeID2);
     void ResetConstants();
     void SetShooter (double percent);
     void SetIntake (double percent);
@@ -33,8 +32,9 @@ private:
     CowLib::CowMotorController *m_Shooter2;
     CowLib::CowMotorController *m_Intake1;
     CowLib::CowMotorController *m_Intake2;
-    CowMotor::PercentOutput m_Shooter1ControlRequest{ 0 };
-    CowMotor::PercentOutput m_Shooter2ControlRequest{ 0 };
-    CowMotor::PercentOutput m_Intake1ControlRequest{ 0 };
-    CowMotor::PercentOutput m_Intake2ControlRequest{ 0 };
+
+    CowMotor::PercentOutput m_ShooterControlRequest{ 0 };
+    
+    CowMotor::PercentOutput m_IntakeControlRequest{ 0 };
+    
 };

@@ -1,11 +1,8 @@
 #include "Elevator.h"
 
-#include <frc/trajectory/TrapezoidProfile.h>
-#include <units/velocity.h>
-
-Elevator::Elevator(const int MotorId)
+Elevator::Elevator(const int motorID)
 {
-    m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(MotorId, CowMotor::PHOENIX_V6);
+    m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(motorID, CowMotor::PHOENIX_V6);
     m_ElevatorMotor->SetNeutralMode(CowMotor::BRAKE);
 
     m_ClimberState = ST_DEFAULT;
@@ -68,7 +65,7 @@ void Elevator::UsePIDSet(Elevator::PIDSet set)
                                      CONSTANT("ELEVATOR_UP_D"),
                                      CONSTANT("ELEVATOR_UP_F"));
             m_ElevatorMotor->SetMotionMagic(CONSTANT("ELEVATOR_UP_V"), CONSTANT("ELEVATOR_UP_A"));
-           std::cout << "UP elevator constants\n";
+        //    std::cout << "UP elevator constants\n";
 
             break;
         case RETRACTING :
@@ -77,7 +74,7 @@ void Elevator::UsePIDSet(Elevator::PIDSet set)
                                      CONSTANT("ELEVATOR_DOWN_D"),
                                      CONSTANT("ELEVATOR_DOWN_F"));
             m_ElevatorMotor->SetMotionMagic(CONSTANT("ELEVATOR_DOWN_V"), CONSTANT("ELEVATOR_DOWN_A"));
-            std::cout << "DOWN telescope constants\n";
+            // std::cout << "DOWN telescope constants\n";
 
             break;
         default :

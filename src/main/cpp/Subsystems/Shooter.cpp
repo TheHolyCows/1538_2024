@@ -1,12 +1,13 @@
 #include "Shooter.h"
 
-Shooter::Shooter(int shooterID1, int shooterID2, int intakeID1, int intakeID2) 
+Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID1, const int intakeID2) 
 {
 
     m_Shooter1  = new CowLib::CowMotorController(shooterID1, CowMotor::PHOENIX_V6);
     m_Shooter2  = new CowLib::CowMotorController(shooterID2, CowMotor::PHOENIX_V6);
     m_Shooter1->SetNeutralMode(CowMotor::COAST);
     m_Shooter2->SetNeutralMode(CowMotor::COAST);
+    
     m_Intake1  = new CowLib::CowMotorController(intakeID1, CowMotor::PHOENIX_V6);
     m_Intake2  = new CowLib::CowMotorController(intakeID2, CowMotor::PHOENIX_V6);
     m_Intake1->SetNeutralMode(CowMotor::COAST);
@@ -17,16 +18,14 @@ Shooter::Shooter(int shooterID1, int shooterID2, int intakeID1, int intakeID2)
 void Shooter::SetShooter(double percent)
 {
 
-    m_Shooter1ControlRequest.PercentOut = percent;
-    m_Shooter2ControlRequest.PercentOut = percent;
+    m_ShooterControlRequest.PercentOut = percent;
 
 }
 
 void Shooter::SetIntake(double percent)
 {
 
-    m_Intake1ControlRequest.PercentOut = percent;
-    m_Intake2ControlRequest.PercentOut = percent;
+    m_IntakeControlRequest.PercentOut = percent;
 
 }
 
@@ -79,22 +78,22 @@ void Shooter::Handle()
 
     if(m_Shooter1)
     {
-        m_Shooter1->Set(m_Shooter1ControlRequest);
+        m_Shooter1->Set(m_ShooterControlRequest);
     }
 
     if(m_Shooter2)
     {
-        m_Shooter2->Set(m_Shooter2ControlRequest);
+        m_Shooter2->Set(m_ShooterControlRequest);
     }
 
     if(m_Intake1)
     {
-        m_Intake1->Set(m_Intake1ControlRequest);
+        m_Intake1->Set(m_IntakeControlRequest);
     }
 
     if(m_Intake2)
     {
-        m_Intake2->Set(m_Intake2ControlRequest);
+        m_Intake2->Set(m_IntakeControlRequest);
     }
 
 }
