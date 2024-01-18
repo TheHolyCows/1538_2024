@@ -17,10 +17,11 @@
 #include "Drivetrain/SwerveDrive.h"
 #include "Drivetrain/SwerveDriveController.h"
 #include "frc/controller/PIDController.h"
-#include "Subsystems/Arm.h"
-#include "Subsystems/ArmState.h"
-#include "Subsystems/Vision.h"
 
+#include "Subsystems/ArmState.h" // delete before 2024
+#include "Subsystems/Vision.h"
+#include "Subsystems/Shooter.h"
+#include "Subsystems/Elevator.h"
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/PowerDistribution.h>
@@ -32,6 +33,8 @@ class CowRobot
 public:
     // Drive Motors
     SwerveDrive *m_Drivetrain;
+    Shooter *m_Shooter;
+    Elevator *m_Elevator;
 
 private:
 
@@ -83,6 +86,10 @@ public:
     void Handle();
 
     void DoNothing(void);
+
+    void ClimbSM(void);
 };
+
+
 
 #endif
