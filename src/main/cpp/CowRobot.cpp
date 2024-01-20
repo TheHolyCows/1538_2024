@@ -142,21 +142,21 @@ void CowRobot::ClimbSM()
     {
         case Elevator::ST_EXTEND :
             // elevator extending
-            if(m_Elevator->AtTarget())
+            if(m_Elevator->ElevatorAtTarget())
             {
-                m_Elevator->RequestPosition(CONSTANT("CLIMB_RETRACT"));
+                m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_RETRACT"));
                 m_Elevator->m_ClimberState = Elevator::ST_RETRACT;
             }
             break;
         case Elevator::ST_RETRACT :
             // elevator retracting
-            if(m_Elevator->AtTarget())
+            if(m_Elevator->ElevatorAtTarget())
             {
                 // end lockout
             }
             break;
         case Elevator::ST_DEFAULT :
-            m_Elevator->RequestPosition(CONSTANT("CLIMB_EXT"));
+            m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_EXT"));
             m_Elevator->m_ClimberState = Elevator::ST_EXTEND;
             break;
         default :

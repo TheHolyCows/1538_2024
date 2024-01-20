@@ -30,24 +30,36 @@ public:
         ST_DEFAULT,
     };
 
-    Elevator(const int motorID);
+    Elevator(const int emotorID, const int pmotorID);
 
     CLIMB_STATE m_ClimberState;
 
     /**
      * sets variable in current position request to pos
     */
-    void RequestPosition(double pos);
+    void RequestElevatorPosition(double pos);
 
-    double GetSetpoint();
+    double GetElevatorSetpoint();
 
-    bool AtTarget();
+    bool ElevatorAtTarget();
 
     /**
      * returns the current encoder read from the motor
      * not currently converted
     */
-    double GetPosition();
+    double GetElevatorPosition();
+
+    void RequestPivotAngle(double angle);
+
+    double GetPivotSetpoint();
+
+    bool PivotAtTarget();
+
+    /**
+     * returns the current angle read from the motor
+     * converted to degrees
+    */
+    double GetPivotAngle();
 
     /**
      * update PID of pivot based on currrent arm extension
@@ -64,7 +76,12 @@ public:
 
 private:
     std::shared_ptr<CowLib::CowMotorController> m_ElevatorMotor;
-    CowMotor::MotionMagicPercentOutput m_MotorRequest = { 0 };
+    std::shared_ptr<CowLib::CowMotorController> m_PivotMotor;
+    CowMotor::MotionMagicPercentOutput m_ElevatorMotorRequest = { 0 };
+    CowMotor::MotionMagicPercentOutput m_PivotMotorRequest = { 0 };
+    
+    double m_TargetAngle;
+    int m_TickCount;
 
     PIDSet m_PrevPIDSet = RETRACTING;
 };
