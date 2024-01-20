@@ -82,6 +82,18 @@ void Elevator::ResetConstants()
     m_ElevatorMotor->SetMotionMagic(CONSTANT("ELEVATOR_DOWN_V"), CONSTANT("ELEVATOR_DOWN_A"));
 }
 
+void Elevator::BrakeMode(bool brakeMode)
+{
+    if (brakeMode)
+    {
+        m_PivotMotor->SetNeutralMode(CowMotor::BRAKE);
+    }
+    else
+    {
+        m_PivotMotor->SetNeutralMode(CowMotor::COAST);
+    }
+}
+
 void Elevator::Handle()
 {
     m_ElevatorMotor->Set(m_ElevatorMotorRequest);
