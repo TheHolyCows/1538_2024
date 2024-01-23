@@ -27,13 +27,11 @@ public:
         bool started = false;
     };
 
-    PathplannerSwerveTrajectoryCommand(const std::string &trajectoryName,
+    PathplannerSwerveTrajectoryCommand(const std::string &pathName,
                                        units::feet_per_second_t maxVelocity,
                                        units::feet_per_second_squared_t maxAccel,
-                                       frc::Rotation2d startingRotation,
                                        bool stop,
-                                       bool resetOdometry        = false,
-                                       std::vector<Event> events = {});
+                                       bool resetOdometry        = false);
     ~PathplannerSwerveTrajectoryCommand() override;
 
     bool IsComplete(CowRobot *robot) override;
@@ -63,6 +61,4 @@ private:
     frc::Pose2d m_EndPose;
     frc::Rotation2d m_StartRotation;
     frc::Rotation2d m_EndRotation;
-    
-    std::vector<Event> m_Events;
 };
