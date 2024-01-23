@@ -45,38 +45,24 @@ void Shooter::ResetConstants()
 
 double Shooter::GetShooterVelocity()
 {
-    double velocity = (m_Shooter1->GetVelocity() +  m_Shooter2->GetVelocity()) / 2;
-    return velocity;
+    return m_Shooter1->GetVelocity();
 }
 
 double Shooter::GetIntakeVelocity()
 {
-    double velocity = (m_Intake1->GetVelocity() +  m_Intake2->GetVelocity()) / 2;
-    return velocity;
+    return m_Intake1->GetVelocity();
 }
 
-double Shooter::GetMeanShooterCurrent()
+double Shooter::GetShooterCurrent()
 {
     double mcurrent = (m_Shooter1->GetTorqueCurrent() + m_Shooter2->GetTorqueCurrent()) / 2;
     return mcurrent;
 }
 
-double Shooter::GetTotalShooterCurrent()
-{
-    double tcurrent = m_Shooter1->GetTorqueCurrent() + m_Shooter2->GetTorqueCurrent();
-    return tcurrent;
-}
-
-double Shooter::GetMeanIntakeCurrent()
+double Shooter::GetIntakeCurrent()
 {
     double mcurrent = (m_Intake1->GetTorqueCurrent() + m_Intake2->GetTorqueCurrent()) / 2;
     return mcurrent;
-}
-
-double Shooter::GetTotalIntakeCurrent()
-{
-    double tcurrent = m_Intake1->GetTorqueCurrent() + m_Intake2->GetTorqueCurrent();
-    return tcurrent;
 }
 
 void Shooter::RequestWristAngle(double angle)

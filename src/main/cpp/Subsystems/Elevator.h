@@ -30,7 +30,7 @@ public:
         ST_DEFAULT,
     };
 
-    Elevator(const int emotorID, const int pmotorID);
+    Elevator(const int elevatorMotorID, const int pivotMotorID);
 
     CLIMB_STATE m_ClimberState;
 
@@ -72,7 +72,7 @@ public:
 
     void Handle();
 
-    void BrakeMode(bool brakeMode);
+    void PivotBrakeMode(bool brakeMode);
 
 private:
     std::shared_ptr<CowLib::CowMotorController> m_ElevatorMotor;

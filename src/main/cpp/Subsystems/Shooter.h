@@ -20,17 +20,19 @@ public:
     void ResetConstants();
     void SetShooter (double percent);
     void SetIntake (double percent);
-    void SetWrist (double percent);
+
     double GetShooterVelocity();
+    
     double GetIntakeVelocity();
+
     void RequestWristAngle(double position);
     double GetWristSetpoint();
     bool WristAtTarget();
     double GetWristAngle();
-    double GetMeanShooterCurrent();
-    double GetTotalShooterCurrent();
-    double GetMeanIntakeCurrent();
-    double GetTotalIntakeCurrent();
+
+    double GetShooterCurrent();
+    double GetIntakeCurrent();
+
     void Handle();
     
 private:

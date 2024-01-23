@@ -1,9 +1,9 @@
 #include "Elevator.h"
 
-Elevator::Elevator(const int emotorID, const int pmotorID)
+Elevator::Elevator(const int elevatorMotorID, const int pivotMotorID)
 {
-    m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(emotorID, CowMotor::PHOENIX_V6);
-    m_PivotMotor = std::make_shared<CowLib::CowMotorController>(pmotorID, CowMotor::PHOENIX_V6);
+    m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(elevatorMotorID, CowMotor::PHOENIX_V6);
+    m_PivotMotor = std::make_shared<CowLib::CowMotorController>(pivotMotorID, CowMotor::PHOENIX_V6);
     m_ElevatorMotor->SetNeutralMode(CowMotor::BRAKE);
     m_PivotMotor->SetNeutralMode(CowMotor::BRAKE);
 
@@ -82,7 +82,7 @@ void Elevator::ResetConstants()
     m_ElevatorMotor->SetMotionMagic(CONSTANT("ELEVATOR_DOWN_V"), CONSTANT("ELEVATOR_DOWN_A"));
 }
 
-void Elevator::BrakeMode(bool brakeMode)
+void Elevator::PivotBrakeMode(bool brakeMode)
 {
     if (brakeMode)
     {
@@ -96,8 +96,15 @@ void Elevator::BrakeMode(bool brakeMode)
 
 void Elevator::Handle()
 {
-    m_ElevatorMotor->Set(m_ElevatorMotorRequest);
-    m_PivotMotor->Set(m_PivotMotorRequest);
+    
+    if (m_ElevatorMotor)
+    {
+        m_ElevatorMotor->Set(m_ElevatorMotorRequest);
+    }
+    if (m_PivotMotor)
+    {
+        m_PivotMotor->Set(m_PivotMotorRequest);
+    }
 }
 
 void Elevator::UsePIDSet(Elevator::PIDSet set)

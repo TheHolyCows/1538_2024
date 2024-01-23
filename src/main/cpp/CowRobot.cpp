@@ -152,7 +152,7 @@ void CowRobot::ClimbSM()
             // elevator retracting
             if(m_Elevator->ElevatorAtTarget())
             {
-                // end lockout
+                // end wrist lockout
             }
             break;
         case Elevator::ST_DEFAULT :
