@@ -1,42 +1,76 @@
 #include "Elevator.h"
 
-Elevator::Elevator(const int motorID)
+Elevator::Elevator(const int elevatorMotorID, const int pivotMotorID)
 {
-    m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(motorID, CowMotor::PHOENIX_V6);
+    m_ElevatorMotor = std::make_shared<CowLib::CowMotorController>(elevatorMotorID, CowMotor::PHOENIX_V6);
+    m_PivotMotor = std::make_shared<CowLib::CowMotorController>(pivotMotorID, CowMotor::PHOENIX_V6);
     m_ElevatorMotor->SetNeutralMode(CowMotor::BRAKE);
+    m_PivotMotor->SetNeutralMode(CowMotor::BRAKE);
+
+    m_TargetAngle = 0;
+    m_TickCount   = 0;
 
     m_ClimberState = ST_DEFAULT;
 
     ResetConstants();
 }
 
-void Elevator::RequestPosition(double pos)
+void Elevator::RequestElevatorPosition(double pos)
 {
-   m_MotorRequest.Position = pos * CONSTANT("ELEVATOR_GEAR_RATIO");
+   m_ElevatorMotorRequest.Position = pos * CONSTANT("ELEVATOR_GEAR_RATIO");
 
-    if (GetPosition() < GetSetpoint())
+    if (GetElevatorPosition() < GetElevatorSetpoint())
     {
-        m_MotorRequest.FeedForward = CONSTANT("ELEVATOR_FF");
+        m_ElevatorMotorRequest.FeedForward = CONSTANT("ELEVATOR_FF");
     }
     else
     {
-        m_MotorRequest.FeedForward = 0;
+        m_ElevatorMotorRequest.FeedForward = 0;
     };
 }
 
-double Elevator::GetSetpoint()
+double Elevator::GetElevatorSetpoint()
 {
-    return m_MotorRequest.Position / CONSTANT("ELEVATOR_GEAR_RATIO");
+    return m_ElevatorMotorRequest.Position / CONSTANT("ELEVATOR_GEAR_RATIO");
 }
 
-bool Elevator::AtTarget()
+bool Elevator::ElevatorAtTarget()
 {
-    return fabs(GetPosition() - GetSetpoint()) < CONSTANT("ELEVATOR_TOLERANCE");
+    return fabs(GetElevatorPosition() - GetElevatorSetpoint()) < CONSTANT("ELEVATOR_TOLERANCE");
 }
 
-double Elevator::GetPosition()
+double Elevator::GetElevatorPosition()
 {
     return m_ElevatorMotor->GetPosition() / CONSTANT("ELEVATOR_GEAR_RATIO");
+}
+
+void Elevator::RequestPivotAngle(double angle)
+{
+    m_PivotMotorRequest.Position = CowLib::Conversions::DegreesToFalcon(angle, CONSTANT("PIVOT_GEAR_RATIO"));
+}
+
+double Elevator::GetPivotSetpoint()
+{
+    return CowLib::Conversions::FalconToDegrees(m_TargetAngle, CONSTANT("PIVOT_GEAR_RATIO"));
+}
+
+bool Elevator::PivotAtTarget()
+{
+    return fabs(GetPivotSetpoint() - GetPivotAngle() < CONSTANT("PIVOT_TOLERANCE"));
+}
+
+double Elevator::GetPivotAngle()
+{
+    return CowLib::Conversions::FalconToDegrees(m_PivotMotor->GetPosition(),
+                                                CONSTANT("PIVOT_GEAR_RATIO"));
+}
+
+void Elevator::UpdatePID(double armExt)
+{
+    double p
+        = CONSTANT("PIVOT_P_BASE") + (CONSTANT("PIVOT_P_EXTENSION") * armExt) + (CONSTANT("PIVOT_P_ANGLE") * armExt);
+
+    m_PivotMotor->SetPID(p,CONSTANT("PIVOT_I"),CONSTANT("PIVOT_D"),CONSTANT("PIVOT_F"));
 }
 
 void Elevator::ResetConstants()
@@ -48,9 +82,29 @@ void Elevator::ResetConstants()
     m_ElevatorMotor->SetMotionMagic(CONSTANT("ELEVATOR_DOWN_V"), CONSTANT("ELEVATOR_DOWN_A"));
 }
 
+void Elevator::PivotBrakeMode(bool brakeMode)
+{
+    if (brakeMode)
+    {
+        m_PivotMotor->SetNeutralMode(CowMotor::BRAKE);
+    }
+    else
+    {
+        m_PivotMotor->SetNeutralMode(CowMotor::COAST);
+    }
+}
+
 void Elevator::Handle()
 {
-    m_ElevatorMotor->Set(m_MotorRequest);
+    
+    if (m_ElevatorMotor)
+    {
+        m_ElevatorMotor->Set(m_ElevatorMotorRequest);
+    }
+    if (m_PivotMotor)
+    {
+        m_PivotMotor->Set(m_PivotMotorRequest);
+    }
 }
 
 void Elevator::UsePIDSet(Elevator::PIDSet set)

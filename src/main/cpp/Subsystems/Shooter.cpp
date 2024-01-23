@@ -1,6 +1,6 @@
 #include "Shooter.h"
 
-Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID1, const int intakeID2) 
+Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID1, const int intakeID2, const int wristID) 
 {
 
     m_Shooter1  = new CowLib::CowMotorController(shooterID1, CowMotor::PHOENIX_V6);
@@ -13,6 +13,10 @@ Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID1
     m_Intake1->SetNeutralMode(CowMotor::COAST);
     m_Intake2->SetNeutralMode(CowMotor::COAST);
 
+    m_Wrist  = new CowLib::CowMotorController(wristID, CowMotor::PHOENIX_V6);
+    m_Wrist->SetNeutralMode(CowMotor::BRAKE);
+
+    double m_WristPosition = 0;
 }
 
 void Shooter::SetShooter(double percent)
@@ -35,42 +39,50 @@ void Shooter::ResetConstants()
     m_Shooter2->SetPID(CONSTANT("SHOOTER_P"), CONSTANT("SHOOTER_I"), CONSTANT("SHOOTER_D"));
     m_Intake1->SetPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
     m_Intake2->SetPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
+    m_Wrist->SetPID(CONSTANT("WRIST_P"), CONSTANT("WRIST_I"), CONSTANT("WRIST_D"), CONSTANT("WRIST_F"));
+    m_Wrist->SetMotionMagic(CONSTANT("WRIST_V"), CONSTANT("WRIST_A"));
 }
 
 double Shooter::GetShooterVelocity()
 {
-    double velocity = (m_Shooter1->GetVelocity() +  m_Shooter2->GetVelocity()) / 2;
-    return velocity;
+    return m_Shooter1->GetVelocity();
 }
 
 double Shooter::GetIntakeVelocity()
 {
-    double velocity = (m_Intake1->GetVelocity() +  m_Intake2->GetVelocity()) / 2;
-    return velocity;
+    return m_Intake1->GetVelocity();
 }
 
-double Shooter::GetMeanShooterCurrent()
+double Shooter::GetShooterCurrent()
 {
     double mcurrent = (m_Shooter1->GetTorqueCurrent() + m_Shooter2->GetTorqueCurrent()) / 2;
     return mcurrent;
 }
 
-double Shooter::GetTotalShooterCurrent()
-{
-    double tcurrent = m_Shooter1->GetTorqueCurrent() + m_Shooter2->GetTorqueCurrent();
-    return tcurrent;
-}
-
-double Shooter::GetMeanIntakeCurrent()
+double Shooter::GetIntakeCurrent()
 {
     double mcurrent = (m_Intake1->GetTorqueCurrent() + m_Intake2->GetTorqueCurrent()) / 2;
     return mcurrent;
 }
 
-double Shooter::GetTotalIntakeCurrent()
+void Shooter::RequestWristAngle(double angle)
 {
-    double tcurrent = m_Intake1->GetTorqueCurrent() + m_Intake2->GetTorqueCurrent();
-    return tcurrent;
+    m_WristControlRequest.Position = CowLib::Conversions::DegreesToFalcon(angle, CONSTANT("WRIST_GEAR_RATIO")) * -1;
+}
+
+double Shooter::GetWristSetpoint()
+{
+    return CowLib::Conversions::FalconToDegrees(m_WristControlRequest.Position, CONSTANT("WRIST_GEAR_RATIO")) * -1;
+}
+
+bool Shooter::WristAtTarget()
+{
+    return fabs(GetWristSetpoint() - GetWristAngle() < CONSTANT("WRIST_TOLERANCE"));
+}
+
+double Shooter::GetWristAngle()
+{
+    return CowLib::Conversions::FalconToDegrees(m_Wrist->GetPosition(), CONSTANT("WRIST_GEAR_RATIO")) * -1;
 }
 
 void Shooter::Handle()
@@ -96,5 +108,9 @@ void Shooter::Handle()
         m_Intake2->Set(m_IntakeControlRequest);
     }
 
+    if (m_Wrist)
+    {
+        m_Wrist->Set(m_WristControlRequest);
+    }
 }
    
