@@ -30,6 +30,7 @@ public:
     SwerveDrive *m_Drivetrain;
 
 private:
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
     int m_DSUpdateCount;
 

@@ -43,6 +43,9 @@ public:
                     const double angularAccel,
                     const double encoderOffset);
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() override;
+
+    CowLib::CowSwerveModulePosition GetPosition() override;
     void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) override;
 
     void ResetConstants() override;

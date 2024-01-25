@@ -9,7 +9,6 @@ namespace CowMotor
 {
     TalonFX::TalonFX(int id, std::string bus)
         : m_Talon(id, bus),
-          m_MotorOutputConfig({}),
           m_SynchronizedSignals({
               .Position = &m_Talon.GetPosition(),
               .Velocity = &m_Talon.GetVelocity(),
@@ -19,8 +18,20 @@ namespace CowMotor
               .Temperature = &m_Talon.GetDeviceTemp()
           })
     {
-        ctre::phoenix6::configs::TalonFXConfigurator &configurator = m_Talon.GetConfigurator();
-        configurator.Refresh(m_MotorOutputConfig);
+        m_Talon.GetConfigurator().Apply(m_Config);
+        m_Talon.GetConfigurator().Refresh(m_Config);
+    }
+
+    ctre::phoenix::StatusCode TalonFX::ApplyConfig(ctre::phoenix6::configs::TalonFXConfiguration config)
+    {
+        ctre::phoenix::StatusCode status = m_Talon.GetConfigurator().Apply(m_Config);
+
+        if (!status.IsError())
+        {
+            m_Config = config;
+        }
+
+        return status;
     }
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> TalonFX::GetSynchronizedSignals()
@@ -43,67 +54,66 @@ namespace CowMotor
         return signals;
     }
 
+    ctre::phoenix::StatusCode TalonFX::FuseCANCoder(int id, double rotorToSensorRatio)
+    {        
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.Feedback.FeedbackRemoteSensorID = id;
+        config.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
+        config.Feedback.SensorToMechanismRatio = 1.0;
+        config.Feedback.RotorToSensorRatio = rotorToSensorRatio;
+
+        return ApplyConfig(config);
+    }
+
+    ctre::phoenix::StatusCode TalonFX::ConfigContinuousWrap(bool enable)
+    {
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.ClosedLoopGeneral.ContinuousWrap = enable;
+
+        return ApplyConfig(config);
+    }
+
     Status TalonFX::ConfigNeutralMode(NeutralMode neutralMode)
     {
-        ctre::phoenix6::configs::TalonFXConfigurator &configurator = m_Talon.GetConfigurator();
-
-        // Only update cached motor config if config was applied successfully
-        ctre::phoenix6::configs::MotorOutputConfigs modifiedConfig = m_MotorOutputConfig;
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
 
         if (neutralMode == NeutralMode::COAST)
         {
-            modifiedConfig.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+            config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
         }
         else if (neutralMode == NeutralMode::BRAKE)
         {
-            modifiedConfig.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+            config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         }
 
-        ctre::phoenix::StatusCode status = configurator.Apply(modifiedConfig);
-
-        if (!status.IsError())
-        {
-            m_MotorOutputConfig = modifiedConfig;
-        }
-
-        return status;
+        return ApplyConfig(config);
     }
 
     Status TalonFX::ConfigPositivePolarity(Direction positivePolarity)
     {
-        ctre::phoenix6::configs::TalonFXConfigurator &configurator = m_Talon.GetConfigurator();
-
-        // Only update cached motor config if config was applied successfully
-        ctre::phoenix6::configs::MotorOutputConfigs modifiedConfig = m_MotorOutputConfig;
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
 
         if (positivePolarity == Direction::CLOCKWISE)
         {
-            m_MotorOutputConfig.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+            config.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
         }
         else if (positivePolarity == Direction::COUNTER_CLOCKWISE)
         {
-            m_MotorOutputConfig.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+            config.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
         }
 
-        ctre::phoenix::StatusCode status = configurator.Apply(modifiedConfig);
-
-        if (!status.IsError())
-        {
-            m_MotorOutputConfig = modifiedConfig;
-        }
-
-        return status;
+        return ApplyConfig(config);
     }
 
     Status TalonFX::ConfigPID(double kp, double ki, double kd, double kf)
     {
-        ctre::phoenix6::configs::SlotConfigs slotConfigs = ctre::phoenix6::configs::SlotConfigs()
-            .WithKP(kp)
-            .WithKI(ki)
-            .WithKD(kd);
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.Slot0.kP = kp;
+        config.Slot0.kI = ki;
+        config.Slot0.kD = kd;
+        config.Slot0.kS = kf;
 
-        ctre::phoenix6::configs::TalonFXConfigurator &configurator = m_Talon.GetConfigurator();
-        return configurator.Apply(slotConfigs);
+        return ApplyConfig(config);
     }
 
     Status TalonFX::Set(Control::DutyCycle cowRequest)
@@ -208,8 +218,7 @@ namespace CowMotor
 
     double TalonFX::GetTemperature()
     {
-        m_UnsynchronizedSignals.Temperature->Refresh();
-        return m_UnsynchronizedSignals.Temperature->GetValue().value();
+        return m_UnsynchronizedSignals.Temperature->Refresh().GetValue().value();
     }
 
     Status TalonFX::SetEncoderPosition(double value)
@@ -221,6 +230,6 @@ namespace CowMotor
     {
         *temp = GetTemperature();
         *encoder_count = GetPosition();
-        *inverted = m_MotorOutputConfig.Inverted == ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+        *inverted = m_Config.MotorOutput.Inverted == ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
     }
 }

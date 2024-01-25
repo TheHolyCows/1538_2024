@@ -27,20 +27,24 @@ namespace CowMotor
         };
 
         ctre::phoenix6::hardware::TalonFX m_Talon;
-        ctre::phoenix6::configs::MotorOutputConfigs m_MotorOutputConfig;
+        ctre::phoenix6::configs::TalonFXConfiguration m_Config;
 
         SynchronizedSignals m_SynchronizedSignals;
         UnsynchronizedSignals m_UnsynchronizedSignals;
+
+        ctre::phoenix::StatusCode ApplyConfig(ctre::phoenix6::configs::TalonFXConfiguration config);
 
     public:
         TalonFX(int id, std::string bus);
 
         std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
         std::vector<ctre::phoenix6::BaseStatusSignal*> GetUnsynchronizedSignals();
+        ctre::phoenix::StatusCode FuseCANCoder(int id, double rotorToSensorRatio);
+        ctre::phoenix::StatusCode ConfigContinuousWrap(bool enable);
 
         Status ConfigNeutralMode(NeutralMode neutralMode) override;
         Status ConfigPositivePolarity(Direction positivePolarity) override;
-        Status ConfigPID(double kp, double ki, double kd, double kf = 0) override;
+        Status ConfigPID(double kp, double ki, double kd, double ks = 0) override;
 
         Status Set(Control::DutyCycle request) override;
         Status Set(Control::PositionDutyCycle request) override;

@@ -30,13 +30,16 @@ private:
 
     std::unique_ptr<CowMotor::TalonFX> m_DriveMotor;
     std::unique_ptr<CowMotor::TalonFX> m_RotationMotor;
+    std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
 
+    CowLib::CowSwerveModuleState m_TargetState;
+    CowLib::CowSwerveModuleState m_PrevTargetState;
+    
     CowMotor::Control::DutyCycle m_DriveControlRequest;
     CowMotor::Control::PositionDutyCycle m_RotationControlRequest;
 
-    std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
-
     bool m_BrakeMode;
+    double m_InitialRotation;
 
 public:
     /**
@@ -55,7 +58,9 @@ public:
                  const int encoderId,
                  const double encoderOffset);
 
-    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() override;
+
+    CowLib::CowSwerveModulePosition GetPosition() override;
 
     /**
      * @brief Sets the desired module state to the given state after optimizing

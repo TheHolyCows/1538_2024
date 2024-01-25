@@ -6,6 +6,13 @@
 class CowPigeon
 {
 private:
+    struct SynchronizedSignals
+    {
+        ctre::phoenix6::StatusSignal<units::degree_t> *Yaw;
+        ctre::phoenix6::StatusSignal<units::degree_t> *Pitch;
+        ctre::phoenix6::StatusSignal<units::degree_t> *Roll;
+    };
+
     static CowPigeon *s_Instance;
 
     CowPigeon();
@@ -13,12 +20,16 @@ private:
 
     ctre::phoenix6::hardware::Pigeon2 *m_Pigeon;
 
+    SynchronizedSignals m_SynchronizedSignals;
+
     bool m_Inverted;
 
     double m_YawOffset;
 
 public:
     static CowPigeon *GetInstance();
+
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
     void SetInverted(bool inverted);
 

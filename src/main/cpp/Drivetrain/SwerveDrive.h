@@ -96,12 +96,7 @@ public:
     void ResetConstants();
     void ResetEncoders();
 
-    void Reset()
-    {
-        ResetConstants();
-        ResetEncoders();
-        ResetOdometry(frc::Pose2d(0_ft, 0_ft, 0_deg));
-    }
+    void Reset();
 
     void ResetOdometry(frc::Pose2d pose = frc::Pose2d{ 0_m, 0_m, 0_deg });
 
