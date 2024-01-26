@@ -35,7 +35,7 @@ AutoModes::AutoModes()
             series.push_back(event.command);
         }
 
-        return new ParallelCommand({ new PathplannerSwerveTrajectoryCommand(pathName, speed, accel, true, resetOdometry),
+        return new ParallelCommand({ new PathplannerSwerveCommand(pathName, speed, accel, true, resetOdometry),
                                      new SeriesCommand(series) });
     };
 
@@ -43,13 +43,15 @@ AutoModes::AutoModes()
     /**
      * START AUTO MODE DEFS BELOW
     */
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1", 6_fps, 8_fps_sq, true, true));
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
+    // m_Modes["testing"].push_back(new PathplannerSwerveCommand("drive1-1", 6_fps, 8_fps_sq, true, true));
+    // m_Modes["testing"].push_back(new PathplannerSwerveCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
 
     // m_Modes["testing"].push_back(new RotateCommand(5_s,45_deg,true,true));
     // m_Modes["testing"].push_back(new RotateCommand(5_s,0_deg,true,false));
 
-    m_Modes["testing"].push_back(new PathToPoseCommand(5_s,frc::Pose2d{2_ft,2_ft,-45_deg},true,true));
+    // m_Modes["testing"].push_back(new PathToPoseCommand(5_s,frc::Pose2d{2_ft,2_ft,-45_deg},true,true));
+
+    m_Modes["testing"].push_back(new PathplannerVisionCommand("drive3-1", 4_fps, 4_fps_sq, frc::Pose2d{ 0_ft, 0_ft, 0_deg },true, true));
 
 
     // Initialize auto mode selector
