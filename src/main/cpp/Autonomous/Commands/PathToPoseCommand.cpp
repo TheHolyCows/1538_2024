@@ -7,15 +7,15 @@ PathToPoseCommand::PathToPoseCommand(units::second_t time, frc::Pose2d targetPos
     m_TargetPose = targetPose;
     m_ResetOdometry = resetOdometry;
 
-    m_XController        = new frc::PIDController(CONSTANT("AUTO_DRIVE_P"), // needs to be higher than pathplanner PID
-                                                  CONSTANT("AUTO_DRIVE_I"),
-                                                  CONSTANT("AUTO_DRIVE_D"));
-    m_YController        = new frc::PIDController(CONSTANT("AUTO_DRIVE_P"),
-                                                  CONSTANT("AUTO_DRIVE_I"),
-                                                  CONSTANT("AUTO_DRIVE_D"));
-    m_RotationController = new frc::PIDController(CONSTANT("AUTO_ROTATION_P"),
-                                                  CONSTANT("AUTO_ROTATION_I"),
-                                                  CONSTANT("AUTO_ROTATION_D"));
+    m_XController        = new frc::PIDController(CONSTANT("AUTO_HOLD_DRIVE_P"), // needs to be higher than pathplanner PID
+                                                  CONSTANT("AUTO_HOLD_DRIVE_I"),
+                                                  CONSTANT("AUTO_HOLD_DRIVE_D"));
+    m_YController        = new frc::PIDController(CONSTANT("AUTO_HOLD_DRIVE_P"),
+                                                  CONSTANT("AUTO_HOLD_DRIVE_I"),
+                                                  CONSTANT("AUTO_HOLD_DRIVE_D"));
+    m_RotationController = new frc::PIDController(CONSTANT("AUTO_HOLD_ROTATION_P"),
+                                                  CONSTANT("AUTO_HOLD_ROTATION_I"),
+                                                  CONSTANT("AUTO_HOLD_ROTATION_D"));
 
     m_TotalTime = time.value();
 }

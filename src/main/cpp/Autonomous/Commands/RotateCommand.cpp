@@ -7,9 +7,9 @@ RotateCommand::RotateCommand(units::second_t time, units::degree_t targetRotatio
     m_TargetRotation = targetRotation;
     m_ResetOdometry = resetOdometry;
 
-    m_RotationController = new frc::PIDController(CONSTANT("AUTO_ROTATION_P"),
-                                                   CONSTANT("AUTO_ROTATION_I"),
-                                                   CONSTANT("AUTO_ROTATION_D"));
+    m_RotationController = new frc::PIDController(CONSTANT("AUTO_HOLD_ROTATION_P"),
+                                                   CONSTANT("AUTO_HOLD_ROTATION_I"),
+                                                   CONSTANT("AUTO_HOLD_ROTATION_D"));
 
     m_TotalTime = time.value();
 }
