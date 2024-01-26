@@ -1,6 +1,6 @@
-#include "PathplannerSwerveTrajectoryCommand.h"
+#include "PathplannerSwerveCommand.h"
 
-PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std::string &pathName,
+PathplannerSwerveCommand::PathplannerSwerveCommand(const std::string &pathName,
                                                                        units::feet_per_second_t maxVelocity,
                                                                        units::feet_per_second_squared_t maxAccel,
                                                                        bool stopAtEnd,
@@ -68,18 +68,18 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, startingSpeeds, m_StartRotation);
 }
 
-PathplannerSwerveTrajectoryCommand::~PathplannerSwerveTrajectoryCommand()
+PathplannerSwerveCommand::~PathplannerSwerveCommand()
 {
     delete m_Timer;
     delete m_HolonomicController;
 }
 
-bool PathplannerSwerveTrajectoryCommand::IsComplete(CowRobot *robot)
+bool PathplannerSwerveCommand::IsComplete(CowRobot *robot)
 {
     return m_Timer->HasElapsed(m_TotalTime);
 }
 
-void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
+void PathplannerSwerveCommand::Start(CowRobot *robot)
 {
     // m_Trajectory = std::make_shared<CowLibTrajectory>(m_Path,
                                             // robot->GetDrivetrain()->GetChassisSpeeds(),
@@ -102,7 +102,7 @@ void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
     m_Timer->Start();
 }
 
-void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
+void PathplannerSwerveCommand::Handle(CowRobot *robot)
 {
 
     frc::Pose2d currentPose = robot->GetDrivetrain()->GetPose();
@@ -140,7 +140,7 @@ void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
     robot->GetDrivetrain()->SetVelocity(chassisSpeeds, false);
 }
 
-void PathplannerSwerveTrajectoryCommand::Finish(CowRobot *robot)
+void PathplannerSwerveCommand::Finish(CowRobot *robot)
 {
     if (m_Stop)
     {
@@ -151,12 +151,12 @@ void PathplannerSwerveTrajectoryCommand::Finish(CowRobot *robot)
     m_Timer->Stop();
 }
 
-frc::Pose2d PathplannerSwerveTrajectoryCommand::GetStartingPose()
+frc::Pose2d PathplannerSwerveCommand::GetStartingPose()
 {
     return m_Path->getPreviewStartingHolonomicPose();
 }
 
-frc::Rotation2d PathplannerSwerveTrajectoryCommand::GetEndRot()
+frc::Rotation2d PathplannerSwerveCommand::GetEndRot()
 {
     return m_EndRotation;
 }

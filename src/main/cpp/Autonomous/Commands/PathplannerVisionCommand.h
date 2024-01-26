@@ -15,7 +15,7 @@
 #include <wpi/json.h>
 #include <fstream>
 
-class PathplannerSwerveTrajectoryCommand : public RobotCommand
+class PathplannerVisionCommand : public RobotCommand
 {
 public:
     struct Event
@@ -27,12 +27,13 @@ public:
         bool started = false;
     };
 
-    PathplannerSwerveTrajectoryCommand(const std::string &pathName,
+    PathplannerVisionCommand(const std::string &pathName,
                                        units::feet_per_second_t maxVelocity,
                                        units::feet_per_second_squared_t maxAccel,
+                                       frc::Pose2d visionTarget,
                                        bool stop,
                                        bool resetOdometry        = false);
-    ~PathplannerSwerveTrajectoryCommand() override;
+    ~PathplannerVisionCommand() override;
 
     bool IsComplete(CowRobot *robot) override;
 
