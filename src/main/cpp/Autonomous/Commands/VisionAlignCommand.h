@@ -16,10 +16,10 @@ private:
 
     const double m_Timeout;
 
-    ARM_CARGO m_Cargo;
+    int m_Cargo;
 
 public:
-    VisionAlignCommand(double timeout, ARM_CARGO cargo);
+    VisionAlignCommand(double timeout, int cargo);
     ~VisionAlignCommand() override = default;
 
     bool IsComplete(CowRobot *robot) override;

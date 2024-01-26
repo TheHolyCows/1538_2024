@@ -1,6 +1,6 @@
 #include "VisionAlignCommand.h"
 
-VisionAlignCommand::VisionAlignCommand(const double timeout, const ARM_CARGO cargo)
+VisionAlignCommand::VisionAlignCommand(const double timeout, const int cargo)
     : m_Timer(std::make_unique<CowLib::CowTimer>()),
       m_Gyro(*CowPigeon::GetInstance()),
       m_Timeout(timeout),

@@ -48,6 +48,5 @@ private:
     CowMotor::PercentOutput m_ShooterControlRequest{ 0 };
     
     CowMotor::PercentOutput m_IntakeControlRequest{ 0 };
-    
-    double m_WristPosition;
+
 };
