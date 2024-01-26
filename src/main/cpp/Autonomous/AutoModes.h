@@ -14,6 +14,8 @@
 #include "Commands/VisionAlignCommand.h"
 #include "Commands/WaitCommand.h"
 #include "Commands/ParallelCommand.h"
+#include "Commands/RotateCommand.h"
+#include "Commands/PathToPoseCommand.h"
 
 #include <deque>
 #include <frc/Errors.h>
