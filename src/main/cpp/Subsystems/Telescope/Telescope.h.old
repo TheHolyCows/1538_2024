@@ -9,7 +9,6 @@
 
 #include "../../CowConstants.h"
 #include "../../CowLib/Conversions.h"
-#include "../../CowLib/CowMotorController.h"
 #include "TelescopeInterface.h"
 #include <frc/trajectory/TrapezoidProfile.h>
 

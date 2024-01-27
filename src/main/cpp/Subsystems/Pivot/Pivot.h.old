@@ -9,8 +9,6 @@
 
 #include "../../CowConstants.h"
 #include "../../CowLib/Conversions.h"
-#include "../../CowLib/CowMotorController.h"
-#include "../../CowLib/CowMotor/CowMotorUtils.h"
 #include "PivotInterface.h"
 
 #include <memory>

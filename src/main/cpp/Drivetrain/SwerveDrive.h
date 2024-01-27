@@ -2,7 +2,6 @@
 #define __SWERVE_DRIVE_H__
 
 #include "../CowConstants.h"
-#include "../CowLib/CowMotorController.h"
 #include "../CowLib/CowPID.h"
 #include "../CowLib/Swerve/CowSwerveKinematics.h"
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
@@ -61,6 +60,8 @@ public:
     SwerveDrive(ModuleConstants constants[4], double wheelBase);
     ~SwerveDrive();
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+
     void SetVelocity(double x,
                      double y,
                      double rotation,
@@ -95,12 +96,7 @@ public:
     void ResetConstants();
     void ResetEncoders();
 
-    void Reset()
-    {
-        ResetConstants();
-        ResetEncoders();
-        ResetOdometry(frc::Pose2d(0_ft, 0_ft, 0_deg));
-    }
+    void Reset();
 
     void ResetOdometry(frc::Pose2d pose = frc::Pose2d{ 0_m, 0_m, 0_deg });
 

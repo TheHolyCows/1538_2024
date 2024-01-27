@@ -31,10 +31,20 @@ CowRobot::CowRobot()
     };
 
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
-
-    m_Drivetrain->ResetEncoders();
-
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
+
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetSynchronizedSignals());
+}
+
+std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> drivetrainSignals = m_Drivetrain->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> gyroSignals = m_Gyro->GetSynchronizedSignals();
+    signals.insert(signals.end(), drivetrainSignals.begin(), drivetrainSignals.end());
+    signals.insert(signals.end(), gyroSignals.begin(), gyroSignals.end());
+
+    return signals;
 }
 
 /**
@@ -77,6 +87,7 @@ void CowRobot::PrintToDS()
 // Please call this once per update cycle.
 void CowRobot::Handle()
 {
+    double t_0 = CowLib::CowTimer::GetFPGATimestamp();
     m_MatchTime = CowLib::CowTimer::GetFPGATimestamp() - m_StartTime;
 
     if (m_Controller == nullptr)
@@ -84,6 +95,9 @@ void CowRobot::Handle()
         printf("No controller for CowRobot!!\n");
         return;
     }
+
+    // Synchronize and sample time-critical sensors
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetSynchronizedSignals());
 
     m_Controller->Handle(this);
     m_Drivetrain->Handle();

@@ -5,7 +5,6 @@
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowCANCoder.h"
 #include "../CowLib/CowLogger.h"
-#include "../CowLib/CowMotorController.h"
 #include "../CowLib/Swerve/CowSwerveKinematics.h"
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
@@ -44,6 +43,9 @@ public:
                     const double angularAccel,
                     const double encoderOffset);
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() override;
+
+    CowLib::CowSwerveModulePosition GetPosition() override;
     void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) override;
 
     void ResetConstants() override;

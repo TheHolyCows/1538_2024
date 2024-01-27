@@ -34,8 +34,7 @@ SwerveDrive::SwerveDrive(ModuleConstants moduleConstants[4], double wheelBase)
     }
 
     m_Kinematics = new CowLib::CowSwerveKinematics(wheelBase);
-
-    m_Odometry = new CowLib::CowSwerveOdometry(m_Kinematics, m_Gyro->GetYawDegrees(), 0, 0, 0);
+    m_Odometry = new CowLib::CowSwerveOdometry(m_Kinematics, 0, 0, 0, 0);
 
     // m_VisionPIDController = new CowLib::CowPID(CONSTANT("SWERVE_VISION_P"), CONSTANT("SWERVE_VISION_I"),
     // CONSTANT("SWERVE_VISION_D"), 0);
@@ -57,6 +56,19 @@ SwerveDrive::~SwerveDrive()
     }
 
     // delete m_VisionPIDController;
+}
+
+std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveDrive::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+
+    for (auto module : m_Modules)
+    {
+        std::vector<ctre::phoenix6::BaseStatusSignal*> moduleSignals = module->GetSynchronizedSignals();
+        signals.insert(signals.end(), moduleSignals.begin(), moduleSignals.end());
+    }
+
+    return signals;
 }
 
 /**
@@ -204,6 +216,13 @@ void SwerveDrive::SetLocked(bool isLocked)
     m_Locked = isLocked;
 }
 
+void SwerveDrive::Reset()
+{
+    ResetConstants();
+    ResetEncoders();
+    ResetOdometry(frc::Pose2d(0_ft, 0_ft, 0_deg));
+}
+
 void SwerveDrive::ResetConstants()
 {
     for (auto module : m_Modules)
@@ -223,14 +242,16 @@ void SwerveDrive::ResetEncoders()
 
 void SwerveDrive::ResetOdometry(frc::Pose2d pose)
 {
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetSynchronizedSignals());
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, m_Gyro->GetSynchronizedSignals());
+
     std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
     for (auto module : m_Modules)
     {
         modulePositions[module->GetID()] = module->GetPosition();
     }
 
-    m_Odometry->Reset(pose, pose.Rotation().Degrees().value(), modulePositions);
-    m_Gyro->SetYaw(pose.Rotation().Degrees().value());
+    m_Odometry->Reset(pose, m_Gyro->GetYawDegrees(), modulePositions);
 }
 
 void SwerveDrive::AddVisionMeasurement(frc::Pose2d pose, double timestamp)

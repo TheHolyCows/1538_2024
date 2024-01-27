@@ -3,6 +3,8 @@
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
 
+#include <ctre/phoenix6/StatusSignal.hpp>
+
 class SwerveModuleInterface
 {
 protected:
@@ -39,11 +41,13 @@ public:
 
     virtual ~SwerveModuleInterface() = default;
 
+    virtual std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() = 0;
+
     inline int GetID() const { return m_Id; }
 
     inline CowLib::CowSwerveModuleState GetState() const { return { m_Velocity, m_Angle, m_AngularVelocity }; }
 
-    inline CowLib::CowSwerveModulePosition GetPosition() const { return { m_Position, m_Angle }; }
+    virtual CowLib::CowSwerveModulePosition GetPosition() = 0;
 
     virtual void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) = 0;
 

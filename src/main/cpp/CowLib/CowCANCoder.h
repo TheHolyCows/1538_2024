@@ -11,25 +11,31 @@ namespace CowLib
     class CowCANCoder
     {
     private:
-        ctre::phoenix6::hardware::CANcoder *m_Cancoder;
+        struct SynchronizedSignals
+        {
+            ctre::phoenix6::StatusSignal<units::turn_t> *Position;
+            ctre::phoenix6::StatusSignal<units::turn_t> *AbsolutePosition;
+        };
 
-        // struct Signals
-        // {
-        std::function<units::turn_t()> m_PositionSupplier;
-        std::function<units::turn_t()> m_AbsolutePositionSupplier;
-        std::function<units::turns_per_second_t()> m_VelocitySupplier;
-        // ctre::phoenix6::StatusSignalValue<units::turn_t>;
-        // ctre::phoenix6::StatusSignalValue<units::turn_t>;
-        // ctre::phoenix6::StatusSignalValue<units::turns_per_second_t>;
+        struct UnsynchronizedSignals
+        {
+            ctre::phoenix6::StatusSignal<units::turns_per_second_t> *Velocity;
+        };
 
-        // Signals m_Signals;
-
+        ctre::phoenix6::hardware::CANcoder *m_CANCoder;
         ctre::phoenix6::configs::CANcoderConfiguration m_Config;
+        
+        SynchronizedSignals m_SynchronizedSignals;
+        UnsynchronizedSignals m_UnsynchronizedSignals;
 
         void ApplyConfig();
 
     public:
         CowCANCoder(int device);
+
+        std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+
+        void ConfigAbsoluteOffset(double offset);
 
         void SetSigned(bool isSigned);
         void SetInverted(bool isInverted);

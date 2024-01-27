@@ -9,7 +9,6 @@
 #include "CowConstants.h"
 #include "CowLib/CowAlphaNum.h"
 #include "CowLib/CowLogger.h"
-#include "CowLib/CowMotorController.h"
 #include "CowLib/CowPID.h"
 #include "CowLib/CowTimer.h"
 #include "CowLib/Utility.h"
@@ -37,6 +36,7 @@ public:
     Elevator *m_Elevator;
 
 private:
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
     int m_DSUpdateCount;
 

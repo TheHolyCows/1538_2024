@@ -18,7 +18,22 @@ CowPigeon::CowPigeon()
 
     m_Pigeon = new ctre::phoenix6::hardware::Pigeon2(PIGEON_ID, "cowdrive");
 
+    m_SynchronizedSignals.Yaw = &m_Pigeon->GetYaw();
+    m_SynchronizedSignals.Pitch = &m_Pigeon->GetPitch();
+    m_SynchronizedSignals.Roll = &m_Pigeon->GetRoll();
+
     m_Inverted = false;
+}
+
+std::vector<ctre::phoenix6::BaseStatusSignal*> CowPigeon::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
+        m_SynchronizedSignals.Yaw,
+        m_SynchronizedSignals.Pitch,
+        m_SynchronizedSignals.Roll
+    };
+
+    return signals;
 }
 
 void CowPigeon::SetInverted(bool inverted)
@@ -28,17 +43,17 @@ void CowPigeon::SetInverted(bool inverted)
 
 units::degree_t CowPigeon::GetYaw()
 {
-    return m_Pigeon->GetYaw().Refresh().GetValue() * (m_Inverted ? -1 : 1);
+    return m_SynchronizedSignals.Yaw->GetValue()* (m_Inverted ? -1 : 1);
 }
 
 units::degree_t CowPigeon::GetPitch()
 {
-    return m_Pigeon->GetPitch().Refresh().GetValue() * (m_Inverted ? -1 : 1);
+    return m_SynchronizedSignals.Pitch->GetValue()* (m_Inverted ? -1 : 1);
 }
 
 units::degree_t CowPigeon::GetRoll()
 {
-    return m_Pigeon->GetRoll().Refresh().GetValue() * (m_Inverted ? -1 : 1);
+    return m_SynchronizedSignals.Roll->GetValue()* (m_Inverted ? -1 : 1);
 }
 
 double CowPigeon::GetYawDegrees()

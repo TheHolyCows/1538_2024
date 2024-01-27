@@ -11,7 +11,6 @@
 #include "../../CowConstants.h"
 #include "../../CowLib/Conversions.h"
 #include "../../CowLib/CowLPF.h"
-#include "../../CowLib/CowMotorController.h"
 
 #include <frc/Solenoid.h>
 #include <iostream>
@@ -19,8 +18,8 @@
 class Claw
 {
 private:
-    CowLib::CowMotorController *m_WristMotor;
-    CowLib::CowMotorController *m_IntakeMotor;
+    CowMotor::TalonFX *m_WristMotor;
+    CowMotor::TalonFX *m_IntakeMotor;
 
     CowMotor::MotionMagicPercentOutput m_WristControlRequest{ 0 };
     CowMotor::PercentOutput m_IntakeControlRequest{ 0 };

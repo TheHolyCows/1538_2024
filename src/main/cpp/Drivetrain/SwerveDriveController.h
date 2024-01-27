@@ -2,7 +2,6 @@
 
 #include "../CowLib/CowExponentialFilter.h"
 #include "../CowPigeon.h"
-#include "../Subsystems/Vision.h"
 #include "SwerveDrive.h"
 
 #include <frc/controller/ProfiledPIDController.h>

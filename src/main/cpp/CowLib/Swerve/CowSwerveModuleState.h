@@ -12,8 +12,8 @@ namespace CowLib
 
     struct CowSwerveModuleState
     {
-        double velocity;
-        double angle;
+        double velocity = 0;
+        double angle = 0;
 
         // degrees per second
         double omega = 0;
