@@ -103,7 +103,8 @@ void CowRobot::Handle()
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetSynchronizedSignals());
 
     m_Controller->Handle(this);
-    m_Drivetrain->Handle();
+  //  m_Drivetrain->Handle();
+    m_Shooter->Handle();
 
     // logger code below should have checks for debug mode before sending out data
     CowLib::CowLogger::GetInstance()->Handle();

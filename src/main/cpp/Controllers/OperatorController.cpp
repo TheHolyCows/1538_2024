@@ -36,4 +36,14 @@ void OperatorController::Handle(CowRobot *bot)
                                          m_CB->GetRightDriveStickX() * -1,
                                          true);
     }
+   
+    if (m_CB->GetDriveButton(1))
+    {
+        bot->m_Shooter->Preload();
+    }
+
+    if(m_CB->GetDriveButton(2))
+    {
+        bot->m_Shooter->PreloadStop();
+    }
 }

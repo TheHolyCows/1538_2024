@@ -37,7 +37,7 @@ public:
     double GetIntakeCurrent();
 
     void Preload();
-
+    void PreloadStop();
     void Handle();
     
 private:

@@ -108,6 +108,11 @@ void Shooter::Preload()
     m_IntakeState = IntakeState::SPIN_UP;
 }
 
+void Shooter::PreloadStop()
+{
+    m_IntakeState = IntakeState::IDLE;
+}
+
 void Shooter::Handle()
 {
     if (m_IntakeState == IntakeState::IDLE)
