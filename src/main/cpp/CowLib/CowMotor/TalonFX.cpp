@@ -73,6 +73,15 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
+    ctre::phoenix::StatusCode TalonFX::ConfigMotionMagic(double kv, double ka)
+    {
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.MotionMagic.MotionMagicExpo_kV = kv;
+        config.MotionMagic.MotionMagicExpo_kA = ka;
+
+        return ApplyConfig(config);
+    }
+
     Status TalonFX::ConfigNeutralMode(NeutralMode neutralMode)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;

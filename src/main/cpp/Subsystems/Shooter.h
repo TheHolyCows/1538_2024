@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../CowLib/CowMotorController.h"
+#include "../CowLib/CowMotor/TalonFX.h"
 #include "../Cowconstants.h"
 #include "../Cowlib/CowLPF.h"
 #include "../CowLib/Conversions.h"
@@ -33,21 +33,31 @@ public:
     double GetShooterCurrent();
     double GetIntakeCurrent();
 
+    void Preload();
+
     void Handle();
     
 private:
+    enum IntakeState {
+        IDLE,
+        SPIN_UP,
+        WAIT,
+        MOVE
+    };
 
-    CowLib::CowMotorController *m_Shooter1;
-    CowLib::CowMotorController *m_Shooter2;
-    CowLib::CowMotorController *m_Intake1;
-    CowLib::CowMotorController *m_Intake2;
-    CowLib::CowMotorController *m_Wrist;
+    std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
+    std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
+    std::unique_ptr<CowMotor::TalonFX> m_Intake1;
+    std::unique_ptr<CowMotor::TalonFX> m_Intake2;
+    std::unique_ptr<CowMotor::TalonFX> m_Wrist;
 
-    CowMotor::MotionMagicPercentOutput m_WristControlRequest{ 0 };
+    CowMotor::Control::MotionMagicPositionDutyCycle m_WristControlRequest{ 0 };
 
-    CowMotor::PercentOutput m_ShooterControlRequest{ 0 };
+    CowMotor::Control::DutyCycle m_ShooterControlRequest{ 0 };
     
-    CowMotor::PercentOutput m_IntakeControlRequest{ 0 };
+    CowMotor::Control::DutyCycle m_IntakeControlRequest{ 0 };
     
     double m_WristPosition;
+
+    IntakeState m_IntakeState;
 };

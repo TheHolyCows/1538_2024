@@ -33,6 +33,8 @@ CowRobot::CowRobot()
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
 
+    m_Shooter = new Shooter(9, 10, 11, 12, 13);
+
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetSynchronizedSignals());
 }
 
@@ -87,7 +89,6 @@ void CowRobot::PrintToDS()
 // Please call this once per update cycle.
 void CowRobot::Handle()
 {
-    double t_0 = CowLib::CowTimer::GetFPGATimestamp();
     m_MatchTime = CowLib::CowTimer::GetFPGATimestamp() - m_StartTime;
 
     if (m_Controller == nullptr)
@@ -150,31 +151,31 @@ void CowRobot::DoNothing()
 }
 
 
-void CowRobot::ClimbSM()
-{
-    switch(m_Elevator->m_ClimberState)
-    {
-        case Elevator::ST_EXTEND :
-            // elevator extending
-            if(m_Elevator->ElevatorAtTarget())
-            {
-                m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_RETRACT"));
-                m_Elevator->m_ClimberState = Elevator::ST_RETRACT;
-            }
-            break;
-        case Elevator::ST_RETRACT :
-            // elevator retracting
-            if(m_Elevator->ElevatorAtTarget())
-            {
-                // end wrist lockout
-            }
-            break;
-        case Elevator::ST_DEFAULT :
-            m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_EXT"));
-            m_Elevator->m_ClimberState = Elevator::ST_EXTEND;
-            break;
-        default :
-            // do nothing
-            break;
-    }
-}
+// void CowRobot::ClimbSM()
+// {
+//     switch(m_Elevator->m_ClimberState)
+//     {
+//         case Elevator::ST_EXTEND :
+//             // elevator extending
+//             if(m_Elevator->ElevatorAtTarget())
+//             {
+//                 m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_RETRACT"));
+//                 m_Elevator->m_ClimberState = Elevator::ST_RETRACT;
+//             }
+//             break;
+//         case Elevator::ST_RETRACT :
+//             // elevator retracting
+//             if(m_Elevator->ElevatorAtTarget())
+//             {
+//                 // end wrist lockout
+//             }
+//             break;
+//         case Elevator::ST_DEFAULT :
+//             m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_EXT"));
+//             m_Elevator->m_ClimberState = Elevator::ST_EXTEND;
+//             break;
+//         default :
+//             // do nothing
+//             break;
+//     }
+// }
