@@ -17,6 +17,9 @@ class Shooter
 public:
 
     Shooter (const int shooterID1, const int shooterID2, const int intakeID1, const int intakeID2, const int wristID);
+
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+
     void ResetConstants();
     void SetShooter (double percent);
     void SetIntake (double percent);

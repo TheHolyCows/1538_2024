@@ -43,8 +43,10 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetSynchronizedSignals(
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
     std::vector<ctre::phoenix6::BaseStatusSignal*> drivetrainSignals = m_Drivetrain->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> gyroSignals = m_Gyro->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> shooterSignals = m_Shooter->GetSynchronizedSignals();
     signals.insert(signals.end(), drivetrainSignals.begin(), drivetrainSignals.end());
     signals.insert(signals.end(), gyroSignals.begin(), gyroSignals.end());
+    signals.insert(signals.end(), shooterSignals.begin(), shooterSignals.end());
 
     return signals;
 }

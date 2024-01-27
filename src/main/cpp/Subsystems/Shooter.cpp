@@ -21,6 +21,18 @@ Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID1
     m_IntakeState = IntakeState::IDLE;
 }
 
+std::vector<ctre::phoenix6::BaseStatusSignal*> Shooter::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> intake1Signals = m_Intake1->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> intake2Signals = m_Intake2->GetSynchronizedSignals();
+
+    signals.insert(signals.end(), intake1Signals.begin(), intake1Signals.end());
+    signals.insert(signals.end(), intake2Signals.begin(), intake2Signals.end());
+
+    return signals;
+}
+
 void Shooter::SetShooter(double percent)
 {
 
@@ -157,15 +169,15 @@ void Shooter::Handle()
         m_Shooter2->Set(m_ShooterControlRequest);
     }
 
-    if(m_Intake1)
-    {
-        m_Intake1->Set(m_IntakeControlRequest);
-    }
+    // if(m_Intake1)
+    // {
+    //     m_Intake1->Set(m_IntakeControlRequest);
+    // }
 
-    if(m_Intake2)
-    {
-        m_Intake2->Set(m_IntakeControlRequest);
-    }
+    // if(m_Intake2)
+    // {
+    //     m_Intake2->Set(m_IntakeControlRequest);
+    // }
 
     if (m_Wrist)
     {
