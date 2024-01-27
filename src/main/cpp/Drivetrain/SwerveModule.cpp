@@ -71,18 +71,18 @@ void SwerveModule::SetTargetState(CowLib::CowSwerveModuleState state, bool force
     m_TargetState = state;
 
     // Don't rotate for low speeds - unless we are e-braking
-    // double targetAngle;
+    // may want to lower this value when in teleop
+    // Dustin: commented this out for merge
+//     double targetAngle;
 
-    // if (!force && fabs(optimized.velocity) <= CONSTANT("SWERVE_MAX_SPEED") * 0.01)
-    // {
-    //     targetAngle = m_PreviousAngle;
-    // }
-    // else
-    // {
-    //     targetAngle = optimized.angle;
-    // }
-
-    // targetAngle = optimized.angle;
+//     if (!force && fabs(optimized.velocity) <= CONSTANT("SWERVE_MIN_ROT_SPEED"))
+//     {
+//         targetAngle = m_PreviousAngle;
+//     }
+//     else
+//     {
+//         targetAngle = optimized.angle;
+//     }
 
     // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG, "omtimized vel %f\n", optimized.velocity);
     // printf("optimized vel: %f\n", optimized.velocity);

@@ -148,3 +148,33 @@ void CowRobot::DoNothing()
 {
     // TODO: make the robot stop (including drive)
 }
+
+
+void CowRobot::ClimbSM()
+{
+    switch(m_Elevator->m_ClimberState)
+    {
+        case Elevator::ST_EXTEND :
+            // elevator extending
+            if(m_Elevator->ElevatorAtTarget())
+            {
+                m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_RETRACT"));
+                m_Elevator->m_ClimberState = Elevator::ST_RETRACT;
+            }
+            break;
+        case Elevator::ST_RETRACT :
+            // elevator retracting
+            if(m_Elevator->ElevatorAtTarget())
+            {
+                // end wrist lockout
+            }
+            break;
+        case Elevator::ST_DEFAULT :
+            m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_EXT"));
+            m_Elevator->m_ClimberState = Elevator::ST_EXTEND;
+            break;
+        default :
+            // do nothing
+            break;
+    }
+}
