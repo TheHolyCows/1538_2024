@@ -19,6 +19,7 @@ namespace CowMotor
             ctre::phoenix6::StatusSignal<units::angle::turn_t> *Position;
             ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> *Velocity;
             ctre::phoenix6::StatusSignal<units::angular_acceleration::turns_per_second_squared_t> *Acceleration;
+            ctre::phoenix6::StatusSignal<units::ampere_t> *Current;
         };
 
         struct UnsynchronizedSignals
@@ -62,6 +63,7 @@ namespace CowMotor
         double GetVelocity() override;
         double GetAcceleration() override;
         double GetTemperature() override;
+        double GetCurrent() override;
 
         Status SetEncoderPosition(double value) override;
 

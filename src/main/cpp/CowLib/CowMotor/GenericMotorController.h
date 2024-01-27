@@ -152,6 +152,7 @@ namespace CowMotor
         virtual double GetVelocity() = 0;
         virtual double GetAcceleration() = 0;
         virtual double GetTemperature() = 0;
+        virtual double GetCurrent() = 0;
 
         virtual Status SetEncoderPosition(double value) = 0;
 
