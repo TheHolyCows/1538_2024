@@ -38,11 +38,13 @@ public:
 
     void Preload();
     void PreloadStop();
+    void Exhaust();
     void Handle();
     
 private:
     enum IntakeState {
         IDLE,
+        EXHAUST,
         SPIN_UP,
         WAIT,
         MOVE

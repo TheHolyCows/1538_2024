@@ -46,4 +46,9 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->PreloadStop();
     }
+
+    if(m_CB->GetDriveButton(3))
+    {
+        bot->m_Shooter->Exhaust();
+    }
 }

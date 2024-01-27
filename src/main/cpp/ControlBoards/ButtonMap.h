@@ -11,7 +11,7 @@ enum OP_BUTTON_MAP
 {
     BT_HUMAN       = 1,
     BT_STOW        = 2,
-    BT_CONST_RESET = 3,
+    BT_CONST_RESET = 8,
     BT_SCORE       = 3, // drop cargo
     BT_SELECT_AUTO = 4,
     BT_WRIST_FLIP  = 4,

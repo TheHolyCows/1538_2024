@@ -92,13 +92,13 @@ void CowBase::DisabledPeriodic()
     //     m_Display->DisplayPeriodic();
     // }
 
-    // if (m_ControlBoard->GetConstantsResetButton())
-    // {
-    //     printf("RESETTING CONSTANTS\n");
-    //     CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_OFF, "RESETTING CONSTANTS");
-    //     m_Constants->RestoreData();
-    //     m_Bot->Reset();
-    // }
+    if (m_ControlBoard->GetConstantsResetButton())
+    {
+        printf("RESETTING CONSTANTS\n");
+        CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_OFF, "RESETTING CONSTANTS");
+        m_Constants->RestoreData();
+        m_Bot->Reset();
+    }
 
     // if (m_ControlBoard->GetAutoSelectButton())
     // {

@@ -33,7 +33,7 @@ CowRobot::CowRobot()
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
 
-    m_Shooter = new Shooter(9, 10, 11, 12, 13);
+    m_Shooter = new Shooter(11, 12, 9, 10, 13);
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetSynchronizedSignals());
 }
