@@ -100,36 +100,51 @@ void Shooter::Handle()
 {
     if (m_IntakeState == IntakeState::IDLE)
     {
-        CowMotor::Control::TorqueCurrent request;
-        request.Current = 0;
-        request.MaxDutyCycle = 0;
-        request.Deadband = 0;
+        CowMotor::Control::TorqueCurrent request = {0};
 
         m_Intake1->Set(request);
         m_Intake2->Set(request);
     }
     else if (m_IntakeState == IntakeState::SPIN_UP)
     {
-        CowMotor::Control::TorqueCurrent request;
-        request.Current = 5;
-        request.MaxDutyCycle = 1;
-        request.Deadband = 0;
+        CowMotor::Control::TorqueCurrent request = {0};
+        request.Current = CONSTANT("INTAKE_CURRENT");
+        request.MaxDutyCycle = CONSTANT("INTAKE_MAX_DUTY_CYCLE");
 
         m_Intake1->Set(request);
         m_Intake2->Set(request);
 
-        if (m_Intake1->GetVelocity() > 5)
+        if (m_Intake1->GetVelocity() > CONSTANT("INTAKE_SPINUP_VEL"))
         {
             m_IntakeState = IntakeState::WAIT;
         }
     }
     else if (m_IntakeState == IntakeState::WAIT)
     {
+        CowMotor::Control::TorqueCurrent request = {0};
+        request.Current = CONSTANT("INTAKE_CURRENT");
+        request.MaxDutyCycle = CONSTANT("INTAKE_MAX_DUTY_CYCLE");
 
+        m_Intake1->Set(request);
+        m_Intake2->Set(request);
+
+        if(m_Intake1->GetCurrent() > CONSTANT("INTAKE_MOVE_CURRENT_THRESHOLD") && m_Intake1->GetVelocity() < CONSTANT("INTAKE_MOVE_VEL_THRESHOLD"))
+        {
+            m_IntakeState = IntakeState::MOVE;
+            m_Intake1GoalPosition = m_Intake1->GetPosition() + CONSTANT("INTAKE_MOVE_POS");
+            m_Intake2GoalPosition = m_Intake2->GetPosition() + CONSTANT("iNTAKE_MOVE_POS");
+        }
     }
     else if (m_IntakeState == IntakeState::MOVE)
     {
-        
+        CowMotor::Control::PositionDutyCycle request1 = {0};
+        CowMotor::Control::PositionDutyCycle request2 = {0};
+        request1.Position = m_Intake1GoalPosition;
+        request2.Position = m_Intake2GoalPosition;
+
+        m_Intake1->Set(request1);
+        m_Intake2->Set(request2);
+
     }
 
     if(m_Shooter1)

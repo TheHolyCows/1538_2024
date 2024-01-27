@@ -58,6 +58,7 @@ private:
     CowMotor::Control::DutyCycle m_IntakeControlRequest{ 0 };
     
     double m_WristPosition;
-
+    double m_Intake1GoalPosition;
+    double m_Intake2GoalPosition;
     IntakeState m_IntakeState;
 };
