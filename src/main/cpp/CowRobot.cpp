@@ -62,6 +62,7 @@ void CowRobot::Reset()
 
     m_Drivetrain->ResetConstants();
     m_DriveController->ResetConstants();
+    m_Shooter->ResetConstants();
     // m_Controller->ResetConstants(); TODO: error
 
     // Vision::GetInstance()->Reset();
