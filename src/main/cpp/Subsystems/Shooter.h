@@ -36,18 +36,25 @@ public:
     double GetShooterCurrent();
     double GetIntakeCurrent();
 
-    void Preload();
-    void PreloadStop();
-    void Exhaust();
+    void Intake();
+    void StopIntake();
+    void Outtake();
     void Handle();
     
 private:
     enum IntakeState {
         IDLE,
-        EXHAUST,
+        OUTTAKE,
         SPIN_UP,
-        WAIT,
-        MOVE
+        DETECT,
+        HOLD
+    };
+
+    enum ShooterState {
+        IDLE,
+        SPIN_UP,
+        READY,
+        SHOOT
     };
 
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
@@ -66,4 +73,5 @@ private:
     double m_Intake1GoalPosition;
     double m_Intake2GoalPosition;
     IntakeState m_IntakeState;
+    ShooterState m_ShooterState;
 };

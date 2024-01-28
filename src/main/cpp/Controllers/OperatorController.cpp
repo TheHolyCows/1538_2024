@@ -39,16 +39,15 @@ void OperatorController::Handle(CowRobot *bot)
    
     if (m_CB->GetDriveButton(1))
     {
-        bot->m_Shooter->Preload();
+        bot->m_Shooter->Intake();
     }
-
-    if(m_CB->GetDriveButton(2))
+    else if(m_CB->GetDriveButton(3))
     {
-        bot->m_Shooter->PreloadStop();
+        bot->m_Shooter->Outtake();
     }
-
-    if(m_CB->GetDriveButton(3))
+    else
     {
-        bot->m_Shooter->Exhaust();
+        bot->m_Shooter->StopIntake();
     }
+    
 }

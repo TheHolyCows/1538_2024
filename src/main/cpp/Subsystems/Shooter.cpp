@@ -103,19 +103,25 @@ double Shooter::GetWristAngle()
     // return CowLib::Conversions::FalconToDegrees(m_Wrist->GetPosition(), CONSTANT("WRIST_GEAR_RATIO")) * -1;
 }
 
-void Shooter::Preload()
+void Shooter::Intake()
 {
-    m_IntakeState = IntakeState::SPIN_UP;
+    if(m_IntakeState == IntakeState::IDLE || m_IntakeState == IntakeState::OUTTAKE)
+    {
+        m_IntakeState = IntakeState::SPIN_UP;
+    }
 }
 
-void Shooter::PreloadStop()
+void Shooter::StopIntake()
 {
-    m_IntakeState = IntakeState::IDLE;
+    if(m_IntakeState != IntakeState::HOLD)
+    {
+        m_IntakeState = IntakeState::IDLE;
+    }
 }
 
-void Shooter::Exhaust()
+void Shooter::Outtake()
 {
-    m_IntakeState = IntakeState::EXHAUST;
+    m_IntakeState = IntakeState::OUTTAKE;
 }
 
 void Shooter::Handle()
@@ -127,7 +133,7 @@ void Shooter::Handle()
         m_Intake1->Set(request);
         m_Intake2->Set(request);
     }
-    else if(m_IntakeState == IntakeState::EXHAUST)
+    else if(m_IntakeState == IntakeState::OUTTAKE)
     {
         CowMotor::Control::DutyCycle request = {0};
         request.DutyCycle = CONSTANT("INTAKE_EXHAUST");
@@ -145,10 +151,10 @@ void Shooter::Handle()
 
         if (m_Intake1->GetVelocity() > CONSTANT("INTAKE_SPINUP_VEL_THRESHOLD") && m_Intake1->GetCurrent() < CONSTANT("INTAKE_SPINUP_CURRENT_THRESHOLD"))
         {
-            m_IntakeState = IntakeState::WAIT;
+            m_IntakeState = IntakeState::DETECT;
         }
     }
-    else if (m_IntakeState == IntakeState::WAIT)
+    else if (m_IntakeState == IntakeState::DETECT)
     {
         CowMotor::Control::TorqueCurrent request = {0};
         request.Current = CONSTANT("INTAKE_WAIT_CURRENT");
@@ -159,14 +165,14 @@ void Shooter::Handle()
 
         if(m_Intake1->GetCurrent() > CONSTANT("INTAKE_MOVE_CURRENT_THRESHOLD") && m_Intake1->GetVelocity() < CONSTANT("INTAKE_MOVE_VEL_THRESHOLD"))
         {
-            m_IntakeState = IntakeState::MOVE;
+            m_IntakeState = IntakeState::HOLD;
             m_Intake1GoalPosition = m_Intake1->GetPosition() + CONSTANT("INTAKE_MOVE_POS");
             m_Intake2GoalPosition = m_Intake2->GetPosition() + CONSTANT("INTAKE_MOVE_POS");
 
             printf("%f\n", m_Intake1GoalPosition);
         }
     }
-    else if (m_IntakeState == IntakeState::MOVE)
+    else if (m_IntakeState == IntakeState::HOLD)
     {
         CowMotor::Control::PositionDutyCycle request1 = {0};
         CowMotor::Control::PositionDutyCycle request2 = {0};
