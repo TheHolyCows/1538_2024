@@ -40,21 +40,24 @@ public:
     void StopIntake();
     void Outtake();
     void Handle();
+
+    void PrimeShooter();
+    void Shoot();
     
 private:
-    enum IntakeState {
+    enum class IntakeState {
         IDLE,
         OUTTAKE,
         SPIN_UP,
         DETECT,
-        HOLD
+        HOLD,
+        SHOOT
     };
 
-    enum ShooterState {
+    enum class ShooterState {
         IDLE,
         SPIN_UP,
-        READY,
-        SHOOT
+        READY
     };
 
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;

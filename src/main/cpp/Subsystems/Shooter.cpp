@@ -19,6 +19,7 @@ Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID1
     // double m_WristPosition = 0;
 
     m_IntakeState = IntakeState::IDLE;
+    m_ShooterState = ShooterState::IDLE;
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> Shooter::GetSynchronizedSignals()
@@ -124,8 +125,28 @@ void Shooter::Outtake()
     m_IntakeState = IntakeState::OUTTAKE;
 }
 
+void Shooter::PrimeShooter()
+{
+    if(m_ShooterState == ShooterState::IDLE)
+    {
+        m_ShooterState = ShooterState::SPIN_UP;
+    }
+}
+
+void Shooter::Shoot()
+{
+    if(m_ShooterState == ShooterState::READY && m_IntakeState == IntakeState::HOLD)
+    {
+        m_IntakeState = IntakeState::SHOOT;
+    }
+}
+
 void Shooter::Handle()
 {
+    double totalCurrent = m_Intake1->GetCurrent() + m_Intake2->GetCurrent();
+    double meanIntakeVel = (m_Intake1->GetVelocity() + m_Intake2->GetVelocity()) / 2;
+    double meanShooterVel = (m_Shooter1->GetVelocity() + m_Shooter2->GetVelocity()) / 2;
+
     if (m_IntakeState == IntakeState::IDLE)
     {
         CowMotor::Control::TorqueCurrent request = {0};
@@ -149,7 +170,7 @@ void Shooter::Handle()
         m_Intake1->Set(request);
         m_Intake2->Set(request);
 
-        if (m_Intake1->GetVelocity() > CONSTANT("INTAKE_SPINUP_VEL_THRESHOLD") && m_Intake1->GetCurrent() < CONSTANT("INTAKE_SPINUP_CURRENT_THRESHOLD"))
+        if (meanIntakeVel > CONSTANT("INTAKE_SPINUP_VEL_THRESHOLD") && totalCurrent < CONSTANT("INTAKE_SPINUP_CURRENT_THRESHOLD"))
         {
             m_IntakeState = IntakeState::DETECT;
         }
@@ -163,7 +184,7 @@ void Shooter::Handle()
         m_Intake1->Set(request);
         m_Intake2->Set(request);
 
-        if(m_Intake1->GetCurrent() > CONSTANT("INTAKE_MOVE_CURRENT_THRESHOLD") && m_Intake1->GetVelocity() < CONSTANT("INTAKE_MOVE_VEL_THRESHOLD"))
+        if(totalCurrent > CONSTANT("INTAKE_MOVE_CURRENT_THRESHOLD") && meanIntakeVel < CONSTANT("INTAKE_MOVE_VEL_THRESHOLD"))
         {
             m_IntakeState = IntakeState::HOLD;
             m_Intake1GoalPosition = m_Intake1->GetPosition() + CONSTANT("INTAKE_MOVE_POS");
@@ -182,6 +203,51 @@ void Shooter::Handle()
         m_Intake1->Set(request1);
         m_Intake2->Set(request2);
 
+    }
+    else if (m_IntakeState == IntakeState::SHOOT)
+    {
+        CowMotor::Control::TorqueCurrent request = {0};
+        request.Current = CONSTANT("INTAKE_SHOOT_CURRENT");
+        request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
+
+        m_Intake1->Set(request);
+        m_Intake2->Set(request);
+    }
+
+    if(m_ShooterState == ShooterState::IDLE)
+    {
+        CowMotor::Control::DutyCycle request = {0};
+
+        m_Shooter1->Set(request);
+        m_Shooter2->Set(request);
+
+    }
+    else if(m_ShooterState == ShooterState::SPIN_UP)
+    {
+        CowMotor::Control::TorqueCurrent request = {0};
+        request.Current = CONSTANT("SHOOTER_SPINUP_CURRENT");
+        request.MaxDutyCycle = CONSTANT("SHOOTER_SPINUP_MAX_DUTY_CYCLE");
+
+        m_Shooter1->Set(request);
+        m_Shooter1->Set(request);
+
+        if(meanShooterVel > CONSTANT("SHOOTER_SPINUP_VEL_THRESHOLD"))
+        {
+            m_ShooterState = ShooterState::READY;
+        }
+
+    }
+    else if(m_ShooterState == ShooterState::READY)
+    {
+        CowMotor::Control::TorqueCurrent request = {0};
+
+        m_Shooter1->Set(request);
+        m_Shooter2->Set(request);
+
+        if(meanShooterVel < CONSTANT("SHOOTER_READY_VEL_THRESHOLD"))
+        {
+            m_ShooterState = ShooterState::SPIN_UP;
+        }
     }
 
     if(m_Shooter1)
