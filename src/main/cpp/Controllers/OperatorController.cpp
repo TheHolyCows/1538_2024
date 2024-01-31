@@ -54,11 +54,13 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->PrimeShooter();
     }
-    else if(m_CB->GetDriveButton(4))
+    else if(m_CB->GetDriveButton(2) && m_CB->GetDriveButton(4))
     {
         bot->m_Shooter->Shoot();
     }
-
-    // Do we need an else state here to return ShooterState to IDLE?
+    else
+    {
+        bot->m_Shooter->StopShooter();
+    }
     
 }

@@ -42,6 +42,7 @@ public:
     void Handle();
 
     void PrimeShooter();
+    void StopShooter();
     void Shoot();
     
 private:

@@ -133,6 +133,14 @@ void Shooter::PrimeShooter()
     }
 }
 
+void Shooter::StopShooter()
+{
+    if(m_IntakeState != IntakeState::SHOOT)
+    {
+        m_ShooterState = ShooterState::IDLE;
+    }
+}
+
 void Shooter::Shoot()
 {
     if(m_ShooterState == ShooterState::READY && m_IntakeState == IntakeState::HOLD)
