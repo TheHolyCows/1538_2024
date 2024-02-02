@@ -12,6 +12,8 @@
 #include "../Cowlib/CowLPF.h"
 #include "../CowLib/Conversions.h"
 
+#include <cmath>
+
 class Shooter
 {
 public:
@@ -49,7 +51,7 @@ private:
     enum class IntakeState {
         IDLE,
         OUTTAKE,
-        SPIN_UP,
+        WAIT_FOR_STOP,
         DETECT,
         HOLD,
         SHOOT
@@ -74,6 +76,7 @@ private:
     CowMotor::Control::DutyCycle m_IntakeControlRequest{ 0 };
     
     double m_WristPosition;
+    double m_DetectStartTime;
     double m_Intake1GoalPosition;
     double m_Intake2GoalPosition;
     IntakeState m_IntakeState;

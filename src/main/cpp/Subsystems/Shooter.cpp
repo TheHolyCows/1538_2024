@@ -108,7 +108,7 @@ void Shooter::Intake()
 {
     if(m_IntakeState == IntakeState::IDLE || m_IntakeState == IntakeState::OUTTAKE)
     {
-        m_IntakeState = IntakeState::SPIN_UP;
+        m_IntakeState = IntakeState::WAIT_FOR_STOP;
     }
 }
 
@@ -169,37 +169,50 @@ void Shooter::Handle()
         m_Intake1->Set(request);
         m_Intake2->Set(request);
     }
-    else if (m_IntakeState == IntakeState::SPIN_UP)
+    else if (m_IntakeState == IntakeState::WAIT_FOR_STOP)
     {
-        CowMotor::Control::TorqueCurrent request = {0};
-        request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
-        request.MaxDutyCycle = CONSTANT("INTAKE_SPINUP_MAX_DUTY_CYCLE");
+        CowMotor::Control::DutyCycle request = {0};
 
         m_Intake1->Set(request);
         m_Intake2->Set(request);
 
-        if (meanIntakeVel > CONSTANT("INTAKE_SPINUP_VEL_THRESHOLD") && totalCurrent < CONSTANT("INTAKE_SPINUP_CURRENT_THRESHOLD"))
+        if (meanIntakeVel == 0)
         {
             m_IntakeState = IntakeState::DETECT;
+            m_DetectStartTime = frc::Timer::GetFPGATimestamp().value();
         }
     }
     else if (m_IntakeState == IntakeState::DETECT)
     {
         CowMotor::Control::TorqueCurrent request = {0};
-        request.Current = CONSTANT("INTAKE_WAIT_CURRENT");
-        request.MaxDutyCycle = CONSTANT("INTAKE_WAIT_MAX_DUTY_CYCLE");
+        request.Current = CONSTANT("INTAKE_DETECT_CURRENT");
+        request.MaxDutyCycle = CONSTANT("INTAKE_DETECT_MAX_DUTY_CYCLE");
         
         m_Intake1->Set(request);
         m_Intake2->Set(request);
 
-        if(totalCurrent > CONSTANT("INTAKE_MOVE_CURRENT_THRESHOLD") && meanIntakeVel < CONSTANT("INTAKE_MOVE_VEL_THRESHOLD"))
+        double currentTime = frc::Timer::GetFPGATimestamp().value() - m_DetectStartTime;
+        double expectedVel = 0;
+
+        if(currentTime < CONSTANT("INTAKE_SPINUP_TIME"))
+        {
+            expectedVel = CONSTANT("INTAKE_SPINUP_MOTOR_SLOPE") * currentTime;
+        }
+        else
+        {
+            expectedVel = CONSTANT("INTAKE_SPINUP_MOTOR_SLOPE") * CONSTANT("INTAKE_SPINUP_TIME");
+        }
+
+        double error = expectedVel - meanIntakeVel;
+
+        // printf("%f, %f\n", currentTime, meanIntakeVel);
+
+        if(abs(error) > CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
         {
             m_IntakeState = IntakeState::HOLD;
-            m_Intake1GoalPosition = m_Intake1->GetPosition() + CONSTANT("INTAKE_MOVE_POS");
-            m_Intake2GoalPosition = m_Intake2->GetPosition() + CONSTANT("INTAKE_MOVE_POS");
-
-            printf("%f\n", m_Intake1GoalPosition);
-        }
+            m_Intake1GoalPosition = m_Intake1->GetPosition() + (CONSTANT("INTAKE_MOVE_M") * meanIntakeVel) + CONSTANT("INTAKE_MOVE_B");
+            m_Intake2GoalPosition = m_Intake2->GetPosition() + (CONSTANT("INTAKE_MOVE_M") * meanIntakeVel) + CONSTANT("INTAKE_MOVE_B");
+        }        
     }
     else if (m_IntakeState == IntakeState::HOLD)
     {
@@ -207,6 +220,7 @@ void Shooter::Handle()
         CowMotor::Control::PositionDutyCycle request2 = {0};
         request1.Position = m_Intake1GoalPosition;
         request2.Position = m_Intake2GoalPosition;
+        request2.EnableFOC = true;
 
         m_Intake1->Set(request1);
         m_Intake2->Set(request2);
