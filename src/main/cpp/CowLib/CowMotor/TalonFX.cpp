@@ -25,7 +25,7 @@ namespace CowMotor
 
     ctre::phoenix::StatusCode TalonFX::ApplyConfig(ctre::phoenix6::configs::TalonFXConfiguration config)
     {
-        ctre::phoenix::StatusCode status = m_Talon.GetConfigurator().Apply(m_Config);
+        ctre::phoenix::StatusCode status = m_Talon.GetConfigurator().Apply(config);
 
         if (!status.IsError())
         {
