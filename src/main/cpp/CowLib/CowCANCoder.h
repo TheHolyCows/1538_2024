@@ -31,7 +31,7 @@ namespace CowLib
         void ApplyConfig();
 
     public:
-        CowCANCoder(int device);
+        CowCANCoder(int device, std::string canbus);
 
         std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 

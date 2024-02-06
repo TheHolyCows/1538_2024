@@ -13,7 +13,7 @@ SwerveModule::SwerveModule(const int id,
 {
     m_DriveMotor    = std::make_unique<CowMotor::TalonFX>(driveMotor, "cowdrive");
     m_RotationMotor = std::make_unique<CowMotor::TalonFX>(rotationMotor, "cowdrive");
-    m_Encoder       = std::make_unique<CowLib::CowCANCoder>(encoderId);
+    m_Encoder       = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowdrive");
 
     m_Encoder->ConfigAbsoluteOffset(-encoderOffset / 360.0);
 
