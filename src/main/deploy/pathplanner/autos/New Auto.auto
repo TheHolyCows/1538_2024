@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.34,
+      "y": 6.2
+    },
+    "rotation": -154.36
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -8,13 +14,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "drive1-1"
+            "pathName": "two-close_note1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "drive1-2"
+            "pathName": "two-close_note2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "two-close_note3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "two-close_score3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "two-close_note4"
           }
         }
       ]
