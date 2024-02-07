@@ -18,6 +18,8 @@ public:
 
     Pivot(const int motorId1, const int motorId2, const int encoderId, int encoderOffset);
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals();
+
     double GetAngle(void);
     double GetSetpoint(void);
 

@@ -20,6 +20,18 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int en
     ResetConstants();
 }
 
+std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> intake1Signals = m_PivotMotor1->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> intake2Signals = m_PivotMotor2->GetSynchronizedSignals();
+
+    signals.insert(signals.end(), intake1Signals.begin(), intake1Signals.end());
+    signals.insert(signals.end(), intake2Signals.begin(), intake2Signals.end());
+
+    return signals;
+}
+
 double Pivot::GetAngle()
 {
     return CowLib::Conversions::FalconToDegrees(m_PivotMotor1->GetPosition(), CONSTANT("PIVOT_GEAR_RATIO"));
