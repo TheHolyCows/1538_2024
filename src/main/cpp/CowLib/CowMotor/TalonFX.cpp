@@ -212,6 +212,13 @@ namespace CowMotor
         return m_Talon.SetControl(ctre_request);
     }
 
+    Status TalonFX::Set(Control::Follower cowRequest)
+    {
+        ctre::phoenix6::controls::Follower ctre_request = ctre::phoenix6::controls::Follower(cowRequest.MasterID, cowRequest.OpposeMasterDirection);
+
+        return m_Talon.SetControl(ctre_request);
+    }
+
     double TalonFX::GetPosition()
     {
         return m_SynchronizedSignals.Position->GetValue().value();

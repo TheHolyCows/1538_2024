@@ -58,6 +58,7 @@ namespace CowMotor
         Status Set(Control::VelocityTorqueCurrent request) override;
         Status Set(Control::MotionMagicPositionTorqueCurrent request) override;
         Status Set(Control::MotionMagicVelocityTorqueCurrent request) override;
+        Status Set(Control::Follower request) override;
 
         double GetPosition() override;
         double GetVelocity() override;
