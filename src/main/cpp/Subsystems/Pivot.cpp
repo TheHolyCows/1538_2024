@@ -9,7 +9,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int en
     m_PivotMotor2->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
     m_PivotMotor1->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
-    m_PivotMotor1->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
+    m_PivotMotor2->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
 
     m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowbus");
     m_Encoder->ConfigAbsoluteOffset(encoderOffset / 360.0);
