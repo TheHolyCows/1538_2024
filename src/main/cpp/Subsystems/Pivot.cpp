@@ -109,5 +109,4 @@ void Pivot::Handle()
     {
         m_PivotMotor2->Set(m_PivotPosRequest);
     }
-    
 }
