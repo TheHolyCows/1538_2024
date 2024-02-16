@@ -58,7 +58,7 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveModule::GetSynchronizedSign
 
 CowLib::CowSwerveModulePosition SwerveModule::GetPosition()
 {
-    double drive_rotation_offset = -(m_RotationMotor->GetPosition() - m_InitialRotation) * (50 / 14);
+    double drive_rotation_offset = -(m_RotationMotor->GetPosition() - m_InitialRotation) * (CONSTANT("SWERVE_DRIVE_OFFSET_RATIO"));
 
     return CowLib::CowSwerveModulePosition{
         .distance = ((m_DriveMotor->GetPosition() + drive_rotation_offset) / CONSTANT("SWERVE_DRIVE_GEAR_RATIO")) * CONSTANT("WHEEL_CIRCUMFERENCE"),
