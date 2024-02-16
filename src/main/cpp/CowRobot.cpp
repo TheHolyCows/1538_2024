@@ -6,17 +6,12 @@ CowRobot::CowRobot()
     m_StartTime     = 0;
     m_DSUpdateCount = 0;
 
-    // uncomment for b-bot
     m_PowerDistributionPanel = new frc::PowerDistribution(1, frc::PowerDistribution::ModuleType::kRev);
-    // m_PowerDistributionPanel = new frc::PowerDistribution();
 
     // mxp board was removed from robot - can remove this code
     m_LEDDisplay = nullptr;
 
     m_Gyro = CowPigeon::GetInstance();
-
-    m_PreviousGyroError = 0;
-    // m_Gyro->Reset(); - don't know why we have this commented
     m_Accelerometer = new frc::BuiltInAccelerometer(frc::BuiltInAccelerometer::kRange_4G);
 
     // Set up drivetrain
@@ -24,14 +19,16 @@ CowRobot::CowRobot()
     // fl, fr, bl, br
     // drive motor, angle motor, encoder canId's
     SwerveDrive::ModuleConstants swerveModuleConstants[4]{
-        SwerveDrive::ModuleConstants{ 2, 1, 25, CONSTANT("SWERVE_FL_ENCODER_OFFSET") },
-        SwerveDrive::ModuleConstants{ 4, 3, 26, CONSTANT("SWERVE_FR_ENCODER_OFFSET") },
-        SwerveDrive::ModuleConstants{ 6, 5, 27, CONSTANT("SWERVE_BL_ENCODER_OFFSET") },
-        SwerveDrive::ModuleConstants{ 8, 7, 28, CONSTANT("SWERVE_BR_ENCODER_OFFSET") }
+        SwerveDrive::ModuleConstants{ 1, 2, 25, CONSTANT("SWERVE_FL_ENCODER_OFFSET") },
+        SwerveDrive::ModuleConstants{ 3, 4, 26, CONSTANT("SWERVE_FR_ENCODER_OFFSET") },
+        SwerveDrive::ModuleConstants{ 5, 6, 27, CONSTANT("SWERVE_BL_ENCODER_OFFSET") },
+        SwerveDrive::ModuleConstants{ 7, 8, 28, CONSTANT("SWERVE_BR_ENCODER_OFFSET") }
     };
 
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
+
+    m_Shooter = new Shooter(11, 12, 9, 10, 13);
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetSynchronizedSignals());
 }
@@ -41,8 +38,10 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetSynchronizedSignals(
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
     std::vector<ctre::phoenix6::BaseStatusSignal*> drivetrainSignals = m_Drivetrain->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> gyroSignals = m_Gyro->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> shooterSignals = m_Shooter->GetSynchronizedSignals();
     signals.insert(signals.end(), drivetrainSignals.begin(), drivetrainSignals.end());
     signals.insert(signals.end(), gyroSignals.begin(), gyroSignals.end());
+    signals.insert(signals.end(), shooterSignals.begin(), shooterSignals.end());
 
     return signals;
 }
@@ -54,10 +53,9 @@ void CowRobot::Reset()
 {
     m_MatchTime = 0;
 
-    m_PreviousGyroError = 0;
-
     m_Drivetrain->ResetConstants();
     m_DriveController->ResetConstants();
+    m_Shooter->ResetConstants();
     // m_Controller->ResetConstants(); TODO: error
 
     // Vision::GetInstance()->Reset();
@@ -87,7 +85,6 @@ void CowRobot::PrintToDS()
 // Please call this once per update cycle.
 void CowRobot::Handle()
 {
-    double t_0 = CowLib::CowTimer::GetFPGATimestamp();
     m_MatchTime = CowLib::CowTimer::GetFPGATimestamp() - m_StartTime;
 
     if (m_Controller == nullptr)
@@ -101,6 +98,7 @@ void CowRobot::Handle()
 
     m_Controller->Handle(this);
     m_Drivetrain->Handle();
+    m_Shooter->Handle();
 
     // logger code below should have checks for debug mode before sending out data
     CowLib::CowLogger::GetInstance()->Handle();
@@ -150,31 +148,31 @@ void CowRobot::DoNothing()
 }
 
 
-void CowRobot::ClimbSM()
-{
-    switch(m_Elevator->m_ClimberState)
-    {
-        case Elevator::ST_EXTEND :
-            // elevator extending
-            if(m_Elevator->ElevatorAtTarget())
-            {
-                m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_RETRACT"));
-                m_Elevator->m_ClimberState = Elevator::ST_RETRACT;
-            }
-            break;
-        case Elevator::ST_RETRACT :
-            // elevator retracting
-            if(m_Elevator->ElevatorAtTarget())
-            {
-                // end wrist lockout
-            }
-            break;
-        case Elevator::ST_DEFAULT :
-            m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_EXT"));
-            m_Elevator->m_ClimberState = Elevator::ST_EXTEND;
-            break;
-        default :
-            // do nothing
-            break;
-    }
-}
+// void CowRobot::ClimbSM()
+// {
+//     switch(m_Elevator->m_ClimberState)
+//     {
+//         case Elevator::ST_EXTEND :
+//             // elevator extending
+//             if(m_Elevator->ElevatorAtTarget())
+//             {
+//                 m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_RETRACT"));
+//                 m_Elevator->m_ClimberState = Elevator::ST_RETRACT;
+//             }
+//             break;
+//         case Elevator::ST_RETRACT :
+//             // elevator retracting
+//             if(m_Elevator->ElevatorAtTarget())
+//             {
+//                 // end wrist lockout
+//             }
+//             break;
+//         case Elevator::ST_DEFAULT :
+//             m_Elevator->RequestElevatorPosition(CONSTANT("CLIMB_EXT"));
+//             m_Elevator->m_ClimberState = Elevator::ST_EXTEND;
+//             break;
+//         default :
+//             // do nothing
+//             break;
+//     }
+// }

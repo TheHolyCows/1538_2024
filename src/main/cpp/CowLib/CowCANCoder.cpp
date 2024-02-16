@@ -5,9 +5,9 @@ namespace CowLib
 
     /// @brief Creates a new CowCANCoder. Defaults to unsigned absolute
     /// @param deviceId
-    CowCANCoder::CowCANCoder(int deviceId)
+    CowCANCoder::CowCANCoder(int deviceId, std::string canbus)
     {
-        m_CANCoder = new ctre::phoenix6::hardware::CANcoder(deviceId, "cowdrive");
+        m_CANCoder = new ctre::phoenix6::hardware::CANcoder(deviceId, canbus);
 
         // Default config
         m_Config = ctre::phoenix6::configs::CANcoderConfiguration{};

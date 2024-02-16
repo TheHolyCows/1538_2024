@@ -19,6 +19,7 @@ namespace CowMotor
             ctre::phoenix6::StatusSignal<units::angle::turn_t> *Position;
             ctre::phoenix6::StatusSignal<units::angular_velocity::turns_per_second_t> *Velocity;
             ctre::phoenix6::StatusSignal<units::angular_acceleration::turns_per_second_squared_t> *Acceleration;
+            ctre::phoenix6::StatusSignal<units::ampere_t> *Current;
         };
 
         struct UnsynchronizedSignals
@@ -41,6 +42,7 @@ namespace CowMotor
         std::vector<ctre::phoenix6::BaseStatusSignal*> GetUnsynchronizedSignals();
         ctre::phoenix::StatusCode FuseCANCoder(int id, double rotorToSensorRatio);
         ctre::phoenix::StatusCode ConfigContinuousWrap(bool enable);
+        ctre::phoenix::StatusCode ConfigMotionMagic(double kv, double ka);
 
         Status ConfigNeutralMode(NeutralMode neutralMode) override;
         Status ConfigPositivePolarity(Direction positivePolarity) override;
@@ -56,11 +58,13 @@ namespace CowMotor
         Status Set(Control::VelocityTorqueCurrent request) override;
         Status Set(Control::MotionMagicPositionTorqueCurrent request) override;
         Status Set(Control::MotionMagicVelocityTorqueCurrent request) override;
+        Status Set(Control::Follower request) override;
 
         double GetPosition() override;
         double GetVelocity() override;
         double GetAcceleration() override;
         double GetTemperature() override;
+        double GetCurrent() override;
 
         Status SetEncoderPosition(double value) override;
 

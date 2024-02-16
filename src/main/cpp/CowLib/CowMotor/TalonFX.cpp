@@ -12,7 +12,8 @@ namespace CowMotor
           m_SynchronizedSignals({
               .Position = &m_Talon.GetPosition(),
               .Velocity = &m_Talon.GetVelocity(),
-              .Acceleration = &m_Talon.GetAcceleration()
+              .Acceleration = &m_Talon.GetAcceleration(),
+              .Current = &m_Talon.GetStatorCurrent()
           }),
           m_UnsynchronizedSignals({
               .Temperature = &m_Talon.GetDeviceTemp()
@@ -24,7 +25,7 @@ namespace CowMotor
 
     ctre::phoenix::StatusCode TalonFX::ApplyConfig(ctre::phoenix6::configs::TalonFXConfiguration config)
     {
-        ctre::phoenix::StatusCode status = m_Talon.GetConfigurator().Apply(m_Config);
+        ctre::phoenix::StatusCode status = m_Talon.GetConfigurator().Apply(config);
 
         if (!status.IsError())
         {
@@ -39,7 +40,8 @@ namespace CowMotor
         std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
             m_SynchronizedSignals.Position,
             m_SynchronizedSignals.Velocity,
-            m_SynchronizedSignals.Acceleration
+            m_SynchronizedSignals.Acceleration,
+            m_SynchronizedSignals.Current
         };
 
         return signals;
@@ -69,6 +71,15 @@ namespace CowMotor
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
         config.ClosedLoopGeneral.ContinuousWrap = enable;
+
+        return ApplyConfig(config);
+    }
+
+    ctre::phoenix::StatusCode TalonFX::ConfigMotionMagic(double kv, double ka)
+    {
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.MotionMagic.MotionMagicExpo_kV = kv;
+        config.MotionMagic.MotionMagicExpo_kA = ka;
 
         return ApplyConfig(config);
     }
@@ -201,6 +212,13 @@ namespace CowMotor
         return m_Talon.SetControl(ctre_request);
     }
 
+    Status TalonFX::Set(Control::Follower cowRequest)
+    {
+        ctre::phoenix6::controls::Follower ctre_request = ctre::phoenix6::controls::Follower(cowRequest.MasterID, cowRequest.OpposeMasterDirection);
+
+        return m_Talon.SetControl(ctre_request);
+    }
+
     double TalonFX::GetPosition()
     {
         return m_SynchronizedSignals.Position->GetValue().value();
@@ -219,6 +237,11 @@ namespace CowMotor
     double TalonFX::GetTemperature()
     {
         return m_UnsynchronizedSignals.Temperature->Refresh().GetValue().value();
+    }
+
+    double TalonFX::GetCurrent()
+    {
+        return m_SynchronizedSignals.Current->GetValue().value();
     }
 
     Status TalonFX::SetEncoderPosition(double value)

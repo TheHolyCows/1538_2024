@@ -114,6 +114,13 @@ namespace CowMotor
             // Units: Amperes
             double FeedForward;
         };
+
+        struct Follower
+        {
+            int MasterID;
+
+            bool OpposeMasterDirection;
+        };
     }
 
     typedef std::variant<ctre::phoenix::StatusCode> Status;
@@ -147,11 +154,13 @@ namespace CowMotor
         virtual Status Set(Control::VelocityTorqueCurrent request) = 0;
         virtual Status Set(Control::MotionMagicPositionTorqueCurrent request) = 0;
         virtual Status Set(Control::MotionMagicVelocityTorqueCurrent request) = 0;
+        virtual Status Set(Control::Follower request) = 0;
 
         virtual double GetPosition() = 0;
         virtual double GetVelocity() = 0;
         virtual double GetAcceleration() = 0;
         virtual double GetTemperature() = 0;
+        virtual double GetCurrent() = 0;
 
         virtual Status SetEncoderPosition(double value) = 0;
 

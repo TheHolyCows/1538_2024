@@ -17,10 +17,10 @@
 #include "Drivetrain/SwerveDriveController.h"
 #include "frc/controller/PIDController.h"
 
-#include "Subsystems/ArmState.h" // delete before 2024
-#include "Subsystems/Vision.h"
+// #include "Subsystems/ArmState.h" // delete before 2024
+// #include "Subsystems/Vision.h"
 #include "Subsystems/Shooter.h"
-#include "Subsystems/Elevator.h"
+// #include "Subsystems/Elevator.h"
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/PowerDistribution.h>
@@ -33,7 +33,7 @@ public:
     // Drive Motors
     SwerveDrive *m_Drivetrain;
     Shooter *m_Shooter;
-    Elevator *m_Elevator;
+    // Elevator *m_Elevator;
 
 private:
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
@@ -59,7 +59,6 @@ private:
     double m_LeftDriveValue;
     double m_RightDriveValue;
 
-    double m_PreviousGyroError;
     double m_PreviousDriveError;
 
     double m_MatchTime;

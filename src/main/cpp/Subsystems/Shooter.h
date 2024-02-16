@@ -7,16 +7,21 @@
 
 #pragma once
 
-#include "../CowLib/CowMotorController.h"
+#include "../CowLib/CowMotor/TalonFX.h"
 #include "../Cowconstants.h"
 #include "../Cowlib/CowLPF.h"
 #include "../CowLib/Conversions.h"
+
+#include <cmath>
 
 class Shooter
 {
 public:
 
     Shooter (const int shooterID1, const int shooterID2, const int intakeID1, const int intakeID2, const int wristID);
+
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+
     void ResetConstants();
     void SetShooter (double percent);
     void SetIntake (double percent);
@@ -33,21 +38,47 @@ public:
     double GetShooterCurrent();
     double GetIntakeCurrent();
 
+    void Intake();
+    void StopIntake();
+    void Outtake();
     void Handle();
+
+    void PrimeShooter();
+    void StopShooter();
+    void Shoot();
     
 private:
+    enum class IntakeState {
+        IDLE,
+        OUTTAKE,
+        WAIT_FOR_STOP,
+        DETECT,
+        HOLD,
+        SHOOT
+    };
 
-    CowLib::CowMotorController *m_Shooter1;
-    CowLib::CowMotorController *m_Shooter2;
-    CowLib::CowMotorController *m_Intake1;
-    CowLib::CowMotorController *m_Intake2;
-    CowLib::CowMotorController *m_Wrist;
+    enum class ShooterState {
+        IDLE,
+        SPIN_UP,
+        READY
+    };
 
-    CowMotor::MotionMagicPercentOutput m_WristControlRequest{ 0 };
+    std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
+    std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
+    std::unique_ptr<CowMotor::TalonFX> m_Intake1;
+    std::unique_ptr<CowMotor::TalonFX> m_Intake2;
+    std::unique_ptr<CowMotor::TalonFX> m_Wrist;
 
-    CowMotor::PercentOutput m_ShooterControlRequest{ 0 };
+    CowMotor::Control::MotionMagicPositionDutyCycle m_WristControlRequest{ 0 };
+
+    CowMotor::Control::DutyCycle m_ShooterControlRequest{ 0 };
     
-    CowMotor::PercentOutput m_IntakeControlRequest{ 0 };
+    CowMotor::Control::DutyCycle m_IntakeControlRequest{ 0 };
     
     double m_WristPosition;
+    double m_DetectStartTime;
+    double m_Intake1GoalPosition;
+    double m_Intake2GoalPosition;
+    IntakeState m_IntakeState;
+    ShooterState m_ShooterState;
 };
