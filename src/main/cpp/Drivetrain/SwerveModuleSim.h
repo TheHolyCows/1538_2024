@@ -29,6 +29,11 @@ private:
     const double m_MaxAngularVelocity;
     const double m_AngularAccel;
 
+    double m_Position;
+    double m_Velocity;
+    double m_Angle;
+    double m_AngularVelocity;
+
     double m_TargetAngle;
     double m_TargetVelocity;
 

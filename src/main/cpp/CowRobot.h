@@ -59,7 +59,6 @@ private:
     double m_LeftDriveValue;
     double m_RightDriveValue;
 
-    double m_PreviousGyroError;
     double m_PreviousDriveError;
 
     double m_MatchTime;

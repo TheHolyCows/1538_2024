@@ -137,6 +137,5 @@ void CowBase::TeleopPeriodic()
 
 int main()
 {
-    
     return frc::StartRobot<CowBase>();
 }

@@ -6,17 +6,12 @@ CowRobot::CowRobot()
     m_StartTime     = 0;
     m_DSUpdateCount = 0;
 
-    // uncomment for b-bot
     m_PowerDistributionPanel = new frc::PowerDistribution(1, frc::PowerDistribution::ModuleType::kRev);
-    // m_PowerDistributionPanel = new frc::PowerDistribution();
 
     // mxp board was removed from robot - can remove this code
     m_LEDDisplay = nullptr;
 
     m_Gyro = CowPigeon::GetInstance();
-
-    m_PreviousGyroError = 0;
-    // m_Gyro->Reset(); - don't know why we have this commented
     m_Accelerometer = new frc::BuiltInAccelerometer(frc::BuiltInAccelerometer::kRange_4G);
 
     // Set up drivetrain
@@ -24,10 +19,10 @@ CowRobot::CowRobot()
     // fl, fr, bl, br
     // drive motor, angle motor, encoder canId's
     SwerveDrive::ModuleConstants swerveModuleConstants[4]{
-        SwerveDrive::ModuleConstants{ 2, 1, 25, CONSTANT("SWERVE_FL_ENCODER_OFFSET") },
-        SwerveDrive::ModuleConstants{ 4, 3, 26, CONSTANT("SWERVE_FR_ENCODER_OFFSET") },
-        SwerveDrive::ModuleConstants{ 6, 5, 27, CONSTANT("SWERVE_BL_ENCODER_OFFSET") },
-        SwerveDrive::ModuleConstants{ 8, 7, 28, CONSTANT("SWERVE_BR_ENCODER_OFFSET") }
+        SwerveDrive::ModuleConstants{ 1, 2, 25, CONSTANT("SWERVE_FL_ENCODER_OFFSET") },
+        SwerveDrive::ModuleConstants{ 3, 4, 26, CONSTANT("SWERVE_FR_ENCODER_OFFSET") },
+        SwerveDrive::ModuleConstants{ 5, 6, 27, CONSTANT("SWERVE_BL_ENCODER_OFFSET") },
+        SwerveDrive::ModuleConstants{ 7, 8, 28, CONSTANT("SWERVE_BR_ENCODER_OFFSET") }
     };
 
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
@@ -57,8 +52,6 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetSynchronizedSignals(
 void CowRobot::Reset()
 {
     m_MatchTime = 0;
-
-    m_PreviousGyroError = 0;
 
     m_Drivetrain->ResetConstants();
     m_DriveController->ResetConstants();
@@ -104,7 +97,7 @@ void CowRobot::Handle()
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetSynchronizedSignals());
 
     m_Controller->Handle(this);
-  //  m_Drivetrain->Handle();
+    m_Drivetrain->Handle();
     m_Shooter->Handle();
 
     // logger code below should have checks for debug mode before sending out data

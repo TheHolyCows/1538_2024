@@ -11,11 +11,6 @@ protected:
     const int m_Id;
     const double m_EncoderOffset;
 
-    double m_Velocity;
-    double m_Position;
-    double m_Angle;
-    double m_AngularVelocity;
-
     /**
      * @brief Helper function for optimize
      * @param scopeReference Current angle
@@ -44,8 +39,6 @@ public:
     virtual std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() = 0;
 
     inline int GetID() const { return m_Id; }
-
-    inline CowLib::CowSwerveModuleState GetState() const { return { m_Velocity, m_Angle, m_AngularVelocity }; }
 
     virtual CowLib::CowSwerveModulePosition GetPosition() = 0;
 
