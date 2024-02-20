@@ -296,6 +296,7 @@ void Shooter::Handle()
     {
         CowLib::CowLogger::GetInstance()->LogState(CowLib::CowLogger::SHOOTER, (uint16_t) m_ShooterState);
         CowLib::CowLogger::GetInstance()->LogState(CowLib::CowLogger::INTAKE, (uint16_t) m_IntakeState);
+        m_CycleCount = 1;
     }
 }
    
