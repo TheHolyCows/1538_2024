@@ -15,9 +15,13 @@ SwerveModule::SwerveModule(const int id,
     m_RotationMotor = std::make_unique<CowMotor::TalonFX>(rotationMotor, "cowdrive");
     m_Encoder       = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowdrive");
 
-    m_Encoder->ConfigAbsoluteOffset(-encoderOffset / 360.0);
+    m_Encoder->ConfigAbsoluteOffset(encoderOffset / 360.0);
+
+    m_DriveMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
+    m_DriveMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
     m_RotationMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
+    m_RotationMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     m_RotationMotor->FuseCANCoder(encoderId, CONSTANT("SWERVE_ROTATION_GEAR_RATIO"));
     m_RotationMotor->ConfigContinuousWrap(true);
 
@@ -27,8 +31,6 @@ SwerveModule::SwerveModule(const int id,
     m_RotationControlRequest.EnableFOC = true;
     m_RotationControlRequest.Position = 0;
     m_RotationControlRequest.FeedForward = 0;
-
-    m_PreviousAngle = 0;
 
     m_BrakeMode = true;
 
@@ -58,10 +60,10 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveModule::GetSynchronizedSign
 
 CowLib::CowSwerveModulePosition SwerveModule::GetPosition()
 {
-    double drive_rotation_offset = -(m_RotationMotor->GetPosition() - m_InitialRotation) * (CONSTANT("SWERVE_DRIVE_OFFSET_RATIO"));
+    double drivePositionOffset = (m_RotationMotor->GetPosition() - m_InitialRotation) * (CONSTANT("SWERVE_DRIVE_OFFSET_RATIO"));
 
     return CowLib::CowSwerveModulePosition{
-        .distance = ((m_DriveMotor->GetPosition() + drive_rotation_offset) / CONSTANT("SWERVE_DRIVE_GEAR_RATIO")) * CONSTANT("WHEEL_CIRCUMFERENCE"),
+        .distance = ((m_DriveMotor->GetPosition() + drivePositionOffset) / CONSTANT("SWERVE_DRIVE_GEAR_RATIO")) * CONSTANT("WHEEL_CIRCUMFERENCE"),
         .angle = m_RotationMotor->GetPosition() * 360.0
     };
 }

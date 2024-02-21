@@ -6,17 +6,12 @@ SwerveDriveController::SwerveDriveController(SwerveDrive &drivetrain)
       m_HeadingLocked(false),
       m_TargetHeading(0)
 {
-    m_ExponentialFilter = std::make_unique<CowLib::CowExponentialFilter>(CONSTANT("STICK_EXPONENTIAL_MODIFIER"));
+    m_ExponentialFilter = std::make_unique<CowLib::CowExponentialFilter>(0);
 
-    m_HeadingPIDController = std::make_unique<frc::ProfiledPIDController<units::meters>>(
-        CONSTANT("HEADING_P"),
-        CONSTANT("HEADING_I"),
-        CONSTANT("HEADING_D"),
-        frc::TrapezoidProfile<units::meters>::Constraints{
-            units::meters_per_second_t{ CONSTANT("HEADING_V") },
-            units::meters_per_second_squared_t{ CONSTANT("HEADING_A") } });
+    m_HeadingPIDController = std::make_unique<frc::ProfiledPIDController<units::degrees>>(0, 0, 0, frc::TrapezoidProfile<units::degrees>::Constraints());
+    m_HeadingPIDController->EnableContinuousInput(units::degree_t{ 0 }, units::degree_t{ 360 });
 
-    m_HeadingPIDController->EnableContinuousInput(units::meter_t{ 0 }, units::meter_t{ 360 });
+    ResetConstants();
 }
 
 void SwerveDriveController::ResetConstants()
@@ -24,10 +19,15 @@ void SwerveDriveController::ResetConstants()
     m_ExponentialFilter->Reset(CONSTANT("STICK_EXPONENTIAL_MODIFIER"));
 
     m_HeadingPIDController->SetPID(CONSTANT("HEADING_P"), CONSTANT("HEADING_I"), CONSTANT("HEADING_D"));
+    m_HeadingPIDController->SetConstraints(frc::TrapezoidProfile<units::degrees>::Constraints{
+            units::degrees_per_second_t{ CONSTANT("HEADING_V") },
+            units::degrees_per_second_squared_t{ CONSTANT("HEADING_A") } });
 }
 
 void SwerveDriveController::Drive(double x, double y, double rotation, bool fieldRelative)
 {
+    printf("%f %f\n", x, y);
+
     double centerOfRotationX = 0;
     double centerOfRotationY = 0;
 
@@ -38,45 +38,47 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
     double heading = m_Gyro.GetYawDegrees();
     if (fabs(rotation) > CONSTANT("STICK_DEADBAND"))
     {
-        omega           = ProcessDriveAxis(rotation, CONSTANT("DESIRED_MAX_ANG_VEL"), false);
+        omega           = ProcessDriveAxis(rotation, CONSTANT("DESIRED_MIN_ANG_VEL"), CONSTANT("DESIRED_MAX_ANG_VEL"), false);
         m_HeadingLocked = false;
     }
     else
     {
-        // double heading = m_Drivetrain.GetPoseRot();
-        if (fabs(heading - m_PrevHeading) < CONSTANT("HEADING_PID_THRESHOLD") && !m_HeadingLocked)
+        if (fabs(m_Gyro.GetYawVelocityDegrees()) < CONSTANT("HEADING_CAPTURE_THRESHOLD") && !m_HeadingLocked)
         {
-            // frc::SmartDashboard::PutNumber("heading lock setpoint", m_TargetHeading);
-
-            // if (!m_HeadingLocked)
-            // {
-            m_TargetHeading = m_PrevHeading;
+            m_TargetHeading = heading;
             m_HeadingLocked = true;
-            // }
         }
         else if (m_HeadingLocked)
         {
-            omega = m_HeadingPIDController->Calculate(units::meter_t{ heading }, units::meter_t{ m_TargetHeading });
+            omega = m_HeadingPIDController->Calculate(units::degree_t{ heading }, units::degree_t{ m_TargetHeading });
         }
-
-        // omega = (fmod(heading, 360) - fmod(m_TargetHeading, 360)) * CONSTANT("HEADING_P");
-        // frc::SmartDashboard::PutNumber("heading pid error", m_HeadingPIDController->GetPositionError());
-        // frc::SmartDashboard::PutNumber("heading pid output", omega);
     }
 
     // frc::SmartDashboard::PutNumber("heading locked", m_HeadingLocked);
     // frc::SmartDashboard::PutNumber("omega deg / sec", omega);
 
-    x = ProcessDriveAxis(x, CONSTANT("DESIRED_MAX_SPEED"), false);
-    y = ProcessDriveAxis(y, CONSTANT("DESIRED_MAX_SPEED"), false);
+    double magnitude = sqrt(pow(x, 2.0) + pow(y, 2.0));
+
+    if (magnitude > CONSTANT("STICK_DEADBAND"))
+    {
+        double magnitudeFiltered = m_ExponentialFilter->Filter(magnitude);
+        double theta = atan2(y, x);
+
+        x = cos(theta) * ((magnitudeFiltered * (CONSTANT("DESIRED_MAX_SPEED") - CONSTANT("DESIRED_MIN_SPEED"))) + (x > 0 ? CONSTANT("DESIRED_MIN_SPEED") : -CONSTANT("DESIRED_MIN_SPEED")));
+        y = sin(theta) * ((magnitudeFiltered * (CONSTANT("DESIRED_MAX_SPEED") - CONSTANT("DESIRED_MIN_SPEED"))) + (y > 0 ? CONSTANT("DESIRED_MIN_SPEED") : -CONSTANT("DESIRED_MIN_SPEED")));
+    }
+    else
+    {
+        x = 0;
+        y = 0;
+    }
+
     if (x == 0 && y == 0 && fabs(rotation) < CONSTANT("STICK_DEADBAND"))
     {
         omega = 0;
     }
 
     m_Drivetrain.SetVelocity(x, y, omega, fieldRelative, centerOfRotationX, centerOfRotationY);
-
-    m_PrevHeading = heading;
 }
 
 void SwerveDriveController::LockHeading(double x, double y, bool useRawInputs)
@@ -101,15 +103,13 @@ void SwerveDriveController::LockHeading(double x, double y, bool useRawInputs)
     m_HeadingLocked = true;
 
     // idk if this makes a difference but should ensure no weird PID to past heading things
-    m_PrevHeading = m_TargetHeading;
-
-    double omega = m_HeadingPIDController->Calculate(units::meter_t{ m_Gyro.GetYawDegrees() },
-                                                     units::meter_t{ m_TargetHeading });
+    double omega = m_HeadingPIDController->Calculate(units::degree_t{ m_Gyro.GetYawDegrees() },
+                                                     units::degree_t{ m_TargetHeading });
 
     if (!useRawInputs)
     {
-        x = ProcessDriveAxis(x, CONSTANT("DESIRED_MAX_SPEED"), false);
-        y = ProcessDriveAxis(y, CONSTANT("DESIRED_MAX_SPEED"), false);
+        x = ProcessDriveAxis(x, CONSTANT("DESIRED_MIN_SPEED"), CONSTANT("DESIRED_MAX_SPEED"), false);
+        y = ProcessDriveAxis(y, CONSTANT("DESIRED_MIN_SPEED"), CONSTANT("DESIRED_MAX_SPEED"), false);
     }
 
     m_Drivetrain.SetVelocity(x, y, omega, true, 0, 0);
@@ -164,8 +164,30 @@ void SwerveDriveController::ResetHeadingLock()
     m_TargetHeading = m_Gyro.GetYawDegrees();
 }
 
-double SwerveDriveController::ProcessDriveAxis(double input, double scale, bool reverse)
+double SwerveDriveController::ProcessDriveAxis(double input, double scaleMin, double scaleMax, bool reverse)
 {
-    return m_ExponentialFilter->Filter(CowLib::Deadband(input, CONSTANT("STICK_DEADBAND"))) * scale
-           * (reverse ? -1 : 1);
+    double inputDeadbanded = CowLib::Deadband(input, CONSTANT("STICK_DEADBAND"));
+
+    // Offset the input by the deadband and then renormalize it
+    if (inputDeadbanded > 0)
+    {
+        inputDeadbanded -= CONSTANT("STICK_DEADBAND");
+    }
+    else if (inputDeadbanded < 0)
+    {
+        inputDeadbanded += CONSTANT("STICK_DEADBAND");
+    }
+
+    inputDeadbanded = (inputDeadbanded / (1 - CONSTANT("STICK_DEADBAND")));
+
+    if (inputDeadbanded == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        // Exponential filter
+        return ((m_ExponentialFilter->Filter(inputDeadbanded) * (scaleMax - scaleMin)) + (inputDeadbanded > 0 ? scaleMin : -scaleMin)) *
+               (reverse ? -1 : 1);
+    }
 }

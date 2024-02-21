@@ -63,8 +63,8 @@ namespace CowMotor
         double GetPosition() override;
         double GetVelocity() override;
         double GetAcceleration() override;
-        double GetTemperature() override;
         double GetCurrent() override;
+        double GetTemperature() override;
 
         Status SetEncoderPosition(double value) override;
 

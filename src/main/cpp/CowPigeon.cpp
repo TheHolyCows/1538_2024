@@ -21,6 +21,7 @@ CowPigeon::CowPigeon()
     m_SynchronizedSignals.Yaw = &m_Pigeon->GetYaw();
     m_SynchronizedSignals.Pitch = &m_Pigeon->GetPitch();
     m_SynchronizedSignals.Roll = &m_Pigeon->GetRoll();
+    m_SynchronizedSignals.YawVelocity = &m_Pigeon->GetAngularVelocityZWorld();
 
     m_Inverted = false;
 }
@@ -30,7 +31,8 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> CowPigeon::GetSynchronizedSignals
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
         m_SynchronizedSignals.Yaw,
         m_SynchronizedSignals.Pitch,
-        m_SynchronizedSignals.Roll
+        m_SynchronizedSignals.Roll,
+        m_SynchronizedSignals.YawVelocity
     };
 
     return signals;
@@ -56,6 +58,11 @@ units::degree_t CowPigeon::GetRoll()
     return m_SynchronizedSignals.Roll->GetValue()* (m_Inverted ? -1 : 1);
 }
 
+units::degrees_per_second_t CowPigeon::GetYawVelocity()
+{
+    return m_SynchronizedSignals.YawVelocity->GetValue()* (m_Inverted ? -1 : 1);
+}
+
 double CowPigeon::GetYawDegrees()
 {
     return GetYaw().value();
@@ -69,6 +76,11 @@ double CowPigeon::GetPitchDegrees()
 double CowPigeon::GetRollDegrees()
 {
     return GetRoll().value();
+}
+
+double CowPigeon::GetYawVelocityDegrees()
+{
+    return GetYawVelocity().value();
 }
 
 void CowPigeon::SetYaw(units::degree_t angle)
