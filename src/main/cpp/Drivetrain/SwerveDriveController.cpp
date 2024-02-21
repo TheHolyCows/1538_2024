@@ -26,8 +26,6 @@ void SwerveDriveController::ResetConstants()
 
 void SwerveDriveController::Drive(double x, double y, double rotation, bool fieldRelative)
 {
-    printf("%f %f\n", x, y);
-
     double centerOfRotationX = 0;
     double centerOfRotationY = 0;
 
