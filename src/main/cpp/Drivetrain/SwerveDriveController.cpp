@@ -59,11 +59,11 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
 
     if (magnitude > CONSTANT("STICK_DEADBAND"))
     {
-        double magnitudeFiltered = m_ExponentialFilter->Filter(magnitude);
+        double magnitudeFiltered = ProcessDriveAxis(magnitude, CONSTANT("DESIRED_MIN_SPEED"), CONSTANT("DESIRED_MAX_SPEED"), false);
         double theta = atan2(y, x);
 
-        x = cos(theta) * ((magnitudeFiltered * (CONSTANT("DESIRED_MAX_SPEED") - CONSTANT("DESIRED_MIN_SPEED"))) + (x > 0 ? CONSTANT("DESIRED_MIN_SPEED") : -CONSTANT("DESIRED_MIN_SPEED")));
-        y = sin(theta) * ((magnitudeFiltered * (CONSTANT("DESIRED_MAX_SPEED") - CONSTANT("DESIRED_MIN_SPEED"))) + (y > 0 ? CONSTANT("DESIRED_MIN_SPEED") : -CONSTANT("DESIRED_MIN_SPEED")));
+        x = cos(theta) * magnitudeFiltered;
+        y = sin(theta) * magnitudeFiltered;
     }
     else
     {
