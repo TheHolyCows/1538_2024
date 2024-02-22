@@ -36,7 +36,7 @@ void Vision::Handle()
 
     if (m_LEDState == LEDState::OFF)
     {
-        // Use documentation to turn Limelight off
+        nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("force off", 1);
     }
     else if (m_LEDState == LEDState::BLINK_SLOW || m_LEDState == LEDState::BLINK_FAST)
     {
