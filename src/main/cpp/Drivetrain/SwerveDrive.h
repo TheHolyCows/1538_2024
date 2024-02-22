@@ -27,8 +27,6 @@ class SwerveDrive
 private:
     std::array<SwerveModuleInterface *, 4> m_Modules{};
 
-    frc::Rotation2d m_Angle = frc::Rotation2d{ 0_deg };
-
     frc::Pose2d m_Pose{ 0_m, 0_m, 0_deg };
 
     frc::ChassisSpeeds m_PrevChassisSpeeds{ 0.0_mps, 0.0_mps, units::radians_per_second_t(0) };

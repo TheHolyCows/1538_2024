@@ -234,14 +234,14 @@ namespace CowMotor
         return m_SynchronizedSignals.Acceleration->GetValue().value();
     }
 
-    double TalonFX::GetTemperature()
-    {
-        return m_UnsynchronizedSignals.Temperature->Refresh().GetValue().value();
-    }
-
     double TalonFX::GetCurrent()
     {
         return m_SynchronizedSignals.Current->GetValue().value();
+    }
+
+    double TalonFX::GetTemperature()
+    {
+        return m_UnsynchronizedSignals.Temperature->Refresh().GetValue().value();
     }
 
     Status TalonFX::SetEncoderPosition(double value)

@@ -26,7 +26,7 @@ public:
     void ResetConstants();
 
 private:
-    double ProcessDriveAxis(double input, double scale, bool reverse);
+    double ProcessDriveAxis(double input, double scaleMin, double scaleMax, bool reverse);
 
     SwerveDrive &m_Drivetrain;
 
@@ -34,9 +34,8 @@ private:
 
     std::unique_ptr<CowLib::CowExponentialFilter> m_ExponentialFilter;
 
-    std::unique_ptr<frc::ProfiledPIDController<units::meters>> m_HeadingPIDController;
+    std::unique_ptr<frc::ProfiledPIDController<units::degrees>> m_HeadingPIDController;
 
     bool m_HeadingLocked;
     double m_TargetHeading;
-    double m_PrevHeading;
 };

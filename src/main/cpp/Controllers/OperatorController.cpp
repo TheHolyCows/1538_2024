@@ -31,37 +31,40 @@ void OperatorController::Handle(CowRobot *bot)
     else
     {
         // standard drive with field/bot relative option
+        
+        // From the driver station perspective, +x is right, +y is away from
+        // the driver station, and +rotation is a counter clockwise rotation
         bot->GetDriveController()->Drive(m_CB->GetLeftDriveStickY(),
-                                         m_CB->GetLeftDriveStickX(),
-                                         m_CB->GetRightDriveStickX() * -1,
+                                         -m_CB->GetLeftDriveStickX(),
+                                         -m_CB->GetRightDriveStickX(),
                                          true);
     }
    
-    if (m_CB->GetDriveButton(1))
-    {
-        bot->m_Shooter->Intake();
-    }
-    else if(m_CB->GetDriveButton(2))
-    {
-        bot->m_Shooter->Outtake();
-    }
-    else if (!m_CB->GetDriveButton(3))
-    {
-        bot->m_Shooter->StopIntake();
-    }
+    // if (m_CB->GetDriveButton(1))
+    // {
+    //     bot->m_Shooter->Intake();
+    // }
+    // else if(m_CB->GetDriveButton(2))
+    // {
+    //     bot->m_Shooter->Outtake();
+    // }
+    // else if (!m_CB->GetDriveButton(3))
+    // {
+    //     bot->m_Shooter->StopIntake();
+    // }
 
-    if(m_CB->GetDriveButton(5))
-    {
-        bot->m_Shooter->PrimeShooter();
+    // if(m_CB->GetDriveButton(5))
+    // {
+    //     bot->m_Shooter->PrimeShooter();
 
-        if(m_CB->GetDriveButton(3))
-        {
-            bot->m_Shooter->Shoot();
-        }
-    }
-    else
-    {
-        bot->m_Shooter->StopShooter();
-    }
+    //     if(m_CB->GetDriveButton(3))
+    //     {
+    //         bot->m_Shooter->Shoot();
+    //     }
+    // }
+    // else
+    // {
+    //     bot->m_Shooter->StopShooter();
+    // }
     
 }

@@ -26,8 +26,6 @@
 class SwerveModule : public SwerveModuleInterface
 {
 private:
-    double m_PreviousAngle;
-
     std::unique_ptr<CowMotor::TalonFX> m_DriveMotor;
     std::unique_ptr<CowMotor::TalonFX> m_RotationMotor;
     std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
