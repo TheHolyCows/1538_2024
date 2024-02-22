@@ -19,6 +19,7 @@
 
 // #include "Subsystems/ArmState.h" // delete before 2024
 // #include "Subsystems/Vision.h"
+#include "Subsystems/Pivot.h"
 #include "Subsystems/Shooter.h"
 // #include "Subsystems/Elevator.h"
 #include <frc/BuiltInAccelerometer.h>
@@ -32,6 +33,7 @@ class CowRobot
 public:
     // Drive Motors
     SwerveDrive *m_Drivetrain;
+    Pivot *m_Pivot;
     Shooter *m_Shooter;
     // Elevator *m_Elevator;
 

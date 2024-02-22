@@ -11,6 +11,7 @@
 #include "../Cowconstants.h"
 #include "../Cowlib/CowLPF.h"
 #include "../CowLib/Conversions.h"
+#include "../CowLib/CowLogger.h"
 
 #include <cmath>
 
@@ -63,6 +64,9 @@ private:
 
     IntakeState m_IntakeState;
     ShooterState m_ShooterState;
+ 
     double m_DetectStartTime;
     double m_IntakeGoalPosition;
+ 
+    uint32_t m_CycleCount;
 };

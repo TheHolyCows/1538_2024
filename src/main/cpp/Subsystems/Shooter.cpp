@@ -17,6 +17,8 @@ Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID)
 
     m_IntakeState = IntakeState::IDLE;
     m_ShooterState = ShooterState::IDLE;
+
+    m_CycleCount = 1;
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> Shooter::GetSynchronizedSignals()
@@ -217,6 +219,13 @@ void Shooter::Handle()
         {
             m_ShooterState = ShooterState::SPIN_UP;
         }
+    }
+
+    if (m_CycleCount++ % 100 == 0) // log every (100 * 10ms) = 1 sec
+    {
+        CowLib::CowLogger::GetInstance()->LogState(CowLib::CowLogger::SHOOTER, (uint16_t) m_ShooterState);
+        CowLib::CowLogger::GetInstance()->LogState(CowLib::CowLogger::INTAKE, (uint16_t) m_IntakeState);
+        m_CycleCount = 1;
     }
 }
    

@@ -28,7 +28,10 @@ CowRobot::CowRobot()
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
 
+    m_Pivot = new Pivot(9, 10, 29, CONSTANT("PIVOT_ENCODER_OFFSET"));
+
     m_Shooter = new Shooter(11, 12, 9, 10, 13);
+    
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetSynchronizedSignals());
 }
@@ -75,7 +78,7 @@ void CowRobot::SetController(GenericController *controller)
 
 void CowRobot::PrintToDS()
 {
-    if (m_DSUpdateCount++ % 10 == 0)
+    if (m_DSUpdateCount++ % 20 == 0)
     {
         m_DSUpdateCount = 1;
     }
@@ -103,7 +106,7 @@ void CowRobot::Handle()
     // logger code below should have checks for debug mode before sending out data
     CowLib::CowLogger::GetInstance()->Handle();
     // log the following every 200 ms
-    // if (m_DSUpdateCount % 15 == 0)
+    // if (m_DSUpdateCount % 20 == 0)
     // {
     //     // m_DSUpdateCount is reset in PrintToDS
     //     CowLib::CowLogger::LogGyro(m_Gyro);
