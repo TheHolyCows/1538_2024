@@ -117,7 +117,7 @@ void CowBase::DisabledPeriodic()
         // m_Bot->GetArm()->DisabledCalibration();
     }
 
-    if (m_DisabledCount++ % 35 == 0)
+    if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
     {
         m_Alliance = frc::DriverStation::Alliance::kRed;
         CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());

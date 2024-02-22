@@ -277,6 +277,29 @@ namespace CowLib
     }
 
     /**
+     * CowLogger::LogState
+     * logs current state of up to 4 different mechanisms
+     * @param id corresponds to subsystem ID defined in StateLogID enum
+     * @param state current state
+     */
+    void CowLogger::LogState(StateLogID id, uint16_t state)
+    {
+        if ((int) CONSTANT("DEBUG") != CowLogger::LOG_INFO)
+        {
+            return;
+        }
+
+        CowStateLog logPacket;
+
+        logPacket.hdr.msgType = CowLogger::STATE_LOG;
+        logPacket.hdr.msgLen = sizeof(CowStateLog);
+        logPacket.id = id;
+        logPacket.state = state;
+
+        SendLog(&logPacket, sizeof(logPacket));
+    }
+
+    /**
      * CowLogger::Handle
      * handler to be called every cycle for logging within CowRobot, strictly used
      * to log registered motors, therefore, this function can safely
@@ -311,7 +334,7 @@ namespace CowLib
         //     }
         // }
 
-        if (m_TickCount++ % 10 == 0) // 200 miliseconds
+        if (m_TickCount++ % 20 == 0) // 200 miliseconds
         {
             m_TickCount = 1;
 

@@ -45,7 +45,11 @@ namespace CowLib
             BATT_LOG,
             AUTO_LOG,
             GYRO_LOG,
-            POSE_LOG
+            POSE_LOG,
+            VAR_LOG,
+            BOOL_LOG,
+            VAL_LOG,
+            STATE_LOG
         };
 
         enum CowLogLevel : uint16_t
@@ -57,6 +61,12 @@ namespace CowLib
             LOG_DBG
         };
 
+        enum StateLogID : uint16_t
+        {
+            SHOOTER = 0,
+            INTAKE
+        };
+
         const static int REGISTERED_MOTORS_MAX = 24;
 
         void RegisterMotor(uint32_t, CowMotor::GenericMotorController *);
@@ -64,6 +74,7 @@ namespace CowLib
         static void LogGyro(CowPigeon *);
         static void LogPose(double, double, double);
         static void LogMsg(CowLogLevel, const char *fmt, ...);
+        static void LogState(StateLogID, uint16_t state);
 
         void Handle();
         void Reset();
@@ -152,6 +163,13 @@ namespace CowLib
             double x;
             double y;
             double rot;
+        };
+
+        struct CowStateLog
+        {
+            CowLogHdr hdr;
+            uint16_t id;
+            uint16_t state;
         };
     };
 
