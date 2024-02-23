@@ -24,7 +24,7 @@ public:
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
     void ResetConstants();
-    
+
     double GetIntakePosition();
     double GetIntakeVelocity();
     double GetIntakeAcceleration();
@@ -34,13 +34,15 @@ public:
     double GetShooterCurrent();
 
     void Intake();
-    void StopIntake();
     void Outtake();
-    void Handle();
+    void StopIntake();
 
     void PrimeShooter();
     void StopShooter();
+
     void Shoot();
+
+    void Handle();
     
 private:
     enum class IntakeState {
