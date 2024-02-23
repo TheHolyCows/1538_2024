@@ -2,7 +2,7 @@
 
 Vision::Vision()
 {
-
+    m_TickCount = 0;
 }
 
 Vision::PoseWithLatency Vision::GetRobotPose()
@@ -31,31 +31,42 @@ void Vision::SetLEDState(Vision::LEDState ledState)
 void Vision::Handle()
 {
     nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 4);
-
-
+    m_TickCount++;
 
     if (m_LEDState == LEDState::OFF)
     {
-        nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("force off", 1);
+        nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 1);
     }
     else if (m_LEDState == LEDState::BLINK_SLOW || m_LEDState == LEDState::BLINK_FAST)
     {
-        double m_StateChangeTime = frc::Timer::GetFPGATimestamp().value();
-        double timeElapsed = frc::Timer::GetFPGATimestamp().value() - m_StateChangeTime;
-        
         if (m_LEDState == LEDState::BLINK_SLOW)
         {
-            if (timeElapsed >= CONSTANT("BLINK_SLOW_TIME"))
+            if(m_TickCount < CONSTANT("BLINK_SLOW_INTERVAL"))
             {
-                // flip LED boolean
+                m_IsLEDOn = true;
             }
-            
+            else if (m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") && m_TickCount < CONSTANT("BLINK_SLOW_INTERVAL") * 2)
+            {
+                m_IsLEDOn = false;
+            }
+            else 
+            {
+                m_TickCount = 0;
+            }
         }
         else if (m_LEDState == LEDState::BLINK_FAST)
         {
-            if (timeElapsed >= CONSTANT("BLINK_FAST_TIME"))
+            if(m_TickCount < CONSTANT("BLINK_FAST_INTERVAL"))
             {
-                // flip LED boolean
+                m_IsLEDOn = true;
+            }
+            else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") && m_TickCount < CONSTANT("BLINK_FAST_INTERVAL") * 2)
+            {
+                m_IsLEDOn = false;
+            }
+            else 
+            {
+                m_TickCount = 0;
             }
         }
     }
