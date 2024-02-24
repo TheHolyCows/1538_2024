@@ -29,7 +29,8 @@ CowRobot::CowRobot()
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
 
     m_Pivot = new Pivot(9, 10, 29, CONSTANT("PIVOT_ENCODER_OFFSET"));
-
+    m_Elevator = new Elevator(12, 13);
+    m_Wrist = new Wrist(13, 30, CONSTANT("WRIST_ENCODER_OFFSET"));
     m_Shooter = new Shooter(15, 16, 14);
     
 

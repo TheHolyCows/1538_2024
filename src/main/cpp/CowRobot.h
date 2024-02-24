@@ -21,7 +21,8 @@
 // #include "Subsystems/Vision.h"
 #include "Subsystems/Pivot.h"
 #include "Subsystems/Shooter.h"
-// #include "Subsystems/Elevator.h"
+#include "Subsystems/Elevator.h"
+#include "Subsystems/Wrist.h"
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/PowerDistribution.h>
@@ -35,7 +36,8 @@ public:
     SwerveDrive *m_Drivetrain;
     Pivot *m_Pivot;
     Shooter *m_Shooter;
-    // Elevator *m_Elevator;
+    Elevator *m_Elevator;
+    Wrist *m_Wrist;
 
 private:
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
