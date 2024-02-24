@@ -96,11 +96,11 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (m_CB->GetOperatorButton(2))
     {
-        bot->m_Wrist->SetAngle(20,bot->m_Pivot->GetSetpoint());
+        bot->m_Wrist->SetAngle(CONSTANT("WRIST_MIN_ANGLE"),bot->m_Pivot->GetSetpoint());
     }
     if (m_CB->GetOperatorButton(1))
     {
-        bot->m_Wrist->SetAngle(80,bot->m_Pivot->GetSetpoint());
+        bot->m_Wrist->SetAngle(CONSTANT("WRIST_MAX_ANGLE"),bot->m_Pivot->GetSetpoint());
     }
     
 }

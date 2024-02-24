@@ -49,7 +49,7 @@ void Wrist::SetAngle(double angle, double pivotAngle)
     m_CanSetAngle = true;
 
     // compute angle of wrist relative to ground
-    double angleSetpoint = angle + pivotAngle;
+    double angleSetpoint = angle + pivotAngle + 90;
     
     
     if (angleSetpoint > CONSTANT("WRIST_MAX_ANGLE"))
