@@ -2,16 +2,16 @@
 
 Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int encoderOffset)
 {
-    m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowbus");
-    m_PivotMotor2 = std::make_unique<CowMotor::TalonFX>(motorId2, "cowbus");
+    m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
+    m_PivotMotor2 = std::make_unique<CowMotor::TalonFX>(motorId2, "cowdrive");
 
+    m_PivotMotor1->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     m_PivotMotor2->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
-    m_PivotMotor2->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
-    m_PivotMotor1->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
-    m_PivotMotor2->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
+    m_PivotMotor1->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
+    m_PivotMotor2->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
 
-    m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowbus");
+    m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowdrive");
     m_Encoder->ConfigAbsoluteOffset(encoderOffset / 360.0);
 
     SetAngle(CONSTANT("PIVOT_STARTING_ANGLE"));
@@ -28,11 +28,11 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int en
 std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
 {
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
-    std::vector<ctre::phoenix6::BaseStatusSignal*> intake1Signals = m_PivotMotor1->GetSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> intake2Signals = m_PivotMotor2->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot1Signals = m_PivotMotor1->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot2Signals = m_PivotMotor2->GetSynchronizedSignals();
 
-    signals.insert(signals.end(), intake1Signals.begin(), intake1Signals.end());
-    signals.insert(signals.end(), intake2Signals.begin(), intake2Signals.end());
+    signals.insert(signals.end(), pivot1Signals.begin(), pivot1Signals.end());
+    signals.insert(signals.end(), pivot2Signals.begin(), pivot2Signals.end());
 
     return signals;
 }
@@ -40,13 +40,13 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
 double Pivot::GetAngle()
 {
     // return CowLib::Conversions::FalconToDegrees(m_PivotMotor1->GetPosition(), CONSTANT("PIVOT_GEAR_RATIO"));
-    return m_PivotMotor1->GetPosition();
+    return m_PivotMotor1->GetPosition() * 360.0;
 }
 
 double Pivot::GetSetpoint()
 {
     //  return CowLib::Conversions::FalconToDegrees(m_PivotPosRequest.Position, CONSTANT("PIVOT_GEAR_RATIO"));
-    return m_PivotPosRequest.Position;
+    return m_PivotPosRequest.Position * 360.0;
 }
 
 void Pivot::SetAngle(double angle)
@@ -60,7 +60,7 @@ void Pivot::SetAngle(double angle)
         angle = CONSTANT("PIVOT_MIN_ANGLE");
     }
 
-    m_PivotPosRequest.Position = angle;
+    m_PivotPosRequest.Position = angle / 360.0;
 }
 
 void Pivot::BrakeMode(bool brakeMode)
