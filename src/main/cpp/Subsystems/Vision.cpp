@@ -24,6 +24,6 @@ double Vision::ComputeWristAngle(frc::Pose2d curPos, frc::Translation2d targetPo
     // assuming 70 deg at 0 dist and 30 deg at 421 in (opposing alliance line)
     // math would be 70 - 0.095d = angle
     // compute wrist multiplier
-    double wristMultiplier = (CONSTANT("WRIST_AT_MAX") - CONSTANT("WRIST_AT_ZERO")) / CONSTANT("MAX_SHOOT_DIST");
-    return CONSTANT("WRIST_AT_ZERO") - wristMultiplier * dist;
+    double wristMultiplier = (CONSTANT("WRIST_AT_MAX_SHOOT") - CONSTANT("WRIST_AT_MIN_SHOOT")) / CONSTANT("MAX_SHOOT_DIST");
+    return CONSTANT("WRIST_AT_MIN_SHOOT") - wristMultiplier * dist;
 }
