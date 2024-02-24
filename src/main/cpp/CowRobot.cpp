@@ -59,6 +59,10 @@ void CowRobot::Reset()
 
     m_Drivetrain->ResetConstants();
     m_DriveController->ResetConstants();
+
+    m_Pivot->ResetConstants();
+    m_Elevator->ResetConstants();
+    m_Wrist->ResetConstants();
     m_Shooter->ResetConstants();
     // m_Controller->ResetConstants(); TODO: error
 
@@ -102,6 +106,10 @@ void CowRobot::Handle()
 
     m_Controller->Handle(this);
     m_Drivetrain->Handle();
+    
+    m_Pivot->Handle();
+    m_Elevator->Handle();
+    m_Wrist->Handle();
     m_Shooter->Handle();
 
     // logger code below should have checks for debug mode before sending out data
