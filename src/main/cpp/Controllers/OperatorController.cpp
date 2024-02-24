@@ -66,5 +66,41 @@ void OperatorController::Handle(CowRobot *bot)
     // {
     //     bot->m_Shooter->StopShooter();
     // }
+
+    if (m_CB->GetOperatorButton(8))
+    {
+        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_MID_SETPOINT"));
+    }
+    if (m_CB->GetOperatorButton(9))
+    {
+        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_FAR_SETPOINT"));
+    }
+
+    if (m_CB->GetOperatorButton(5))
+    {
+        bot->m_Shooter->Intake();
+    }
+    else if (m_CB->GetOperatorButton(6))
+    {
+        bot->m_Shooter->Outtake();
+    }
+
+    if (m_CB->GetOperatorButton(4))
+    {
+        bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
+    }
+    else
+    {
+        bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
+    }
+
+    if (m_CB->GetOperatorButton(2))
+    {
+        bot->m_Wrist->SetAngle(20,bot->m_Pivot->GetSetpoint());
+    }
+    if (m_CB->GetOperatorButton(1))
+    {
+        bot->m_Wrist->SetAngle(80,bot->m_Pivot->GetSetpoint());
+    }
     
 }
