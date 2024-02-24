@@ -2,23 +2,24 @@
 
 Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID)
 {
-
     m_Shooter1 = std::make_unique<CowMotor::TalonFX>(shooterID1, "cowdrive");
-    m_Shooter2 = std::make_unique<CowMotor::TalonFX>(shooterID2, "cowdrive");
-
-    m_Shooter1->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
-    m_Shooter2->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
-
     m_Shooter1->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
-    m_Shooter2->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
+    m_Shooter1->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
+
+    m_Shooter2 = std::make_unique<CowMotor::TalonFX>(shooterID2, "cowdrive");
+    m_Shooter2->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
+    m_Shooter2->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
     
     m_Intake = std::make_unique<CowMotor::TalonFX>(intakeID, "cowdrive");
+    m_Intake->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
     m_Intake->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
     m_IntakeState = IntakeState::IDLE;
     m_ShooterState = ShooterState::IDLE;
 
     m_CycleCount = 1;
+
+    ResetConstants();
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> Shooter::GetSynchronizedSignals()
@@ -80,17 +81,17 @@ void Shooter::Intake()
     }
 }
 
+void Shooter::Outtake()
+{
+    m_IntakeState = IntakeState::OUTTAKE;
+}
+
 void Shooter::StopIntake()
 {
     if (m_IntakeState != IntakeState::HOLD)
     {
         m_IntakeState = IntakeState::IDLE;
     }
-}
-
-void Shooter::Outtake()
-{
-    m_IntakeState = IntakeState::OUTTAKE;
 }
 
 void Shooter::PrimeShooter()
@@ -111,7 +112,7 @@ void Shooter::StopShooter()
 
 void Shooter::Shoot()
 {
-    if (m_ShooterState == ShooterState::READY && m_IntakeState == IntakeState::HOLD)
+    if (m_IntakeState == IntakeState::HOLD && m_ShooterState == ShooterState::READY)
     {
         m_IntakeState = IntakeState::SHOOT;
     }
@@ -122,13 +123,14 @@ void Shooter::Handle()
     // Intake state machine
     if (m_IntakeState == IntakeState::IDLE)
     {
-        CowMotor::Control::TorqueCurrent request = {0};
+        CowMotor::Control::DutyCycle request = {0};
 
         m_Intake->Set(request);
     }
     else if (m_IntakeState == IntakeState::OUTTAKE)
     {
         CowMotor::Control::DutyCycle request = {0};
+        request.EnableFOC = true;
         request.DutyCycle = CONSTANT("INTAKE_EXHAUST");
 
         m_Intake->Set(request);
@@ -136,7 +138,6 @@ void Shooter::Handle()
     else if (m_IntakeState == IntakeState::WAIT_FOR_STOP)
     {
         CowMotor::Control::TorqueCurrent request = {0};
-
         m_Intake->Set(request);
 
         if (GetIntakeVelocity() == 0)
@@ -150,7 +151,7 @@ void Shooter::Handle()
         CowMotor::Control::TorqueCurrent request = {0};
         request.Current = CONSTANT("INTAKE_DETECT_CURRENT");
         request.MaxDutyCycle = CONSTANT("INTAKE_DETECT_MAX_DUTY_CYCLE");
-        
+
         m_Intake->Set(request);
 
         double currentTime = std::min(frc::Timer::GetFPGATimestamp().value() - m_DetectStartTime, CONSTANT("INTAKE_SPINUP_TIME"));
@@ -169,8 +170,8 @@ void Shooter::Handle()
     else if (m_IntakeState == IntakeState::HOLD)
     {
         CowMotor::Control::PositionDutyCycle request = {0};
-        request.Position = m_IntakeGoalPosition;
         request.EnableFOC = true;
+        request.Position = m_IntakeGoalPosition;
 
         m_Intake->Set(request);
     }
@@ -190,7 +191,6 @@ void Shooter::Handle()
 
         m_Shooter1->Set(request);
         m_Shooter2->Set(request);
-
     }
     else if (m_ShooterState == ShooterState::SPIN_UP)
     {
