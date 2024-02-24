@@ -63,8 +63,12 @@ double Elevator::GetCurrent()
     return m_Motor1->GetCurrent() + m_Motor2->GetCurrent();
 }
 
-void Elevator::SetExtension(double extensionLength)
+void Elevator::SetExtension(double extensionLength, double pivotSetpoint)
 {
+    if (pivotSetpoint <= CONSTANT("PREVENT_EXTENSION_UNDER_ANGLE"))
+    {
+        extensionLength = CONSTANT("ELEVATOR_MIN_EXTENSION");
+    }
     m_TargetExtensionLength = std::clamp(extensionLength, CONSTANT("ELEVATOR_MIN_EXTENSION"), CONSTANT("ELEVATOR_MAX_EXTENSION"));
 }
 

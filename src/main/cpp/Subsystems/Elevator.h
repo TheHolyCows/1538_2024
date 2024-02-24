@@ -26,7 +26,7 @@ public:
     double GetAcceleration();
     double GetCurrent();
 
-    void SetExtension(double extensionLength);
+    void SetExtension(double extensionLength, double pivotSetpoint);
 
     void Handle();
     
