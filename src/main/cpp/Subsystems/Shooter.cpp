@@ -2,15 +2,15 @@
 
 Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID)
 {
-    m_Shooter1 = std::make_unique<CowMotor::TalonFX>(shooterID1, "cowdrive");
+    m_Shooter1 = std::make_unique<CowMotor::TalonFX>(shooterID1, "cowbus");
     m_Shooter1->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Shooter1->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
 
-    m_Shooter2 = std::make_unique<CowMotor::TalonFX>(shooterID2, "cowdrive");
+    m_Shooter2 = std::make_unique<CowMotor::TalonFX>(shooterID2, "cowbus");
     m_Shooter2->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Shooter2->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
     
-    m_Intake = std::make_unique<CowMotor::TalonFX>(intakeID, "cowdrive");
+    m_Intake = std::make_unique<CowMotor::TalonFX>(intakeID, "cowbus");
     m_Intake->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Intake->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
