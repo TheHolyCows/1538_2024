@@ -11,7 +11,7 @@ Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID)
     m_Shooter2->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
     
     m_Intake = std::make_unique<CowMotor::TalonFX>(intakeID, "cowbus");
-    m_Intake->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
+    m_Intake->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Intake->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
     m_IntakeState = IntakeState::IDLE;

@@ -76,7 +76,12 @@ void OperatorController::Handle(CowRobot *bot)
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_FAR_SETPOINT"));
     }
 
-    if (m_CB->GetOperatorButton(5))
+    // TODO: Move calibration stuff to test controller
+    if (m_CB->GetDriveAxis(2) > 0.8)
+    {
+        bot->m_Shooter->CalibrateIntake();
+    }
+    else if (m_CB->GetOperatorButton(5))
     {
         bot->m_Shooter->Intake();
     }
