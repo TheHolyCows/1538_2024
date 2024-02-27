@@ -82,7 +82,11 @@ void OperatorController::Handle(CowRobot *bot)
     }
     else if (m_CB->GetOperatorButton(6))
     {
-        bot->m_Shooter->Outtake();
+        bot->m_Shooter->Exhaust();
+    }
+    else
+    {
+        bot->m_Shooter->StopIntake();
     }
 
     if (m_CB->GetOperatorButton(4))
