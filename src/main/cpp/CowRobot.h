@@ -40,7 +40,8 @@ public:
     Wrist *m_Wrist;
 
 private:
-    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowDriveSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowBusSynchronizedSignals();
 
     int m_DSUpdateCount;
 

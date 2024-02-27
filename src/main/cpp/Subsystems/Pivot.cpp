@@ -20,7 +20,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double
     m_FollowerRequest.MasterID = motorId1;
     m_FollowerRequest.OpposeMasterDirection = true;
 
-    m_PivotMotor1->ConfigRemoteCANCoder(encoderId);
+    m_PivotMotor1->FuseCANCoder(encoderId, CONSTANT("PIVOT_GEAR_RATIO"));
 
     ResetConstants();
 }

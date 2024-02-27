@@ -57,12 +57,11 @@ void OperatorController::Handle(CowRobot *bot)
     // }
 
     // intake calibration - remove in PROD
-    if (m_CB->GetOperatorButton(BUTTON_AMP))
+    /*if (m_CB->GetOperatorButton(BUTTON_AMP))
     {
         bot->m_Shooter->CalibrateIntake();
     }
-    
-    if (m_CB->GetOperatorButton(BUTTON_INTAKE))
+    else */if (m_CB->GetOperatorButton(BUTTON_INTAKE))
     {
         bot->m_Shooter->Intake();
     }

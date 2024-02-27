@@ -25,12 +25,12 @@ bool CowControlBoard::GetAutoSelectButton()
 
 bool CowControlBoard::GetConstantsResetButton()
 {
-    if (GetDriveButton(BUTTON_RST_CONST) && !m_PreviousReset)
+    if (GetOperatorButton(BUTTON_RST_CONST) && !m_PreviousReset)
     {
-        m_PreviousReset = GetDriveButton(BUTTON_RST_CONST);
+        m_PreviousReset = GetOperatorButton(BUTTON_RST_CONST);
         return true;
     }
-    m_PreviousReset = GetDriveButton(BUTTON_RST_CONST);
+    m_PreviousReset = GetOperatorButton(BUTTON_RST_CONST);
     return false;
 }
 

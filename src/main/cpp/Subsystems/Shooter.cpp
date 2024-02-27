@@ -129,7 +129,7 @@ void Shooter::Shoot()
 }
 
 void Shooter::Handle()
-{
+{    
     // Intake state machine
     if (m_IntakeState == IntakeState::CALIBRATION_START)
     {
@@ -149,7 +149,7 @@ void Shooter::Handle()
         double elapsed = frc::Timer::GetFPGATimestamp().value() - m_IntakeCalibrationStartTime;
 
         // TODO: Save this to a file instead of dumping it in stdout
-        printf("%f,%f,%f", elapsed, GetIntakeAcceleration(), GetIntakeCurrent());
+        printf("%f,%f,%f\n", elapsed, GetIntakeAcceleration(), GetIntakeCurrent());
 
         if (elapsed > CONSTANT("INTAKE_CALIBRATION_PERIOD"))
         {
