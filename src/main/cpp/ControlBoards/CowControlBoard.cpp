@@ -14,23 +14,23 @@ CowControlBoard::CowControlBoard()
 bool CowControlBoard::GetAutoSelectButton()
 {
     // TODO: change this
-    if (GetOperatorButton(BT_SELECT_AUTO) && !m_PreviousAuto)
+    if (GetOperatorButton(BUTTON_AUTO_SELECT) && !m_PreviousAuto)
     {
-        m_PreviousAuto = GetOperatorButton(BT_SELECT_AUTO);
+        m_PreviousAuto = GetOperatorButton(BUTTON_AUTO_SELECT);
         return true;
     }
-    m_PreviousAuto = GetOperatorButton(BT_SELECT_AUTO);
+    m_PreviousAuto = GetOperatorButton(BUTTON_AUTO_SELECT);
     return false;
 }
 
 bool CowControlBoard::GetConstantsResetButton()
 {
-    if (GetDriveButton(BT_CONST_RESET) && !m_PreviousReset)
+    if (GetDriveButton(BUTTON_RST_CONST) && !m_PreviousReset)
     {
-        m_PreviousReset = GetDriveButton(BT_CONST_RESET);
+        m_PreviousReset = GetDriveButton(BUTTON_RST_CONST);
         return true;
     }
-    m_PreviousReset = GetDriveButton(BT_CONST_RESET);
+    m_PreviousReset = GetDriveButton(BUTTON_RST_CONST);
     return false;
 }
 

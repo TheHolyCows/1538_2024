@@ -40,18 +40,7 @@ void OperatorController::Handle(CowRobot *bot)
                                          true);
     }
    
-    // if (m_CB->GetDriveButton(1))
-    // {
-    //     bot->m_Shooter->Intake();
-    // }
-    // else if(m_CB->GetDriveButton(2))
-    // {
-    //     bot->m_Shooter->Outtake();
-    // }
-    // else if (!m_CB->GetDriveButton(3))
-    // {
-    //     bot->m_Shooter->StopIntake();
-    // }
+
 
     // if(m_CB->GetDriveButton(5))
     // {
@@ -66,26 +55,12 @@ void OperatorController::Handle(CowRobot *bot)
     // {
     //     bot->m_Shooter->StopShooter();
     // }
-
-    if (m_CB->GetOperatorButton(8))
-    {
-        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_MID_SETPOINT"));
-    }
-    if (m_CB->GetOperatorButton(9))
-    {
-        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_FAR_SETPOINT"));
-    }
-
-    // TODO: Move calibration stuff to test controller
-    if (m_CB->GetDriveAxis(2) > 0.8)
-    {
-        bot->m_Shooter->CalibrateIntake();
-    }
-    else if (m_CB->GetOperatorButton(5))
+    
+    if (m_CB->GetOperatorButton(BUTTON_INTAKE))
     {
         bot->m_Shooter->Intake();
     }
-    else if (m_CB->GetOperatorButton(6))
+    else if(m_CB->GetOperatorButton(BUTTON_EXHAUST))
     {
         bot->m_Shooter->Exhaust();
     }
@@ -93,23 +68,85 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->StopIntake();
     }
-
-    if (m_CB->GetOperatorButton(4))
+    
+    if(m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
-        bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
+        bot->m_Shooter->PrimeShooter();
+
+        if(m_CB->GetOperatorButton(BUTTON_SHOOT))
+        {
+            bot->m_Shooter->Shoot();
+        }
     }
     else
     {
-        bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
+        bot->m_Shooter->StopShooter();
     }
 
-    if (m_CB->GetOperatorButton(2))
+    if (m_CB->GetOperatorButton(SWITCH_CLIMB))
     {
-        bot->m_Wrist->SetAngle(CONSTANT("WRIST_MIN_ANGLE"),bot->m_Pivot->GetSetpoint());
+        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_CLIMB_ANGLE"));
+        bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_UP"),bot->m_Pivot->GetSetpoint());
     }
-    if (m_CB->GetOperatorButton(1))
+    else if (m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
-        bot->m_Wrist->SetAngle(CONSTANT("WRIST_MAX_ANGLE"),bot->m_Pivot->GetSetpoint());
+        if (m_CB->GetOperatorButton(BUTTON_SETPOINT_1))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_NEAR_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_NEAR_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
+        }
+        else if (m_CB->GetOperatorButton(BUTTON_SETPOINT_2))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_MID_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_MID_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
+        }
+        else if (m_CB->GetOperatorButton(BUTTON_SETPOINT_3))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_FAR_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_FAR_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
+        }
     }
+    else // switch in low position and not climbing
+    {
+        if (m_CB->GetOperatorButton(BUTTON_SETPOINT_1))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_NEAR_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_NEAR_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
+        }
+        else if (m_CB->GetOperatorButton(BUTTON_SETPOINT_2))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_MID_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_MID_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
+        }
+        else if (m_CB->GetOperatorButton(BUTTON_SETPOINT_3))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_FAR_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_FAR_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
+        }
+    }
+
+    // if (m_CB->GetOperatorButton(4))
+    // {
+    //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
+    // }
+    // else
+    // {
+    //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
+    // }
+
+    // if (m_CB->GetOperatorButton(2))
+    // {
+    //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_MIN_ANGLE"),bot->m_Pivot->GetSetpoint());
+    // }
+    // if (m_CB->GetOperatorButton(1))
+    // {
+    //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_MAX_ANGLE"),bot->m_Pivot->GetSetpoint());
+    // }
     
 }
