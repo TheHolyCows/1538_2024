@@ -67,6 +67,16 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
+    ctre::phoenix::StatusCode TalonFX::ConfigRemoteCANCoder(int id)
+    {
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.Feedback.FeedbackRemoteSensorID = id;
+        config.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::RemoteCANcoder;
+        config.Feedback.SensorToMechanismRatio = 1.0;
+
+        return ApplyConfig(config);
+    }
+
     ctre::phoenix::StatusCode TalonFX::ConfigContinuousWrap(bool enable)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;

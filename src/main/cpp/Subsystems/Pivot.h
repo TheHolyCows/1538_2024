@@ -16,7 +16,7 @@ class Pivot
 {
 public:
 
-    Pivot(const int motorId1, const int motorId2, const int encoderId, int encoderOffset);
+    Pivot(const int motorId1, const int motorId2, const int encoderId, double encoderOffset);
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 

@@ -1,6 +1,6 @@
 #include "Pivot.h"
 
-Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int encoderOffset)
+Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double encoderOffset)
 {
     m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
     m_PivotMotor2 = std::make_unique<CowMotor::TalonFX>(motorId2, "cowdrive");
@@ -12,7 +12,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int en
     m_PivotMotor2->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
 
     m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowdrive");
-    m_Encoder->ConfigAbsoluteOffset(encoderOffset / 360.0);
+    m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
     SetAngle(CONSTANT("PIVOT_STARTING_ANGLE"));
     m_PivotPosRequest.EnableFOC = true;
@@ -20,7 +20,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, int en
     m_FollowerRequest.MasterID = motorId1;
     m_FollowerRequest.OpposeMasterDirection = true;
 
-    m_PivotMotor1->FuseCANCoder(encoderId, CONSTANT("PIVOT_GEAR_RATIO"));
+    m_PivotMotor1->ConfigRemoteCANCoder(encoderId);
 
     ResetConstants();
 }
