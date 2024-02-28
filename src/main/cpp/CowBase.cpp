@@ -133,12 +133,11 @@ void CowBase::DisabledPeriodic()
             m_Bot->m_Pivot->BrakeMode(true);
             m_Bot->m_Wrist->BrakeMode(true);
         }
-
-        // set wrist and pivot to current locations
-        m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
-        m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
-        
     }
+    
+    // set wrist and pivot to current locations
+    m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
+    m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
 }
 
 void CowBase::AutonomousPeriodic()
