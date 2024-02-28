@@ -48,6 +48,10 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->Intake();
     }
+    else if(m_CB->GetOperatorButton(BUTTON_SHOOT))
+    {
+        bot->m_Shooter->Shoot();
+    }
     else if(m_CB->GetOperatorButton(BUTTON_EXHAUST))
     {
         bot->m_Shooter->Exhaust();
@@ -57,14 +61,9 @@ void OperatorController::Handle(CowRobot *bot)
         bot->m_Shooter->StopIntake();
     }
 
-    if (m_CB->GetOperatorButton(SWITCH_SHOOTER))
+    if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
         bot->m_Shooter->PrimeShooter();
-
-        if(m_CB->GetOperatorButton(BUTTON_SHOOT))
-        {
-            bot->m_Shooter->Shoot();
-        }
     }
     else
     {

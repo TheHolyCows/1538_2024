@@ -254,9 +254,10 @@ void SwerveDrive::ResetOdometry(frc::Pose2d pose)
     m_Odometry->Reset(pose, m_Gyro->GetYawDegrees(), modulePositions);
 }
 
-void SwerveDrive::AddVisionMeasurement(frc::Pose2d pose, double timestamp)
+void SwerveDrive::AddVisionMeasurement(frc::Pose2d pose, double latency)
 {
-    m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(pose, units::second_t{ timestamp });
+    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - units::second_t{ latency };
+    m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(pose, timestamp);
 }
 
 void SwerveDrive::Handle()

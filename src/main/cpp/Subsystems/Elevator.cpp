@@ -3,11 +3,11 @@
 Elevator::Elevator(const int motorID1, const int motorID2)
 {
     m_Motor1 = std::make_unique<CowMotor::TalonFX>(motorID1, "cowbus");
-    m_Motor1->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
+    m_Motor1->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Motor1->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
     m_Motor2 = std::make_unique<CowMotor::TalonFX>(motorID2, "cowbus");
-    m_Motor2->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
+    m_Motor2->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Motor2->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
     m_PositionRequest.EnableFOC = true;
@@ -18,6 +18,8 @@ Elevator::Elevator(const int motorID1, const int motorID2)
     m_FollowerRequest.OpposeMasterDirection = false;
 
     m_TargetExtensionLength = 0;
+
+    m_PrevBrakeMode = true;
 
     ResetConstants();
 }
@@ -70,6 +72,28 @@ void Elevator::SetExtension(double extensionLength, double pivotSetpoint)
         extensionLength = CONSTANT("ELEVATOR_MIN_EXTENSION");
     }
     m_TargetExtensionLength = std::clamp(extensionLength, CONSTANT("ELEVATOR_MIN_EXTENSION"), CONSTANT("ELEVATOR_MAX_EXTENSION"));
+}
+
+void Elevator::BrakeMode(bool brakeMode)
+{
+    if (brakeMode)
+    {
+        if (m_PrevBrakeMode)
+        {
+            m_Motor1->ConfigNeutralMode(CowMotor::BRAKE);
+            m_Motor2->ConfigNeutralMode(CowMotor::BRAKE);
+            m_PrevBrakeMode = false;
+        }
+    }
+    else
+    {
+        if (!m_PrevBrakeMode)
+        {
+            m_Motor1->ConfigNeutralMode(CowMotor::COAST);
+            m_Motor2->ConfigNeutralMode(CowMotor::COAST);
+            m_PrevBrakeMode = true;
+        }
+    }
 }
 
 void Elevator::Handle()

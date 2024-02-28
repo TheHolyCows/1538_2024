@@ -127,11 +127,13 @@ void CowBase::DisabledPeriodic()
         {
             m_Bot->m_Pivot->BrakeMode(false);
             m_Bot->m_Wrist->BrakeMode(false);
+            m_Bot->m_Elevator->BrakeMode(false);
         }
         else
         {
             m_Bot->m_Pivot->BrakeMode(true);
             m_Bot->m_Wrist->BrakeMode(true);
+            m_Bot->m_Elevator->BrakeMode(true);
         }
     }
     

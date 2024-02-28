@@ -28,6 +28,8 @@ public:
 
     void SetExtension(double extensionLength, double pivotSetpoint);
 
+    void BrakeMode(bool brakeMode);
+
     void Handle();
     
 private:
@@ -38,4 +40,5 @@ private:
     CowMotor::Control::Follower m_FollowerRequest;
 
     double m_TargetExtensionLength;
+    bool m_PrevBrakeMode;
 };
