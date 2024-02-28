@@ -111,11 +111,11 @@ void CowBase::DisabledPeriodic()
     //     printf("%s\n", AutoModes::GetInstance()->GetName().c_str());
     // }
 
-    if (m_Bot)
-    {
-        // TODO: add this back in
-        // m_Bot->GetArm()->DisabledCalibration();
-    }
+    // if (m_Bot)
+    // {
+    //     // TODO: add this back in
+    //     // m_Bot->GetArm()->DisabledCalibration();
+    // }
 
     if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
     {
@@ -133,6 +133,11 @@ void CowBase::DisabledPeriodic()
             m_Bot->m_Pivot->BrakeMode(true);
             m_Bot->m_Wrist->BrakeMode(true);
         }
+
+        // set wrist and pivot to current locations
+        m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
+        m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
+        
     }
 }
 

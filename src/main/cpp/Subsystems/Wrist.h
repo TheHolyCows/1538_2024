@@ -23,7 +23,7 @@ public:
     double GetAngle(void);
     double GetSetpoint(void);
 
-    void SetAngle(double angle, double pivotAngle);
+    void SetAngle(double angle, double pivotAngle, bool force = false);
 
     void BrakeMode(bool brakeMode);
     

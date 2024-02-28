@@ -45,9 +45,15 @@ double Wrist::GetSetpoint()
 /**
  * sets wrist to absolute angle relative to the ground
 */
-void Wrist::SetAngle(double angle, double pivotAngle)
+void Wrist::SetAngle(double angle, double pivotAngle, bool force)
 {
     m_CanSetAngle = true;
+
+    if (force)
+    {
+        m_WristPosRequest.Position = angle / 360.0;
+        return;
+    }
 
     // compute angle of wrist relative to ground
     double angleSetpoint = angle + pivotAngle + 90;
