@@ -43,16 +43,6 @@ void Shooter::ResetConstants()
     m_Intake->ConfigPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
 }
 
-void Shooter::CalibrateIntake()
-{
-    if (m_IntakeState != IntakeState::CALIBRATION_START &&
-        m_IntakeState != IntakeState::CALIBRATION_COLLECT &&
-        m_IntakeState != IntakeState::CALIBRATION_END)
-    {
-        m_IntakeState = IntakeState::CALIBRATION_START;
-    }
-}
-
 double Shooter::GetIntakePosition()
 {
     return m_Intake->GetPosition();
@@ -83,11 +73,32 @@ double Shooter::GetShooterCurrent()
     return m_Shooter1->GetCurrent() + m_Shooter2->GetCurrent();
 }
 
+void Shooter::StopIntake()
+{
+    if (m_IntakeState != IntakeState::DETECT_HOLD)
+    {
+        m_IntakeState = IntakeState::IDLE;
+    }
+}
+
+void Shooter::CalibrateIntake()
+{
+    if (m_IntakeState != IntakeState::CALIBRATION_BEGIN &&
+        m_IntakeState != IntakeState::CALIBRATION_ACTIVE &&
+        m_IntakeState != IntakeState::CALIBRATION_END)
+    {
+        m_IntakeState = IntakeState::CALIBRATION_BEGIN;
+    }
+}
+
 void Shooter::Intake()
 {
-    if (m_IntakeState == IntakeState::IDLE || m_IntakeState == IntakeState::EXHAUST)
+    if (m_IntakeState != IntakeState::DETECT_BEGIN &&
+        m_IntakeState != IntakeState::DETECT_ACTIVE &&
+        m_IntakeState != IntakeState::DETECT_HOLD &&
+        m_IntakeState != IntakeState::SHOOT)
     {
-        m_IntakeState = IntakeState::WAIT_FOR_STOP;
+        m_IntakeState = IntakeState::DETECT_BEGIN;
     }
 }
 
@@ -96,17 +107,10 @@ void Shooter::Exhaust()
     m_IntakeState = IntakeState::EXHAUST;
 }
 
-void Shooter::StopIntake()
-{
-    if (m_IntakeState != IntakeState::HOLD)
-    {
-        m_IntakeState = IntakeState::IDLE;
-    }
-}
-
 void Shooter::PrimeShooter()
 {
-    if (m_ShooterState == ShooterState::IDLE)
+    if (m_ShooterState != ShooterState::SPIN_UP &&
+        m_ShooterState != ShooterState::READY)
     {
         m_ShooterState = ShooterState::SPIN_UP;
     }
@@ -114,151 +118,215 @@ void Shooter::PrimeShooter()
 
 void Shooter::StopShooter()
 {
-    if (m_IntakeState != IntakeState::SHOOT)
-    {
-        m_ShooterState = ShooterState::IDLE;
-    }
+    m_ShooterState = ShooterState::IDLE;
 }
 
 void Shooter::Shoot()
 {
-    if (m_IntakeState == IntakeState::HOLD && m_ShooterState == ShooterState::READY)
+    if (m_IntakeState == IntakeState::DETECT_HOLD && m_ShooterState == ShooterState::READY)
     {
         m_IntakeState = IntakeState::SHOOT;
     }
 }
 
 void Shooter::Handle()
-{    
+{
     // Intake state machine
-    if (m_IntakeState == IntakeState::CALIBRATION_START)
+    switch (m_IntakeState)
     {
-        m_IntakeCalibrationStartTime = frc::Timer::GetFPGATimestamp().value();
-        m_IntakeState = IntakeState::CALIBRATION_COLLECT;
-    }
-    else if (m_IntakeState == IntakeState::CALIBRATION_COLLECT)
-    {
-        // Run the intake rollers with the detection parameters
-        CowMotor::Control::TorqueCurrent request = {};
-        request.Current = CONSTANT("INTAKE_DETECT_CURRENT");
-        request.MaxDutyCycle = CONSTANT("INTAKE_DETECT_MAX_DUTY_CYCLE");
-
-        m_Intake->Set(request);
-
-        // Collect data
-        double elapsed = frc::Timer::GetFPGATimestamp().value() - m_IntakeCalibrationStartTime;
-
-        // TODO: Save this to a file instead of dumping it in stdout
-        printf("%f,%f,%f\n", elapsed, GetIntakeAcceleration(), GetIntakeCurrent());
-
-        if (elapsed > CONSTANT("INTAKE_CALIBRATION_PERIOD"))
+        // Idle
+        case IntakeState::IDLE:
         {
-            m_IntakeState = IntakeState::CALIBRATION_END;
+            CowMotor::Control::TorqueCurrent request = {};
+            m_Intake->Set(request);
+
+            break;
         }
-    }
-    else if (m_IntakeState == IntakeState::CALIBRATION_END)
-    {
-        CowMotor::Control::TorqueCurrent request = {};
 
-        m_Intake->Set(request);
-    }
-    else if (m_IntakeState == IntakeState::IDLE)
-    {
-        CowMotor::Control::DutyCycle request = {};
-
-        m_Intake->Set(request);
-    }
-    else if (m_IntakeState == IntakeState::EXHAUST)
-    {
-        CowMotor::Control::DutyCycle request = {};
-        request.EnableFOC = true;
-        request.DutyCycle = CONSTANT("INTAKE_EXHAUST");
-
-        m_Intake->Set(request);
-    }
-    else if (m_IntakeState == IntakeState::WAIT_FOR_STOP)
-    {
-        CowMotor::Control::TorqueCurrent request = {};
-        m_Intake->Set(request);
-
-        if (GetIntakeVelocity() == 0)
+        // Calibration
+        case IntakeState::CALIBRATION_BEGIN:
         {
-            m_IntakeState = IntakeState::DETECT;
-            m_DetectStartTime = frc::Timer::GetFPGATimestamp().value();
+            CowMotor::Control::TorqueCurrent request = {};
+            m_Intake->Set(request);
+
+            if (GetIntakeVelocity() == 0)
+            {
+                m_IntakeState = IntakeState::CALIBRATION_ACTIVE;
+                m_IntakeCalibrationStartTime = 0;
+            }
+
+            break;
         }
-    }
-    else if (m_IntakeState == IntakeState::DETECT)
-    {
-        CowMotor::Control::TorqueCurrent request = {};
-        request.Current = CONSTANT("INTAKE_DETECT_CURRENT");
-        request.MaxDutyCycle = CONSTANT("INTAKE_DETECT_MAX_DUTY_CYCLE");
-
-        m_Intake->Set(request);
-
-        double currentTime = std::min(frc::Timer::GetFPGATimestamp().value() - m_DetectStartTime, CONSTANT("INTAKE_SPINUP_TIME"));
-        double expectedAcc = (CONSTANT("INTAKE_SPINUP_CURVE_A") * pow(currentTime, 3)) +
-                             (CONSTANT("INTAKE_SPINUP_CURVE_B") * pow(currentTime, 2)) +
-                             (CONSTANT("INTAKE_SPINUP_CURVE_C") * pow(currentTime, 1)) +
-                             CONSTANT("INTAKE_SPINUP_CURVE_D");
-        double error = std::max(expectedAcc, 0.0) - GetIntakeAcceleration();
-
-        if (error > CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
+        case IntakeState::CALIBRATION_ACTIVE:
         {
-            m_IntakeState = IntakeState::HOLD;
-            m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
+            CowMotor::Control::TorqueCurrent request = {};
+            request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
+            request.MaxDutyCycle = CONSTANT("INTAKE_MAX_DUTY_CYCLE");
+            m_Intake->Set(request);
+
+            if (m_IntakeCalibrationStartTime == 0)
+            {
+                m_IntakeCalibrationStartTime = frc::Timer::GetFPGATimestamp().value();
+            }
+
+            double elapsed = frc::Timer::GetFPGATimestamp().value() - m_IntakeCalibrationStartTime;
+
+            printf("%f,%f,%f\n", elapsed, GetIntakeAcceleration(), GetIntakeCurrent());
+
+            if (elapsed > CONSTANT("INTAKE_CALIBRATION_PERIOD"))
+            {
+                m_IntakeState = IntakeState::CALIBRATION_END;
+            }
+
+            break;
         }
-    }
-    else if (m_IntakeState == IntakeState::HOLD)
-    {
-        CowMotor::Control::PositionDutyCycle request = {};
-        request.EnableFOC = true;
-        request.Position = m_IntakeGoalPosition;
+        case IntakeState::CALIBRATION_END:
+        {
+            CowMotor::Control::TorqueCurrent request = {};
+            m_Intake->Set(request);
 
-        m_Intake->Set(request);
-    }
-    else if (m_IntakeState == IntakeState::SHOOT)
-    {
-        CowMotor::Control::TorqueCurrent request = {};
-        request.Current = CONSTANT("INTAKE_SHOOT_CURRENT");
-        request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
+            break;
+        }
 
-        m_Intake->Set(request);
+        // Detect
+        case IntakeState::DETECT_BEGIN:
+        {
+            CowMotor::Control::TorqueCurrent request = {};
+            m_Intake->Set(request);
+
+            if (GetIntakeVelocity() == 0)
+            {
+                m_IntakeState = IntakeState::DETECT_ACTIVE;
+                m_DetectStartTime = 0.0;
+            }
+
+            break;
+        }
+        case IntakeState::DETECT_ACTIVE:
+        {
+            if (m_DetectStartTime == 0.0)
+            {
+                m_DetectStartTime = frc::Timer::GetFPGATimestamp().value();
+            }
+
+            double elapsed = std::clamp(frc::Timer::GetFPGATimestamp().value() - m_DetectStartTime, 0.0, CONSTANT("INTAKE_SPINUP_TIME"));
+
+            CowMotor::Control::TorqueCurrent request = {};
+            request.MaxDutyCycle = CONSTANT("INTAKE_MAX_DUTY_CYCLE");
+
+            if (elapsed < CONSTANT("INTAKE_SPINUP_TIME"))
+            {
+                request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
+            }
+            else
+            {
+                request.Current = CONSTANT("INTAKE_STEADY_CURRENT");
+
+                if (GetIntakeAcceleration() < -CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
+                {
+                    m_IntakeState = IntakeState::DETECT_HOLD;
+                    m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
+                }
+            }
+
+            printf("%f %f %f\n", elapsed, CONSTANT("INTAKE_SPINUP_TIME"), request.Current);
+
+            m_Intake->Set(request);
+
+            // double expectedAcceleration = (CONSTANT("INTAKE_SPINUP_CURVE_A") * pow(elapsed, 3)) +
+            //                               (CONSTANT("INTAKE_SPINUP_CURVE_B") * pow(elapsed, 2)) +
+            //                               (CONSTANT("INTAKE_SPINUP_CURVE_C") * pow(elapsed, 1)) +
+            //                                CONSTANT("INTAKE_SPINUP_CURVE_D");
+
+            // double error = std::max(expectedAcceleration, 0.0) - GetIntakeAcceleration();
+
+            // if (error > CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
+            // {
+            //     m_IntakeState = IntakeState::DETECT_HOLD;
+            //     m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
+            // }
+
+            break;
+        }
+        case IntakeState::DETECT_HOLD:
+        {
+            CowMotor::Control::PositionDutyCycle request = {};
+            request.EnableFOC = true;
+            request.Position = m_IntakeGoalPosition;
+
+            m_Intake->Set(request);
+            
+            break;
+        }
+
+        // Shoot
+        case IntakeState::SHOOT:
+        {
+            CowMotor::Control::TorqueCurrent request = {};
+            request.Current = CONSTANT("INTAKE_SHOOT_CURRENT");
+            request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
+
+            m_Intake->Set(request);
+
+            break;
+        }
+
+        // Exhaust
+        case IntakeState::EXHAUST:
+        {
+            CowMotor::Control::TorqueCurrent request = {};
+            request.Current = CONSTANT("INTAKE_EXHAUST_CURRENT");
+            request.MaxDutyCycle = CONSTANT("INTAKE_EXHAUST_MAX_DUTY_CYCLE");
+
+            m_Intake->Set(request);
+
+            break;
+        }
     }
 
     // Shooter state machine
-    if (m_ShooterState == ShooterState::IDLE)
+    switch (m_ShooterState)
     {
-        CowMotor::Control::DutyCycle request = {};
-
-        m_Shooter1->Set(request);
-        m_Shooter2->Set(request);
-    }
-    else if (m_ShooterState == ShooterState::SPIN_UP)
-    {
-        CowMotor::Control::TorqueCurrent request = {};
-        request.Current = CONSTANT("SHOOTER_SPINUP_CURRENT");
-        request.MaxDutyCycle = CONSTANT("SHOOTER_SPINUP_MAX_DUTY_CYCLE");
-
-        m_Shooter1->Set(request);
-        m_Shooter2->Set(request);
-
-        if (GetShooterVelocity() > CONSTANT("SHOOTER_SPINUP_VEL_THRESHOLD"))
+        case ShooterState::IDLE:
         {
-            m_ShooterState = ShooterState::READY;
+            CowMotor::Control::DutyCycle request = {};
+
+            m_Shooter1->Set(request);
+            m_Shooter2->Set(request);
+            
+            break;
         }
-    }
-    else if (m_ShooterState == ShooterState::READY)
-    {
-        CowMotor::Control::TorqueCurrent request = {};
-        request.Current = CONSTANT("SHOOTER_SPINUP_CURRENT");
-        request.MaxDutyCycle = CONSTANT("SHOOTER_SPINUP_MAX_DUTY_CYCLE");
-
-        m_Shooter1->Set(request);
-        m_Shooter2->Set(request);
-
-        if (GetShooterVelocity() < CONSTANT("SHOOTER_READY_VEL_THRESHOLD"))
+        case ShooterState::SPIN_UP:
         {
-            m_ShooterState = ShooterState::SPIN_UP;
+            CowMotor::Control::TorqueCurrent request = {};
+            request.Current = CONSTANT("SHOOTER_CURRENT");
+            request.MaxDutyCycle = CONSTANT("SHOOTER_MAX_DUTY_CYCLE");
+
+            m_Shooter1->Set(request);
+            m_Shooter2->Set(request);
+
+            if (GetShooterVelocity() > CONSTANT("SHOOTER_SPINUP_VEL_THRESHOLD"))
+            {
+                m_ShooterState = ShooterState::READY;
+            }
+
+            break;
+        }
+        case ShooterState::READY:
+        {
+            CowMotor::Control::TorqueCurrent request = {};
+            request.Current = CONSTANT("SHOOTER_CURRENT");
+            request.MaxDutyCycle = CONSTANT("SHOOTER_MAX_DUTY_CYCLE");
+
+            m_Shooter1->Set(request);
+            m_Shooter2->Set(request);
+
+            if (GetShooterVelocity() < CONSTANT("SHOOTER_READY_VEL_THRESHOLD"))
+            {
+                m_ShooterState = ShooterState::SPIN_UP;
+            }
+
+            break;
         }
     }
 
@@ -269,4 +337,3 @@ void Shooter::Handle()
         m_CycleCount = 1;
     }
 }
-   

@@ -39,29 +39,12 @@ void OperatorController::Handle(CowRobot *bot)
                                          -m_CB->GetRightDriveStickX(),
                                          true);
     }
-   
-
-
-    // if(m_CB->GetDriveButton(5))
-    // {
-    //     bot->m_Shooter->PrimeShooter();
-
-    //     if(m_CB->GetDriveButton(3))
-    //     {
-    //         bot->m_Shooter->Shoot();
-    //     }
-    // }
-    // else
-    // {
-    //     bot->m_Shooter->StopShooter();
-    // }
-
     // intake calibration - remove in PROD
-    /*if (m_CB->GetOperatorButton(BUTTON_AMP))
+    if (m_CB->GetOperatorButton(BUTTON_AMP))
     {
         bot->m_Shooter->CalibrateIntake();
     }
-    else */if (m_CB->GetOperatorButton(BUTTON_INTAKE))
+    else if (m_CB->GetOperatorButton(BUTTON_INTAKE))
     {
         bot->m_Shooter->Intake();
     }
@@ -73,8 +56,8 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->StopIntake();
     }
-    
-    if(m_CB->GetOperatorButton(SWITCH_SHOOTER))
+
+    if (m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
         bot->m_Shooter->PrimeShooter();
 

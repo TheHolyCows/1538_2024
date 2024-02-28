@@ -33,10 +33,10 @@ public:
     double GetShooterVelocity();
     double GetShooterCurrent();
 
+    void StopIntake();
     void CalibrateIntake();
     void Intake();
     void Exhaust();
-    void StopIntake();
 
     void PrimeShooter();
     void StopShooter();
@@ -47,15 +47,15 @@ public:
     
 private:
     enum class IntakeState {
-        CALIBRATION_START,
-        CALIBRATION_COLLECT,
-        CALIBRATION_END,
         IDLE,
-        EXHAUST,
-        WAIT_FOR_STOP,
-        DETECT,
-        HOLD,
-        SHOOT
+        CALIBRATION_BEGIN,
+        CALIBRATION_ACTIVE,
+        CALIBRATION_END,
+        DETECT_BEGIN,
+        DETECT_ACTIVE,
+        DETECT_HOLD,
+        SHOOT,
+        EXHAUST
     };
 
     enum class ShooterState {
