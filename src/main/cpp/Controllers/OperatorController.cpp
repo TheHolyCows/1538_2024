@@ -4,6 +4,7 @@ OperatorController::OperatorController(GenericControlBoard *controlboard)
     : m_CB(controlboard)
 {
     m_TrackingCooldownTimer = 0.0;
+    m_ClimberLatch = false;
 }
 
 void OperatorController::Handle(CowRobot *bot)
@@ -73,11 +74,21 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (m_CB->GetOperatorButton(SWITCH_CLIMB))
     {
-        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_CLIMB_ANGLE"));
-        bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_UP"),bot->m_Pivot->GetSetpoint());
+        if (!m_ClimberLatch)
+        {
+            m_ClimberLatch = true;
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_CLIMB_ANGLE"));
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_UP"),bot->m_Pivot->GetSetpoint());
+        }
+        if (m_CB->GetOperatorButton(BUTTON_CLIMB))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_CLIMB_ANGLE"));
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_DOWN"),bot->m_Pivot->GetSetpoint());
+        }
     }
     else if (m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
+        m_ClimberLatch = false;
         if (m_CB->GetOperatorButton(BUTTON_SETPOINT_1))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_NEAR_SETPOINT"));
@@ -99,6 +110,7 @@ void OperatorController::Handle(CowRobot *bot)
     }
     else // switch in low position and not climbing
     {
+        m_ClimberLatch = false;
         if (m_CB->GetOperatorButton(BUTTON_SETPOINT_1))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_NEAR_SETPOINT"));
@@ -119,22 +131,10 @@ void OperatorController::Handle(CowRobot *bot)
         }
     }
 
-    // if (m_CB->GetOperatorButton(4))
-    // {
-    //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"),bot->m_Pivot->GetSetpoint());
-    // }
-    // else
-    // {
-    //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"),bot->m_Pivot->GetSetpoint());
-    // }
-
-    // if (m_CB->GetOperatorButton(2))
-    // {
-    //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_MIN_ANGLE"),bot->m_Pivot->GetSetpoint());
-    // }
-    // if (m_CB->GetOperatorButton(1))
-    // {
-    //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_MAX_ANGLE"),bot->m_Pivot->GetSetpoint());
-    // }
+    // TODO: each press above should set these member variables and this block
+    //   should set the actual subsystem positions
+    // bot->m_Pivot->SetAngle(m_PivotSetpoint);
+    // bot->m_Wrist->SetAngle(m_WristSetpoint, bot->m_Pivot->GetAngle());
+    // bot->m_Elevator->SetExtension(m_ElevatorSetpoint, bot->m_Pivot->GetAngle());
     
 }
