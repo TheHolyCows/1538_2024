@@ -16,7 +16,7 @@ class Wrist
 {
 public:
 
-    Wrist(const int motorId1, const int encoderId, int encoderOffset);
+    Wrist(const int motorId1, const int encoderId, double encoderOffset);
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 

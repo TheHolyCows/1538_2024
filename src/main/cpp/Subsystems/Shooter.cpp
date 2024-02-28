@@ -229,8 +229,6 @@ void Shooter::Handle()
                 }
             }
 
-            printf("%f %f %f\n", elapsed, CONSTANT("INTAKE_SPINUP_TIME"), request.Current);
-
             m_Intake->Set(request);
 
             // double expectedAcceleration = (CONSTANT("INTAKE_SPINUP_CURVE_A") * pow(elapsed, 3)) +

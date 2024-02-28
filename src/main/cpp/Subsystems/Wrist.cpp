@@ -1,6 +1,6 @@
 #include "Wrist.h"
 
-Wrist::Wrist(const int motorId1, const int encoderId, int encoderOffset)
+Wrist::Wrist(const int motorId1, const int encoderId, double encoderOffset)
 {
     m_WristMotor = std::make_unique<CowMotor::TalonFX>(motorId1, "cowbus");
 
@@ -10,9 +10,9 @@ Wrist::Wrist(const int motorId1, const int encoderId, int encoderOffset)
     m_WristMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
 
     m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowbus");
-    m_Encoder->ConfigAbsoluteOffset(encoderOffset / 360.0);
+    m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
-    SetAngle(CONSTANT("WRIST_STARTING_ANGLE"),CONSTANT("PIVOT_STARTING_ANGLE"));
+    // SetAngle(CONSTANT("WRIST_STARTING_ANGLE"),CONSTANT("PIVOT_STARTING_ANGLE"));
     m_WristPosRequest.EnableFOC = true;
 
     m_WristMotor->FuseCANCoder(encoderId, CONSTANT("WRIST_GEAR_RATIO"));

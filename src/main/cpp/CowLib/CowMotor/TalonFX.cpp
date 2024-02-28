@@ -88,8 +88,8 @@ namespace CowMotor
     ctre::phoenix::StatusCode TalonFX::ConfigMotionMagic(double kv, double ka)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
-        config.MotionMagic.MotionMagicExpo_kV = kv;
-        config.MotionMagic.MotionMagicExpo_kA = ka;
+        config.MotionMagic.MotionMagicCruiseVelocity = kv;
+        config.MotionMagic.MotionMagicAcceleration = ka;
 
         return ApplyConfig(config);
     }
