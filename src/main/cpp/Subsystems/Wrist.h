@@ -25,7 +25,7 @@ public:
 
     void SetAngle(double angle, double pivotAngle);
 
-    // void BrakeMode(bool brakeMode);
+    void BrakeMode(bool brakeMode);
     
     void ResetConstants(void);
 
@@ -34,6 +34,8 @@ public:
 private:
     double m_TargetAngle;
     bool m_CanSetAngle;
+
+    bool m_PrevBrakeMode;
 
     std::unique_ptr<CowMotor::TalonFX> m_WristMotor;
 

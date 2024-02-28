@@ -122,6 +122,17 @@ void CowBase::DisabledPeriodic()
         m_Alliance = frc::DriverStation::Alliance::kRed;
         CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
         m_DisabledCount = 1;
+
+        if (m_ControlBoard->GetOperatorButton(2)) // climb down
+        {
+            m_Bot->m_Pivot->BrakeMode(false);
+            m_Bot->m_Wrist->BrakeMode(false);
+        }
+        else
+        {
+            m_Bot->m_Pivot->BrakeMode(true);
+            m_Bot->m_Wrist->BrakeMode(true);
+        }
     }
 }
 

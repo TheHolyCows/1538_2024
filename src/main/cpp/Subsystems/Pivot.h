@@ -34,6 +34,8 @@ public:
 private:
     double m_TargetAngle;
 
+    bool m_PrevBrakeMode;
+
     std::unique_ptr<CowMotor::TalonFX> m_PivotMotor1;
     std::unique_ptr<CowMotor::TalonFX> m_PivotMotor2;
 

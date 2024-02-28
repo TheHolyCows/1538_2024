@@ -5,6 +5,7 @@ Wrist::Wrist(const int motorId1, const int encoderId, int encoderOffset)
     m_WristMotor = std::make_unique<CowMotor::TalonFX>(motorId1, "cowbus");
 
     m_WristMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+    m_PrevBrakeMode = true;
 
     m_WristMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
 
@@ -66,31 +67,31 @@ void Wrist::SetAngle(double angle, double pivotAngle)
     m_WristPosRequest.Position = angleSetpoint / 360.0;
 }
 
-// void Wrist::BrakeMode(bool brakeMode)
-// {
-//     if (brakeMode)
-//     {
-//         if (m_WristMotor)
-//         {
-//             m_WristMotor->ConfigNeutralMode(CowMotor::BRAKE);
-//         }
-//         if (m_WristMotor2)
-//         {
-//             m_WristMotor2->ConfigNeutralMode(CowMotor::BRAKE);
-//         }
-//     }
-//     else
-//     {
-//         if (m_WristMotor)
-//         {
-//             m_WristMotor->ConfigNeutralMode(CowMotor::COAST);
-//         }
-//         if (m_WristMotor2)
-//         {
-//             m_WristMotor2->ConfigNeutralMode(CowMotor::COAST);
-//         }
-//     }
-// }
+void Wrist::BrakeMode(bool brakeMode)
+{
+    if (brakeMode)
+    {
+        if (m_WristMotor)
+        {
+            if (m_PrevBrakeMode)
+            {
+                m_WristMotor->ConfigNeutralMode(CowMotor::BRAKE);
+                m_PrevBrakeMode = false;
+            }
+        }
+    }
+    else
+    {
+        if (m_WristMotor)
+        {
+            if (!m_PrevBrakeMode)
+            {
+                m_WristMotor->ConfigNeutralMode(CowMotor::COAST);
+                m_PrevBrakeMode = true;
+            }
+        }
+    }
+}
 
 void Wrist::ResetConstants()
 {

@@ -5,6 +5,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double
     m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
     m_PivotMotor2 = std::make_unique<CowMotor::TalonFX>(motorId2, "cowdrive");
 
+    m_PrevBrakeMode = true;
     m_PivotMotor1->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     m_PivotMotor2->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
 
@@ -69,22 +70,24 @@ void Pivot::BrakeMode(bool brakeMode)
     {
         if (m_PivotMotor1)
         {
-            m_PivotMotor1->ConfigNeutralMode(CowMotor::BRAKE);
-        }
-        if (m_PivotMotor2)
-        {
-            m_PivotMotor2->ConfigNeutralMode(CowMotor::BRAKE);
+            if (m_PrevBrakeMode)
+            {
+                m_PivotMotor1->ConfigNeutralMode(CowMotor::BRAKE);
+                m_PivotMotor2->ConfigNeutralMode(CowMotor::BRAKE);
+                m_PrevBrakeMode = false;
+            }
         }
     }
     else
     {
         if (m_PivotMotor1)
         {
-            m_PivotMotor1->ConfigNeutralMode(CowMotor::COAST);
-        }
-        if (m_PivotMotor2)
-        {
-            m_PivotMotor2->ConfigNeutralMode(CowMotor::COAST);
+            if (!m_PrevBrakeMode)
+            {
+                m_PivotMotor1->ConfigNeutralMode(CowMotor::COAST);
+                m_PivotMotor2->ConfigNeutralMode(CowMotor::COAST);
+                m_PrevBrakeMode = true;
+            }
         }
     }
 }
