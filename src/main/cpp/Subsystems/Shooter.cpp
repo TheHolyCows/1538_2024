@@ -216,7 +216,7 @@ void Shooter::Handle()
 
             double expectedAcceleration = 0.0;
 
-            if (elapsed > 0 && elapsed <= CONSTANT("INTAKE_CURVE_I_END_TIME"))
+            if (elapsed <= CONSTANT("INTAKE_CURVE_I_END_TIME"))
             {
                 request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
 
@@ -225,7 +225,7 @@ void Shooter::Handle()
                                        (CONSTANT("INTAKE_CURVE_I_C") * pow(elapsed, 2)) +
                                        (CONSTANT("INTAKE_CURVE_I_D") * pow(elapsed, 3));
             }
-            else if (elapsed > 0 && elapsed <= CONSTANT("INTAKE_CURVE_II_END_TIME"))
+            else if (elapsed <= CONSTANT("INTAKE_CURVE_II_END_TIME"))
             {
                 request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
 
