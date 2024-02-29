@@ -70,7 +70,7 @@ void CowBase::AutonomousInit()
 
 void CowBase::TeleopInit()
 {
-    m_Bot->GetDrivetrain()->SetBrakeMode(false);
+    m_Bot->GetDrivetrain()->SetBrakeMode(true);
 
     m_Bot->StartTime();
     // m_Bot->GetGyro()->FinalizeCalibration();
