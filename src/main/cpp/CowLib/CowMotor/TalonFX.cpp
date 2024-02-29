@@ -19,6 +19,10 @@ namespace CowMotor
               .Temperature = &m_Talon.GetDeviceTemp()
           })
     {
+        m_Config.CurrentLimits.StatorCurrentLimitEnable = true;
+        m_Config.CurrentLimits.StatorCurrentLimit = 100.0;
+        m_Config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.02;
+
         m_Talon.GetConfigurator().Apply(m_Config);
         m_Talon.GetConfigurator().Refresh(m_Config);
     }
@@ -139,94 +143,107 @@ namespace CowMotor
 
     Status TalonFX::Set(Control::DutyCycle cowRequest)
     {
-        ctre::phoenix6::controls::DutyCycleOut ctre_request = ctre::phoenix6::controls::DutyCycleOut(units::scalar_t{ cowRequest.DutyCycle })
+        ctre::phoenix6::controls::DutyCycleOut ctreRequest = ctre::phoenix6::controls::DutyCycleOut(units::scalar_t{ cowRequest.DutyCycle })
             .WithEnableFOC(cowRequest.EnableFOC);
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::PositionDutyCycle cowRequest)
     {
-        ctre::phoenix6::controls::PositionDutyCycle ctre_request = ctre::phoenix6::controls::PositionDutyCycle(units::turn_t{ cowRequest.Position })
+        ctre::phoenix6::controls::PositionDutyCycle ctreRequest = ctre::phoenix6::controls::PositionDutyCycle(units::turn_t{ cowRequest.Position })
             .WithEnableFOC(cowRequest.EnableFOC)
             .WithFeedForward(cowRequest.FeedForward);
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::VelocityDutyCycle cowRequest)
     {
-        ctre::phoenix6::controls::VelocityDutyCycle ctre_request = ctre::phoenix6::controls::VelocityDutyCycle(units::turns_per_second_t{ cowRequest.Velocity })
+        ctre::phoenix6::controls::VelocityDutyCycle ctreRequest = ctre::phoenix6::controls::VelocityDutyCycle(units::turns_per_second_t{ cowRequest.Velocity })
             .WithEnableFOC(cowRequest.EnableFOC)
             .WithFeedForward(cowRequest.FeedForward);
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::MotionMagicPositionDutyCycle cowRequest)
     {
-        ctre::phoenix6::controls::MotionMagicDutyCycle ctre_request = ctre::phoenix6::controls::MotionMagicDutyCycle(units::turn_t{ cowRequest.Position })
+        ctre::phoenix6::controls::MotionMagicDutyCycle ctreRequest = ctre::phoenix6::controls::MotionMagicDutyCycle(units::turn_t{ cowRequest.Position })
             .WithEnableFOC(cowRequest.EnableFOC)
             .WithFeedForward(cowRequest.FeedForward);
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::MotionMagicVelocityDutyCycle cowRequest)
     {
-        ctre::phoenix6::controls::MotionMagicVelocityDutyCycle ctre_request = ctre::phoenix6::controls::MotionMagicVelocityDutyCycle(units::turns_per_second_t{ cowRequest.Velocity })
+        ctre::phoenix6::controls::MotionMagicVelocityDutyCycle ctreRequest = ctre::phoenix6::controls::MotionMagicVelocityDutyCycle(units::turns_per_second_t{ cowRequest.Velocity })
             .WithEnableFOC(cowRequest.EnableFOC)
             .WithFeedForward(cowRequest.FeedForward);
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::TorqueCurrent cowRequest)
     {
-        ctre::phoenix6::controls::TorqueCurrentFOC ctre_request = ctre::phoenix6::controls::TorqueCurrentFOC(units::ampere_t{ cowRequest.Current })
+        ctre::phoenix6::controls::TorqueCurrentFOC ctreRequest = ctre::phoenix6::controls::TorqueCurrentFOC(units::ampere_t{ cowRequest.Current })
             .WithMaxAbsDutyCycle(units::scalar_t(cowRequest.MaxDutyCycle))
             .WithDeadband(units::ampere_t(cowRequest.Deadband));
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::PositionTorqueCurrent cowRequest)
     {
-        ctre::phoenix6::controls::PositionTorqueCurrentFOC ctre_request = ctre::phoenix6::controls::PositionTorqueCurrentFOC(units::turn_t{ cowRequest.Position })
+        ctre::phoenix6::controls::PositionTorqueCurrentFOC ctreRequest = ctre::phoenix6::controls::PositionTorqueCurrentFOC(units::turn_t{ cowRequest.Position })
             .WithFeedForward(units::ampere_t{ cowRequest.FeedForward });
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::VelocityTorqueCurrent cowRequest)
     {
-        ctre::phoenix6::controls::VelocityTorqueCurrentFOC ctre_request = ctre::phoenix6::controls::VelocityTorqueCurrentFOC(units::turns_per_second_t{ cowRequest.Velocity })
+        ctre::phoenix6::controls::VelocityTorqueCurrentFOC ctreRequest = ctre::phoenix6::controls::VelocityTorqueCurrentFOC(units::turns_per_second_t{ cowRequest.Velocity })
             .WithFeedForward(units::ampere_t{ cowRequest.FeedForward });
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::MotionMagicPositionTorqueCurrent cowRequest)
     {
-        ctre::phoenix6::controls::MotionMagicTorqueCurrentFOC ctre_request = ctre::phoenix6::controls::MotionMagicTorqueCurrentFOC(units::turn_t{ cowRequest.Position })
+        ctre::phoenix6::controls::MotionMagicTorqueCurrentFOC ctreRequest = ctre::phoenix6::controls::MotionMagicTorqueCurrentFOC(units::turn_t{ cowRequest.Position })
             .WithFeedForward(units::ampere_t{ cowRequest.FeedForward });
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::MotionMagicVelocityTorqueCurrent cowRequest)
     {
-        ctre::phoenix6::controls::MotionMagicVelocityTorqueCurrentFOC ctre_request = ctre::phoenix6::controls::MotionMagicVelocityTorqueCurrentFOC(units::turns_per_second_t{ cowRequest.Velocity })
+        ctre::phoenix6::controls::MotionMagicVelocityTorqueCurrentFOC ctreRequest = ctre::phoenix6::controls::MotionMagicVelocityTorqueCurrentFOC(units::turns_per_second_t{ cowRequest.Velocity })
             .WithFeedForward(units::ampere_t{ cowRequest.FeedForward });
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
+    }
+
+    Status TalonFX::Set(Control::DynamicMotionMagicTorqueCurrent cowRequest)
+    {
+        ctre::phoenix6::controls::DynamicMotionMagicTorqueCurrentFOC ctreRequest = ctre::phoenix6::controls::DynamicMotionMagicTorqueCurrentFOC(
+            units::turn_t{ cowRequest.Position },
+            units::turns_per_second_t{ cowRequest.Velocity },
+            units::turns_per_second_squared_t{ cowRequest.Acceleration },
+            units::turns_per_second_cubed_t{ cowRequest.Jerk },
+            units::ampere_t{ cowRequest.FeedForward }
+        );
+
+        return m_Talon.SetControl(ctreRequest);
     }
 
     Status TalonFX::Set(Control::Follower cowRequest)
     {
-        ctre::phoenix6::controls::Follower ctre_request = ctre::phoenix6::controls::Follower(cowRequest.MasterID, cowRequest.OpposeMasterDirection);
+        ctre::phoenix6::controls::Follower ctreRequest = ctre::phoenix6::controls::Follower(cowRequest.MasterID, cowRequest.OpposeMasterDirection);
 
-        return m_Talon.SetControl(ctre_request);
+        return m_Talon.SetControl(ctreRequest);
     }
 
     double TalonFX::GetPosition()
