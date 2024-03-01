@@ -7,13 +7,13 @@ Vision::Vision()
 
 Vision::PoseWithLatency Vision::GetRobotPose()
 {
-    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose_wpiblue",std::vector<double>(7));
+    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose_wpiblue", std::vector<double>(7));
 
     frc::Pose2d pose2d { units::meter_t {limelightValues[0]},
                          units::meter_t {limelightValues[1]},
                          units::degree_t {limelightValues[5]} }; 	
 
-    double totalLatency = limelightValues[6];
+    units::second_t totalLatency = units::millisecond_t{ limelightValues[6] };
 
     Vision::PoseWithLatency poseWithLatency;
     poseWithLatency.pose2d = pose2d;
@@ -41,7 +41,6 @@ void Vision::LEDOff()
 
 void Vision::Handle()
 {
-//  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 4);
     m_TickCount++;
 
     if (m_LEDState == LEDState::OFF)

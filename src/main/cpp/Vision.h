@@ -17,7 +17,7 @@ public:
     struct PoseWithLatency 
     { 
         frc::Pose2d pose2d;
-        double totalLatency;
+        units::second_t totalLatency;
     };
     
     Vision();

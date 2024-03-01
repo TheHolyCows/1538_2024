@@ -1,19 +1,18 @@
 #include "SwerveDrive.h"
 
-#include "frc/RobotBase.h"
-#include "SwerveModuleSim.h"
-
 /**
  * @brief Construct a new SwerveDrive object
  *
  * @param moduleConstants Array of constants for each module
  */
 SwerveDrive::SwerveDrive(ModuleConstants moduleConstants[4], double wheelBase)
+    : m_Gyro(CowPigeon::GetInstance()),
+      m_Kinematics(new CowLib::CowSwerveKinematics(wheelBase)),
+      m_Odometry(new CowLib::CowSwerveOdometry(m_Kinematics, 0, 0, 0, 0)),
+      m_Pose({0_m, 0_m, 0_deg}),
+      m_PrevChassisSpeeds({ 0.0_mps, 0.0_mps, units::radians_per_second_t(0) }),
+      m_Locked(false)
 {
-    m_Gyro = CowPigeon::GetInstance();
-
-    m_Locked = false;
-
     if (!frc::RobotBase::IsReal())
     {
         for (int i = 0; i < 4; i++)
@@ -33,15 +32,6 @@ SwerveDrive::SwerveDrive(ModuleConstants moduleConstants[4], double wheelBase)
         }
     }
 
-    m_Kinematics = new CowLib::CowSwerveKinematics(wheelBase);
-    m_Odometry = new CowLib::CowSwerveOdometry(m_Kinematics, 0, 0, 0, 0);
-
-    // m_VisionPIDController = new CowLib::CowPID(CONSTANT("SWERVE_VISION_P"), CONSTANT("SWERVE_VISION_I"),
-    // CONSTANT("SWERVE_VISION_D"), 0);
-
-    // m_VisionPIDController->SetContinuous(true);
-    // m_VisionPIDController->SetInputRange(-180, 180);
-
     Reset();
 }
 
@@ -54,8 +44,6 @@ SwerveDrive::~SwerveDrive()
     {
         delete module;
     }
-
-    // delete m_VisionPIDController;
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveDrive::GetSynchronizedSignals()
@@ -91,15 +79,8 @@ void SwerveDrive::SetVelocity(double vx,
 {
     CowLib::CowChassisSpeeds chassisSpeeds{};
 
-    // units::feet_per_second_t vx { x };
-    // units::feet_per_second_t vy { y };
-    // units::degrees_per_second_t rotationalVelocity { rotation };
-
-    // frc::SmartDashboard::PutNumber("Gyro angle", m_Gyro->GetAngle());
-
     if (isFieldRelative)
     {
-        // How does this know what angle it starts at
         chassisSpeeds = CowLib::CowChassisSpeeds::FromFieldRelativeSpeeds(vx, vy, omega, m_Gyro->GetYawDegrees());
 
         // save off current chassis speeds for auto mode - this is always robot relative
@@ -134,9 +115,10 @@ void SwerveDrive::SetVelocity(double vx,
         moduleStates = m_Kinematics->CalculateModuleStates(chassisSpeeds, centerOfRotationX, centerOfRotationY);
     }
 
-    // Just in case
+    // Scale module speeds
     CowLib::CowSwerveKinematics::DesaturateSpeeds(&moduleStates, CONSTANT("SWERVE_MAX_SPEED"));
 
+    // Set module target state
     for (auto module : m_Modules)
     {
         module->SetTargetState(moduleStates[module->GetID()], m_Locked);
@@ -163,6 +145,15 @@ void SwerveDrive::SetVelocity(CowLib::CowChassisSpeeds chassisSpeeds,
                 centerOfRotationX,
                 centerOfRotationY,
                 force);
+}
+
+frc::Pose2d SwerveDrive::GetPose()
+{
+    return m_Odometry->GetWPIPose();
+}
+
+frc::ChassisSpeeds SwerveDrive::GetChassisSpeeds() {
+    return m_PrevChassisSpeeds;
 }
 
 /**
@@ -216,11 +207,18 @@ void SwerveDrive::SetLocked(bool isLocked)
     m_Locked = isLocked;
 }
 
-void SwerveDrive::Reset()
+void SwerveDrive::SetBrakeMode(bool brakeMode)
 {
-    ResetConstants();
-    ResetEncoders();
-    ResetOdometry(frc::Pose2d(0_ft, 0_ft, 180_deg));
+    for (auto module : m_Modules)
+    {
+        module->SetBrakeMode(brakeMode);
+    }
+}
+
+void SwerveDrive::AddVisionMeasurement(frc::Pose2d pose, units::second_t latency)
+{
+    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - latency;
+    m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(pose, timestamp);
 }
 
 void SwerveDrive::ResetConstants()
@@ -254,41 +252,24 @@ void SwerveDrive::ResetOdometry(frc::Pose2d pose)
     m_Odometry->Reset(pose, m_Gyro->GetYawDegrees(), modulePositions);
 }
 
-void SwerveDrive::AddVisionMeasurement(frc::Pose2d pose, double latency)
+void SwerveDrive::Reset()
 {
-    // printf("FUSING %f %f\n", )
-    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - units::millisecond_t{ latency };
-    m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(pose, timestamp);
+    ResetConstants();
+    ResetEncoders();
+    ResetOdometry(frc::Pose2d(0_ft, 0_ft, 180_deg));
 }
 
 void SwerveDrive::Handle()
 {
     std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
-    // std::array<CowLib::CowSwerveModuleState, 4> moduleStates{};
+
     for (auto module : m_Modules)
     {
         module->Handle();
         modulePositions[module->GetID()] = module->GetPosition();
-        // moduleStates[module->GetID()]    = module->GetState();
     }
-
-    // if (!frc::RobotBase::IsReal())
-    // {
-    //     m_Gyro->SetYaw(m_Kinematics->GetInternalKinematics()
-    //                        ->ToChassisSpeeds(CowLib::CowSwerveModuleState::ToWPIExtendedArray(moduleStates))
-    //                        .omega.value()
-    //                    + m_Gyro->GetYawDegrees());
-    // }
 
     m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
 
     m_Pose = m_Odometry->GetWPIPose();
-}
-
-void SwerveDrive::SetBrakeMode(bool brakeMode)
-{
-    for (auto module : m_Modules)
-    {
-        module->SetBrakeMode(brakeMode);
-    }
 }
