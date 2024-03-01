@@ -16,6 +16,7 @@
 #include "Drivetrain/SwerveDrive.h"
 #include "Drivetrain/SwerveDriveController.h"
 #include "frc/controller/PIDController.h"
+#include "Vision.h"
 
 // #include "Subsystems/ArmState.h" // delete before 2024
 // #include "Subsystems/Vision.h"
@@ -38,6 +39,7 @@ public:
     Shooter *m_Shooter;
     Elevator *m_Elevator;
     Wrist *m_Wrist;
+    Vision *m_Vision;
 
 private:
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowDriveSynchronizedSignals();
@@ -86,6 +88,8 @@ public:
     SwerveDrive *GetDrivetrain() { return m_Drivetrain; }
 
     SwerveDriveController *GetDriveController() { return m_DriveController; }
+
+    void FuseVisionPose();
 
     void Handle();
 

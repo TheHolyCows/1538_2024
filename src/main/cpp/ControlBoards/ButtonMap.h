@@ -9,18 +9,19 @@ enum DR_BUTTON_MAP
 
 enum OP_BUTTON_MAP
 {
-    BUTTON_GROUND = 1,
+    BUTTON_HP = 1, // HP
     BUTTON_CLIMB = 2, // (pull climber down - does nothing without climb switch)
     SWITCH_CLIMB = 3, // (start climb == on)
     SWITCH_HI_LO = 4, // (low setpoint == off / high setpoint == on)
     SWITCH_SHOOTER = 5, // (shooter on == switch on)
     BUTTON_SHOOT = 6,
-    BUTTON_HP = 7,
-    BUTTON_LAUNCH = 8,
+    BUTTON_STOW = 7, // stow ?
+    BUTTON_LAUNCH = 8, // launch pad ?
     BUTTON_INTAKE = 9,
     BUTTON_AUTO_SELECT = 9,
     BUTTON_EXHAUST = 10,
     BUTTON_RST_CONST = 10,
-    BUTTON_AMP = 11,
-    BUTTON_BREAK_MODE = 11
+    BUTTON_GROUND = 11,
+    BUTTON_AMP = 12,
+    BUTTON_BREAK_MODE = 12
 };

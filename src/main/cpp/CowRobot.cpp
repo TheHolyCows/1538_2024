@@ -32,6 +32,7 @@ CowRobot::CowRobot()
     m_Elevator = new Elevator(11, 12);
     m_Wrist = new Wrist(13, 30, CONSTANT("WRIST_ENCODER_OFFSET"));
     m_Shooter = new Shooter(15, 16, 14);
+    m_Vision = new Vision();
     
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetCowDriveSynchronizedSignals());
@@ -100,6 +101,16 @@ void CowRobot::PrintToDS()
     if (m_DSUpdateCount++ % 20 == 0)
     {
         m_DSUpdateCount = 1;
+    }
+}
+
+void CowRobot::FuseVisionPose()
+{
+    Vision::PoseWithLatency pose = m_Vision->GetRobotPose();
+
+    if (pose.pose2d.X().value() != 0 && pose.pose2d.Y().value() != 0)
+    {
+        m_Drivetrain->AddVisionMeasurement(pose.pose2d, pose.totalLatency);
     }
 }
 

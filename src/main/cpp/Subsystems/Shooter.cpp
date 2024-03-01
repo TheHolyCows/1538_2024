@@ -209,40 +209,43 @@ void Shooter::Handle()
                 m_DetectStartTime = frc::Timer::GetFPGATimestamp().value();
             }
 
-            double elapsed = std::clamp(frc::Timer::GetFPGATimestamp().value() - m_DetectStartTime, 0.0, CONSTANT("INTAKE_SPINUP_TIME"));
+            double elapsed = frc::Timer::GetFPGATimestamp().value() - m_DetectStartTime;
 
             CowMotor::Control::TorqueCurrent request = {};
             request.MaxDutyCycle = CONSTANT("INTAKE_MAX_DUTY_CYCLE");
 
-            if (elapsed < CONSTANT("INTAKE_SPINUP_TIME"))
+            double expectedAcceleration = 0.0;
+
+            if (elapsed <= CONSTANT("INTAKE_CURVE_I_END_TIME"))
             {
                 request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
+
+                expectedAcceleration =  CONSTANT("INTAKE_CURVE_I_A") +
+                                       (CONSTANT("INTAKE_CURVE_I_B") * pow(elapsed, 1)) +
+                                       (CONSTANT("INTAKE_CURVE_I_C") * pow(elapsed, 2)) +
+                                       (CONSTANT("INTAKE_CURVE_I_D") * pow(elapsed, 3));
+            }
+            else if (elapsed <= CONSTANT("INTAKE_CURVE_II_END_TIME"))
+            {
+                request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
+
+                expectedAcceleration =  CONSTANT("INTAKE_CURVE_II_A") +
+                                       (CONSTANT("INTAKE_CURVE_II_B") * pow(elapsed, 1)) +
+                                       (CONSTANT("INTAKE_CURVE_II_C") * pow(elapsed, 2)) +
+                                       (CONSTANT("INTAKE_CURVE_II_D") * pow(elapsed, 3));
             }
             else
             {
                 request.Current = CONSTANT("INTAKE_STEADY_CURRENT");
 
-                if (GetIntakeAcceleration() < -CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
-                {
-                    m_IntakeState = IntakeState::DETECT_HOLD;
-                    m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
-                }
+                expectedAcceleration = 0.0;
             }
 
-            m_Intake->Set(request);
-
-            // double expectedAcceleration = (CONSTANT("INTAKE_SPINUP_CURVE_A") * pow(elapsed, 3)) +
-            //                               (CONSTANT("INTAKE_SPINUP_CURVE_B") * pow(elapsed, 2)) +
-            //                               (CONSTANT("INTAKE_SPINUP_CURVE_C") * pow(elapsed, 1)) +
-            //                                CONSTANT("INTAKE_SPINUP_CURVE_D");
-
-            // double error = std::max(expectedAcceleration, 0.0) - GetIntakeAcceleration();
-
-            // if (error > CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
-            // {
-            //     m_IntakeState = IntakeState::DETECT_HOLD;
-            //     m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
-            // }
+            if (GetIntakeAcceleration() < -CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
+            {
+                m_IntakeState = IntakeState::DETECT_HOLD;
+                m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
+            }
 
             break;
         }

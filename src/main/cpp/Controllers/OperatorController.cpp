@@ -21,9 +21,9 @@ void OperatorController::Handle(CowRobot *bot)
         bot->GetDrivetrain()->SetLocked(false);
     }
 
-    if (m_CB->GetVisionTargetButton())
+    if (m_CB->GetDriveAxis(5) > 0.8 || m_CB->GetDriveAxis(6) > 0.8)
     {
-        // Vision::GetInstance()->...
+        bot->GetDriveController()->LockHeading(m_CB->GetLeftDriveStickY(), m_CB->GetLeftDriveStickX());
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {
@@ -35,8 +35,10 @@ void OperatorController::Handle(CowRobot *bot)
         
         // From the driver station perspective, +x is right, +y is away from
         // the driver station, and +rotation is a counter clockwise rotation
-        bot->GetDriveController()->Drive(m_CB->GetLeftDriveStickY(),
-                                         -m_CB->GetLeftDriveStickX(),
+
+        // TODO: Flip depending on alliance color
+        bot->GetDriveController()->Drive(-m_CB->GetLeftDriveStickY(),
+                                         m_CB->GetLeftDriveStickX(),
                                          -m_CB->GetRightDriveStickX(),
                                          true);
     }
@@ -49,6 +51,10 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->Intake();
     }
+    else if(m_CB->GetOperatorButton(BUTTON_SHOOT))
+    {
+        bot->m_Shooter->Shoot();
+    }
     else if(m_CB->GetOperatorButton(BUTTON_EXHAUST))
     {
         bot->m_Shooter->Exhaust();
@@ -58,14 +64,9 @@ void OperatorController::Handle(CowRobot *bot)
         bot->m_Shooter->StopIntake();
     }
 
-    if (m_CB->GetOperatorButton(SWITCH_SHOOTER))
+    if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
         bot->m_Shooter->PrimeShooter();
-
-        if(m_CB->GetOperatorButton(BUTTON_SHOOT))
-        {
-            bot->m_Shooter->Shoot();
-        }
     }
     else
     {

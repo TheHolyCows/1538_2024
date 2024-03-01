@@ -115,6 +115,24 @@ namespace CowMotor
             double FeedForward;
         };
 
+        struct DynamicMotionMagicTorqueCurrent
+        {
+            // Units: Motor turns
+            double Position;
+
+            // Units: Motor turns / second
+            double Velocity;
+
+            // Units: Motor turns / second^2
+            double Acceleration;
+
+            // Units: Motor turns / second^3
+            double Jerk;
+
+            // Units: Amperes
+            double FeedForward;
+        };
+
         struct Follower
         {
             int MasterID;
@@ -154,6 +172,7 @@ namespace CowMotor
         virtual Status Set(Control::VelocityTorqueCurrent request) = 0;
         virtual Status Set(Control::MotionMagicPositionTorqueCurrent request) = 0;
         virtual Status Set(Control::MotionMagicVelocityTorqueCurrent request) = 0;
+        virtual Status Set(Control::DynamicMotionMagicTorqueCurrent request) = 0;
         virtual Status Set(Control::Follower request) = 0;
 
         virtual double GetPosition() = 0;

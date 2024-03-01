@@ -15,6 +15,8 @@ public:
 
     void Drive(double x, double y, double rotation, bool fieldRelative);
 
+    void DriveLookAt(double x, double y, double targetX, double targetY);
+
     // 2023
     // void CubeAlign(double x);
     // void ConeAlign(double x, double yInput);
