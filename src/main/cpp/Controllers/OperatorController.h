@@ -26,16 +26,7 @@ private:
     OperatorController();
     GenericControlBoard *m_CB;
 
-    // enum Wheel
-    // {
-    //     NONE = -1,
-    //     FRONT_LEFT,
-    //     FRONT_RIGHT,
-    //     BACK_LEFT,
-    //     BACK_RIGHT
-    // };
-
-    // Wheel m_EvasiveSwerveWheel;
+    bool m_ClimberLatch;
 
 public:
     OperatorController(GenericControlBoard *controlboard);

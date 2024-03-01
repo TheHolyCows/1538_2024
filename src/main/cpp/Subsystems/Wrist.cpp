@@ -45,18 +45,19 @@ double Wrist::GetSetpoint()
 /**
  * sets wrist to absolute angle relative to the ground
 */
-void Wrist::SetAngle(double angle, double pivotAngle, bool force)
+void Wrist::SetAngle(double angle, double pivotSetpoint, bool force)
 {
     m_CanSetAngle = true;
 
     if (force)
     {
-        m_WristPosRequest.Position = angle / 360.0;
+        m_TargetAngle = angle / 360.0;
         return;
     }
 
     // compute angle of wrist relative to ground
-    double angleSetpoint = angle + pivotAngle + 90;
+    // double angleSetpoint = angle + pivotSetpoint + 90;
+    double angleSetpoint = (180 - pivotSetpoint) - angle + CONSTANT("WRIST_VERT_OFFSET");
     
     
     if (angleSetpoint > CONSTANT("WRIST_MAX_ANGLE"))
@@ -70,7 +71,7 @@ void Wrist::SetAngle(double angle, double pivotAngle, bool force)
         m_CanSetAngle = false;
     }
 
-    m_WristPosRequest.Position = angleSetpoint / 360.0;
+    m_TargetAngle = angleSetpoint / 360.0;
 }
 
 void Wrist::BrakeMode(bool brakeMode)
@@ -111,10 +112,17 @@ void Wrist::ResetConstants()
     m_CanSetAngle = true;
 }
 
-void Wrist::Handle()
+void Wrist::Handle(Pivot *pivot)
 {
-    if (m_WristMotor)
+    m_WristPosRequest.Position = m_TargetAngle;
+
+    if (pivot->GetAngle() <= CONSTANT("PIVOT_WRIST_DANGER"))  // 30
     {
-        m_WristMotor->Set(m_WristPosRequest);
+        if (m_WristPosRequest.Position < CONSTANT("WRIST_LOCKOUT_ANGLE")) // 90 ? 112?
+        {
+            m_WristPosRequest.Position = CONSTANT("WRIST_LOCKOUT_ANGLE"); // 112ish at ground
+        }
     }
+    
+    m_WristMotor->Set(m_WristPosRequest);
 }

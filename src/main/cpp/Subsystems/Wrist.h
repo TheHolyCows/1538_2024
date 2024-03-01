@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Pivot.h"
 #include "../CowConstants.h"
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowMotor/TalonFX.h"
@@ -23,13 +24,13 @@ public:
     double GetAngle(void);
     double GetSetpoint(void);
 
-    void SetAngle(double angle, double pivotAngle, bool force = false);
+    void SetAngle(double angle, double pivotSetpoint, bool force = false);
 
     void BrakeMode(bool brakeMode);
     
     void ResetConstants(void);
 
-    void Handle(void);
+    void Handle(Pivot* pivot);
 
 private:
     double m_TargetAngle;
