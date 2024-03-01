@@ -23,6 +23,8 @@ public:
     Vision();
     PoseWithLatency GetRobotPose();
     void SetLEDState(LEDState ledState);
+    void LEDOn();
+    void LEDOff();
     void Handle();
 
 private:

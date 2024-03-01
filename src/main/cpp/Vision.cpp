@@ -28,14 +28,26 @@ void Vision::SetLEDState(Vision::LEDState ledState)
     m_LEDState = ledState;
 }
 
+void Vision::LEDOn()
+{
+   nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 3);
+    m_IsLEDOn = true; 
+}
+
+void Vision::LEDOff()
+{
+    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 1);
+    m_IsLEDOn = false;
+}
+
 void Vision::Handle()
 {
-    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 4);
+//  nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 4);
     m_TickCount++;
 
     if (m_LEDState == LEDState::OFF)
     {
-        nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 1);
+        LEDOff();
     }
     else if (m_LEDState == LEDState::BLINK_SLOW || m_LEDState == LEDState::BLINK_FAST)
     {
@@ -43,11 +55,11 @@ void Vision::Handle()
         {
             if(m_TickCount < CONSTANT("BLINK_SLOW_INTERVAL"))
             {
-                m_IsLEDOn = true;
+                LEDOn();
             }
             else if (m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") && m_TickCount < CONSTANT("BLINK_SLOW_INTERVAL") * 2)
             {
-                m_IsLEDOn = false;
+                LEDOff();
             }
             else 
             {
@@ -58,11 +70,11 @@ void Vision::Handle()
         {
             if(m_TickCount < CONSTANT("BLINK_FAST_INTERVAL"))
             {
-                m_IsLEDOn = true;
+                LEDOn();
             }
             else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") && m_TickCount < CONSTANT("BLINK_FAST_INTERVAL") * 2)
             {
-                m_IsLEDOn = false;
+                LEDOff();
             }
             else 
             {
