@@ -117,6 +117,8 @@ void CowBase::DisabledPeriodic()
     //     // m_Bot->GetArm()->DisabledCalibration();
     // }
 
+    m_Bot->FuseVisionPose();
+
     if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
     {
         m_Alliance = frc::DriverStation::Alliance::kRed;
@@ -144,11 +146,13 @@ void CowBase::DisabledPeriodic()
 
 void CowBase::AutonomousPeriodic()
 {
+    m_Bot->FuseVisionPose();
     m_Bot->Handle();
 }
 
 void CowBase::TeleopPeriodic()
 {
+    m_Bot->FuseVisionPose();
     m_Bot->Handle();
 }
 

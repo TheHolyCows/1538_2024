@@ -7,8 +7,7 @@ Vision::Vision()
 
 Vision::PoseWithLatency Vision::GetRobotPose()
 {
-    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("<botpose_wpiblue>",std::vector<double>(7));
-    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("<botpose_wpiblue>",std::vector<double>(6));
+    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose_wpiblue",std::vector<double>(7));
 
     frc::Pose2d pose2d { units::meter_t {limelightValues[0]},
                          units::meter_t {limelightValues[1]},

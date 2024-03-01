@@ -79,6 +79,14 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
     m_Drivetrain.SetVelocity(x, y, omega, fieldRelative, centerOfRotationX, centerOfRotationY);
 }
 
+void SwerveDriveController::DriveLookAt(double x, double y, double targetX, double targetY)
+{
+    m_TargetHeading = atan2(targetY - y, targetX - x);
+    m_HeadingLocked = true;
+
+    Drive(x, y, 0.0, true);
+}
+
 void SwerveDriveController::LockHeading(double x, double y, bool useRawInputs)
 {
     double currentHeading = m_Gyro.GetYawDegrees();

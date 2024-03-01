@@ -20,9 +20,9 @@ void OperatorController::Handle(CowRobot *bot)
         bot->GetDrivetrain()->SetLocked(false);
     }
 
-    if (m_CB->GetVisionTargetButton())
+    if (m_CB->GetDriveAxis(5) > 0.8 || m_CB->GetDriveAxis(6) > 0.8)
     {
-        // Vision::GetInstance()->...
+        bot->GetDriveController()->LockHeading(m_CB->GetLeftDriveStickY(), m_CB->GetLeftDriveStickX());
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {
@@ -34,8 +34,10 @@ void OperatorController::Handle(CowRobot *bot)
         
         // From the driver station perspective, +x is right, +y is away from
         // the driver station, and +rotation is a counter clockwise rotation
-        bot->GetDriveController()->Drive(m_CB->GetLeftDriveStickY(),
-                                         -m_CB->GetLeftDriveStickX(),
+
+        // TODO: Flip depending on alliance color
+        bot->GetDriveController()->Drive(-m_CB->GetLeftDriveStickY(),
+                                         m_CB->GetLeftDriveStickX(),
                                          -m_CB->GetRightDriveStickX(),
                                          true);
     }
