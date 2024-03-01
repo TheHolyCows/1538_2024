@@ -123,8 +123,8 @@ void CowRobot::Handle()
     m_Drivetrain->Handle();
     
     m_Pivot->Handle();
-    m_Elevator->Handle();
-    m_Wrist->Handle();
+    m_Elevator->Handle(m_Pivot);
+    m_Wrist->Handle(m_Pivot);
     m_Shooter->Handle();
 
     // logger code below should have checks for debug mode before sending out data

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Pivot.h"
 #include "../CowLib/CowMotor/TalonFX.h"
 #include "../Cowconstants.h"
 #include "../CowLib/CowLogger.h"
@@ -26,9 +27,9 @@ public:
     double GetAcceleration();
     double GetCurrent();
 
-    void SetExtension(double extensionLength, double pivotSetpoint);
+    void SetExtension(double extensionLength);
 
-    void Handle();
+    void Handle(Pivot *pivot);
     
 private:
     std::unique_ptr<CowMotor::TalonFX> m_Motor1;
