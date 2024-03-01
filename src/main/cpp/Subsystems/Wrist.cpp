@@ -56,7 +56,8 @@ void Wrist::SetAngle(double angle, double pivotSetpoint, bool force)
     }
 
     // compute angle of wrist relative to ground
-    double angleSetpoint = angle + pivotSetpoint + 90;
+    // double angleSetpoint = angle + pivotSetpoint + 90;
+    double angleSetpoint = (180 - pivotSetpoint) - angle + CONSTANT("WRIST_VERT_OFFSET");
     
     
     if (angleSetpoint > CONSTANT("WRIST_MAX_ANGLE"))
@@ -117,9 +118,9 @@ void Wrist::Handle(Pivot *pivot)
 
     if (pivot->GetAngle() <= CONSTANT("PIVOT_WRIST_DANGER"))  // 30
     {
-        if (m_WristPosRequest.Position < CONSTANT("WRIST_LOCKOUT_ANGLE"))
+        if (m_WristPosRequest.Position < CONSTANT("WRIST_LOCKOUT_ANGLE")) // 90 ? 112?
         {
-            m_WristPosRequest.Position = CONSTANT("WRIST_LOCKOUT_ANGLE"); // 112 at ground
+            m_WristPosRequest.Position = CONSTANT("WRIST_LOCKOUT_ANGLE"); // 112ish at ground
         }
     }
     
