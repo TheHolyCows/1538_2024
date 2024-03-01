@@ -81,7 +81,7 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
 
 void SwerveDriveController::DriveLookAt(double x, double y, double targetX, double targetY)
 {
-    m_TargetHeading = atan2(targetY - y, targetX - x);
+    m_TargetHeading = (atan2(targetY - m_Drivetrain.GetPoseY(), targetX - m_Drivetrain.GetPoseX()) / 3.1415) * 180;
     m_HeadingLocked = true;
 
     Drive(x, y, 0.0, true);

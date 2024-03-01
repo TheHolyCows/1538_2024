@@ -116,13 +116,13 @@ void Wrist::Handle(Pivot *pivot)
 {
     m_WristPosRequest.Position = m_TargetAngle;
 
-    if (pivot->GetAngle() <= CONSTANT("PIVOT_WRIST_DANGER"))  // 30
-    {
-        if (m_WristPosRequest.Position < CONSTANT("WRIST_LOCKOUT_ANGLE")) // 90 ? 112?
-        {
-            m_WristPosRequest.Position = CONSTANT("WRIST_LOCKOUT_ANGLE"); // 112ish at ground
-        }
-    }
+    // if (pivot->GetAngle() <= CONSTANT("PIVOT_WRIST_DANGER"))  // 30
+    // {
+    //     if (m_WristPosRequest.Position < CONSTANT("WRIST_LOCKOUT_ANGLE")) // 90 ? 112?
+    //     {
+    //         m_WristPosRequest.Position = CONSTANT("WRIST_LOCKOUT_ANGLE"); // 112ish at ground
+    //     }
+    // }
     
     m_WristMotor->Set(m_WristPosRequest);
 }

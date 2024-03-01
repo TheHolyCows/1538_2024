@@ -220,7 +220,7 @@ void SwerveDrive::Reset()
 {
     ResetConstants();
     ResetEncoders();
-    ResetOdometry(frc::Pose2d(0_ft, 0_ft, 0_deg));
+    ResetOdometry(frc::Pose2d(0_ft, 0_ft, 180_deg));
 }
 
 void SwerveDrive::ResetConstants()
@@ -256,7 +256,8 @@ void SwerveDrive::ResetOdometry(frc::Pose2d pose)
 
 void SwerveDrive::AddVisionMeasurement(frc::Pose2d pose, double latency)
 {
-    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - units::second_t{ latency };
+    // printf("FUSING %f %f\n", )
+    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - units::millisecond_t{ latency };
     m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(pose, timestamp);
 }
 

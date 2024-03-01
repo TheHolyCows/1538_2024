@@ -241,6 +241,8 @@ void Shooter::Handle()
                 expectedAcceleration = 0.0;
             }
 
+            m_Intake->Set(request);
+
             if (GetIntakeAcceleration() < -CONSTANT("INTAKE_DETECT_ERROR_THRESHOLD"))
             {
                 m_IntakeState = IntakeState::DETECT_HOLD;

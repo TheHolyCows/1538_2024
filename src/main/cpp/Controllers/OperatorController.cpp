@@ -1,5 +1,7 @@
 #include "OperatorController.h"
 
+
+
 OperatorController::OperatorController(GenericControlBoard *controlboard)
     : m_CB(controlboard)
 {
@@ -23,7 +25,20 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (m_CB->GetDriveAxis(5) > 0.8 || m_CB->GetDriveAxis(6) > 0.8)
     {
-        bot->GetDriveController()->LockHeading(m_CB->GetLeftDriveStickY(), m_CB->GetLeftDriveStickX());
+        // TODO: Move to constants
+        double goalX = 54.3941666667;
+        double goalY = 18.2016666667;
+
+        double robotX = bot->GetDrivetrain()->GetPoseX();
+        double robotY = bot->GetDrivetrain()->GetPoseY();
+
+        bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - 1.0, goalY);
+
+        double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
+
+        // wpi::Lerp(NEAR_ANGLE, FAR_ANGLE, (dist - NEAR_DIST) / (FAR_DIST - NEAR_DIST));
+
+        printf("%f\n", dist);
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {
@@ -37,8 +52,8 @@ void OperatorController::Handle(CowRobot *bot)
         // the driver station, and +rotation is a counter clockwise rotation
 
         // TODO: Flip depending on alliance color
-        bot->GetDriveController()->Drive(-m_CB->GetLeftDriveStickY(),
-                                         m_CB->GetLeftDriveStickX(),
+        bot->GetDriveController()->Drive(m_CB->GetLeftDriveStickY(),
+                                         -m_CB->GetLeftDriveStickX(),
                                          -m_CB->GetRightDriveStickX(),
                                          true);
     }
