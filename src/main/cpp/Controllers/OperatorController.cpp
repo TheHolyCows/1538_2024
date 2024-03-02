@@ -32,6 +32,12 @@ void OperatorController::Handle(CowRobot *bot)
         double robotX = bot->GetDrivetrain()->GetPoseX();
         double robotY = bot->GetDrivetrain()->GetPoseY();
 
+        // printf("%f %f %f %f\n", robotX, robotY, robotX - lookaheadPose.X().convert<units::foot>().value(), robotY - lookaheadPose.Y().convert<units::foot>().value());
+        // printf("%f,%f\n", robotX, lookaheadPose.X().convert<units::foot>().value());
+
+        robotX = lookaheadPose.X().convert<units::foot>().value();
+        robotY = lookaheadPose.Y().convert<units::foot>().value();
+
         bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - 1.0, goalY);
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
@@ -110,7 +116,13 @@ void OperatorController::Handle(CowRobot *bot)
     else if (m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
         m_ClimberLatch = false;
-        if (m_CB->GetOperatorButton(BUTTON_GROUND))
+
+        if (m_CB->GetOperatorButton(BUTTON_STOW))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_STOW_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_STOW_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_STOW_SETPOINT"));
+        } else if (m_CB->GetOperatorButton(BUTTON_GROUND))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_GROUND_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_GROUND_SETPOINT"), bot->m_Pivot->GetSetpoint());
@@ -139,7 +151,12 @@ void OperatorController::Handle(CowRobot *bot)
     else // switch in low position and not climbing
     {
         m_ClimberLatch = false;
-        if (m_CB->GetOperatorButton(BUTTON_GROUND))
+        if (m_CB->GetOperatorButton(BUTTON_STOW))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_STOW_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_STOW_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_STOW_SETPOINT"));
+        } else if (m_CB->GetOperatorButton(BUTTON_GROUND))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_GROUND_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_GROUND_SETPOINT"), bot->m_Pivot->GetSetpoint());

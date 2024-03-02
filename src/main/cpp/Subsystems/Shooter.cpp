@@ -77,7 +77,7 @@ double Shooter::GetShooterCurrent()
 
 bool Shooter::IsReady()
 {
-    if (m_IntakeState == IntakeState::DETECT_HOLD && m_ShooterState == ShooterState::READY)
+    if (m_ShooterState == ShooterState::READY)
     {
         return true;
     }

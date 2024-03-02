@@ -19,6 +19,7 @@ SwerveModule::SwerveModule(const int id,
 
     m_DriveMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_DriveMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+    m_DriveMotor->ConfigStatorCurrentLimit(CONSTANT("SWERVE_DRIVE_CURRENT_LIMIT"));
 
     m_RotationMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_RotationMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
@@ -109,6 +110,7 @@ void SwerveModule::SetBrakeMode(bool brakeMode)
 
 void SwerveModule::ResetConstants()
 {
+    m_DriveMotor->ConfigStatorCurrentLimit(CONSTANT("SWERVE_DRIVE_CURRENT_LIMIT"));
     m_DriveMotor->ConfigPID(CONSTANT("SWERVE_DRIVE_P"), CONSTANT("SWERVE_DRIVE_I"), CONSTANT("SWERVE_DRIVE_D"));
     m_RotationMotor->ConfigPID(CONSTANT("SWERVE_ANGLE_P"), CONSTANT("SWERVE_ANGLE_I"), CONSTANT("SWERVE_ANGLE_D"));
 }

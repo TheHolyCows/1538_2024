@@ -85,8 +85,8 @@ void SwerveDrive::SetVelocity(double vx,
 
     if (isFieldRelative)
     {
-        // chassisSpeeds = CowLib::CowChassisSpeeds::FromFieldRelativeSpeeds(vx, vy, omega, m_Gyro->GetYawDegrees());
-        chassisSpeeds = CowLib::CowChassisSpeeds::FromFieldRelativeSpeeds(vx, vy, omega, GetPoseRot());
+        chassisSpeeds = CowLib::CowChassisSpeeds::FromFieldRelativeSpeeds(vx, vy, omega, m_Gyro->GetYawDegrees());
+        // chassisSpeeds = CowLib::CowChassisSpeeds::FromFieldRelativeSpeeds(vx, vy, omega, GetPoseRot());
 
         // save off current chassis speeds for auto mode - this is always robot relative
         m_PrevChassisSpeeds.vx = units::feet_per_second_t(vx);
@@ -228,6 +228,8 @@ void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
         double stdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_STD_DEV_SCALE");
         
         m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {stdDev, stdDev, stdDev});
+
+        frc::Pose2d p2d = sample.pose3d.ToPose2d();
     }
 }
 
@@ -260,6 +262,7 @@ void SwerveDrive::ResetOdometry(frc::Pose2d pose)
     }
 
     m_Odometry->Reset(pose, m_Gyro->GetYawDegrees(), modulePositions);
+    m_Pose = m_Odometry->GetWPIPose();
 }
 
 void SwerveDrive::Reset()

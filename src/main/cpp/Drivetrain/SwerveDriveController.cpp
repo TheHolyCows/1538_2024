@@ -5,7 +5,7 @@ SwerveDriveController::SwerveDriveController(SwerveDrive &drivetrain)
       m_Gyro(*CowPigeon::GetInstance()),
       m_HeadingLocked(false),
       m_VisionTargeting(false),
-      m_TargetHeading(0)
+      m_TargetHeading(180)
 {
     m_ExponentialFilter = std::make_unique<CowLib::CowExponentialFilter>(0);
 
@@ -36,6 +36,7 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
 
     // double heading = m_Gyro.GetYawDegrees();
     double heading = m_Drivetrain.GetPoseRot();
+
     if (fabs(rotation) > CONSTANT("STICK_DEADBAND"))
     {
         omega           = ProcessDriveAxis(rotation, CONSTANT("DESIRED_MIN_ANG_VEL"), CONSTANT("DESIRED_MAX_ANG_VEL"), false);
@@ -84,7 +85,7 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
 
 void SwerveDriveController::DriveLookAt(double x, double y, double targetX, double targetY)
 {
-    m_TargetHeading = (atan2(targetY - m_Drivetrain.GetPoseY(), targetX - m_Drivetrain.GetPoseX()) / 3.1415) * 180;
+    m_TargetHeading = (atan2(m_Drivetrain.GetPoseY() - targetY, m_Drivetrain.GetPoseX() - targetX) / 3.1415) * 180;
     m_HeadingLocked = true;
     m_VisionTargeting = true;
 
@@ -171,7 +172,8 @@ void SwerveDriveController::LockHeading(double x, double y, bool useRawInputs)
 void SwerveDriveController::ResetHeadingLock()
 {
     m_HeadingLocked = false;
-    m_TargetHeading = m_Gyro.GetYawDegrees();
+    // m_TargetHeading = m_Gyro.GetYawDegrees();
+    m_TargetHeading = m_Drivetrain.GetPoseRot();
 }
 
 double SwerveDriveController::ProcessDriveAxis(double input, double scaleMin, double scaleMax, bool reverse)

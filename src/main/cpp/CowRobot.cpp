@@ -71,7 +71,7 @@ void CowRobot::Reset()
 {
     m_MatchTime = 0;
 
-    m_Drivetrain->ResetConstants();
+    m_Drivetrain->Reset();
     m_DriveController->ResetConstants();
 
     m_Pivot->ResetConstants();

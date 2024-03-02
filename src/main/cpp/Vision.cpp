@@ -13,18 +13,18 @@ Vision::Sample Vision::GetRobotPose()
                          units::meter_t {limelightValues[1]},
                          units::meter_t {limelightValues[2]},
                          frc::Rotation3d(
-                            units::radian_t{ limelightValues[3] },
-                            units::radian_t{ limelightValues[4] },
-                            units::radian_t{ limelightValues[5] }
+                            units::degree_t{ limelightValues[3] },
+                            units::degree_t{ limelightValues[4] },
+                            units::degree_t{ limelightValues[5] }
                          )};
 
     Vision::Sample sample;
     sample.pose3d = pose3d;
     sample.totalLatency = units::millisecond_t{ limelightValues[6] };
     sample.tagCount = limelightValues[7];
-    sample.tagSpan = limelightValues[7];
-    sample.averageTagDistance = limelightValues[7];
-    sample.averageTagArea = limelightValues[7];
+    sample.tagSpan = limelightValues[8];
+    sample.averageTagDistance = limelightValues[9];
+    sample.averageTagArea = limelightValues[10];
 
     return sample;
 }

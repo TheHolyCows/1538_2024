@@ -141,6 +141,15 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
+    Status TalonFX::ConfigStatorCurrentLimit(double current)
+    {
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimit = current;
+
+        return ApplyConfig(config);
+    }
+
     Status TalonFX::Set(Control::DutyCycle cowRequest)
     {
         ctre::phoenix6::controls::DutyCycleOut ctreRequest = ctre::phoenix6::controls::DutyCycleOut(units::scalar_t{ cowRequest.DutyCycle })
