@@ -10,7 +10,6 @@ class UpdateShooterStateCommand : public RobotCommand
 {
 private:
     std::optional<Shooter::ShooterState> m_State = std::nullopt;
-    std::optional<bool> m_Invert = std::nullopt;
     bool m_WaitForCompletion;
 
 public:
