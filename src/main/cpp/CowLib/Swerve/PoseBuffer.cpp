@@ -2,8 +2,8 @@
 
 namespace CowLib
 {
-    PoseBuffer::PoseBuffer(units::second_t historyDuration)
-        : m_HistoryDuration(historyDuration)
+    PoseBuffer::PoseBuffer(size_t bufferSize)
+        : m_BufferSize(bufferSize)
     {
 
     }
@@ -13,64 +13,62 @@ namespace CowLib
 
     }
 
-    void PoseBuffer::Add(units::second_t timestamp, frc::Pose2d pose)
-    {
-        m_Buffer.push_back(std::make_tuple(timestamp, pose));
-
-        while (!m_Buffer.empty())
-        {
-            units::second_t deltaTime = timestamp - std::get<0>(m_Buffer.front());
-
-            if (deltaTime > m_HistoryDuration)
-            {
-                m_Buffer.pop_front();
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
-
     std::optional<frc::Pose2d> PoseBuffer::Extrapolate(units::second_t timestamp)
     {
-        if (m_Buffer.size() < 2)
+        if (m_Buffer.size() == 0)
         {
             return std::nullopt;
         }
 
-        if (timestamp < std::get<0>(m_Buffer.back()))
+        auto [prevTimestamp, prevPose] = m_PreviousInput.value();
+
+        if (timestamp < prevTimestamp)
         {
             return std::nullopt;
         }
 
-        units::meters_per_second_t vxSum = 0.0_mps;
-        units::meters_per_second_t vySum = 0.0_mps;
-        units::radians_per_second_t omegaSum = 0.0_rad_per_s;
-
-        for (auto it = m_Buffer.begin(); it < m_Buffer.end() - 1; it++)
-        {
-            auto [currentTimestamp, currentPose] = it[0];
-            auto [nextTimestamp, nextPose] = it[1];
-
-            units::second_t deltaTime = nextTimestamp - currentTimestamp;
-            frc::Transform2d transform = nextPose - currentPose;
-
-            vxSum += transform.X() / deltaTime;
-            vySum += transform.Y() / deltaTime;
-            omegaSum += transform.Rotation().Radians() / deltaTime;
-        }
-
-        units::meters_per_second_t vxAvg = vxSum / (m_Buffer.size() - 1);
-        units::meters_per_second_t vyAvg = vySum / (m_Buffer.size() - 1);
-        units::radians_per_second_t omegaAvg = omegaSum / (m_Buffer.size() - 1);
-
-        auto [lastTimestamp, lastPose] = m_Buffer.back();
-        units::second_t extrapolationTime = timestamp - lastTimestamp;
+        units::meters_per_second_t vxAvg = m_SumVX / m_Buffer.size();
+        units::meters_per_second_t vyAvg = m_SumVY / m_Buffer.size();
+        units::radians_per_second_t omegaAvg = m_SumOmega / m_Buffer.size();
+        units::second_t extrapolationTime = timestamp - prevTimestamp;
 
         return frc::Pose2d(
-            lastPose.X() + (vxAvg * extrapolationTime),
-            lastPose.Y() + (vyAvg * extrapolationTime),
-            lastPose.Rotation().Radians() + (omegaAvg * extrapolationTime));
+            prevPose.X() + (vxAvg * extrapolationTime),
+            prevPose.Y() + (vyAvg * extrapolationTime),
+            prevPose.Rotation().Radians() + (omegaAvg * extrapolationTime));
+    }
+
+    void PoseBuffer::Update(units::second_t timestamp, frc::Pose2d pose)
+    {
+        if (m_Buffer.size() == m_BufferSize)
+        {
+            Sample removedSample = m_Buffer.front();
+
+            m_SumVX -= removedSample.vx;
+            m_SumVY -= removedSample.vy;
+            m_SumOmega -= removedSample.omega;
+
+            m_Buffer.pop_front();
+        }
+
+        if (m_PreviousInput.has_value())
+        {
+            auto [prevTimestamp, prevPose] = m_PreviousInput.value();
+            units::second_t deltaTime = timestamp - prevTimestamp;
+            frc::Transform2d transform = pose - prevPose;
+            Sample sample = {
+                .vx = transform.X() / deltaTime,
+                .vy = transform.Y() / deltaTime,
+                .omega = transform.Rotation().Radians() / deltaTime
+            };
+
+            m_Buffer.push_back(sample);
+
+            m_SumVX += sample.vx;
+            m_SumVY += sample.vy;
+            m_SumOmega += sample.omega;
+        }
+
+        m_PreviousInput = std::make_tuple(timestamp, pose);
     }
 }

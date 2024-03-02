@@ -18,8 +18,8 @@ namespace CowLib
                                          double initialX,
                                          double initialY,
                                          double initialRotation,
-                                         double poseHistoryDuration)
-        : m_PoseBuffer(units::second_t{ poseHistoryDuration })
+                                         size_t poseBufferSize)
+        : m_PoseBuffer(poseBufferSize)
     {
         // frc::SmartDashboard::PutData("field", &m_Field);
 
@@ -160,7 +160,7 @@ namespace CowLib
 
         m_Field.SetRobotPose(m_Pose);
 
-        m_PoseBuffer.Add(frc::Timer::GetFPGATimestamp(), m_Pose);
+        m_PoseBuffer.Update(frc::Timer::GetFPGATimestamp(), m_Pose);
     }
 
     /**

@@ -41,7 +41,7 @@ namespace CowLib
                           double initialX,
                           double initialY,
                           double initialRotation,
-                          double poseHistoryDuration);
+                          size_t poseBufferSize);
         ~CowSwerveOdometry();
 
         void Reset(double newX,

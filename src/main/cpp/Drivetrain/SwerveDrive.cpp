@@ -8,7 +8,7 @@
 SwerveDrive::SwerveDrive(ModuleConstants moduleConstants[4], double wheelBase)
     : m_Gyro(CowPigeon::GetInstance()),
       m_Kinematics(new CowLib::CowSwerveKinematics(wheelBase)),
-      m_Odometry(std::make_shared<CowLib::CowSwerveOdometry>(m_Kinematics, 0, 0, 0, 0, CONSTANT("POSE_HISTORY_DURATION"))),
+      m_Odometry(std::make_shared<CowLib::CowSwerveOdometry>(m_Kinematics, 0, 0, 0, 0, CONSTANT("POSE_BUFFER_SIZE"))),
       m_Pose({0_m, 0_m, 0_deg}),
       m_PrevChassisSpeeds({ 0.0_mps, 0.0_mps, units::radians_per_second_t(0) }),
       m_Locked(false)
