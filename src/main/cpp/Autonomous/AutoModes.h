@@ -15,6 +15,10 @@
 #include "Commands/WaitCommand.h"
 #include "Commands/ParallelCommand.h"
 
+#include "../Subsystems/Shooter.h"
+#include "../Subsystems/Wrist.h"
+#include "../Subsystems/Pivot.h"
+
 #include <deque>
 #include <frc/Errors.h>
 #include <map>
