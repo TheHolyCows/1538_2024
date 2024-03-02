@@ -4,6 +4,7 @@
 #include <frc/geometry/Pose2d.h>
 #include <networktables/NetworkTableInstance.h>
 #include <frc/Timer.h>
+#include <frc/geometry/Pose3d.h>
 
 class Vision {
 public:
@@ -14,14 +15,18 @@ public:
         BLINK_FAST
     };
     
-    struct PoseWithLatency 
+    struct Sample 
     { 
-        frc::Pose2d pose2d;
+        frc::Pose3d pose3d;
         units::second_t totalLatency;
+        uint tagCount;
+        double tagSpan;
+        double averageTagDistance;
+        double averageTagArea;
     };
     
     Vision();
-    PoseWithLatency GetRobotPose();
+    Sample GetRobotPose();
     void SetLEDState(LEDState ledState);
     void LEDOn();
     void LEDOff();
