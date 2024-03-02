@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include "../CowConstants.h"
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowMotor/TalonFX.h"
@@ -26,6 +28,8 @@ public:
     void SetAngle(double angle);
 
     void BrakeMode(bool brakeMode);
+
+    bool AtTarget(void);
     
     void ResetConstants(void);
 
