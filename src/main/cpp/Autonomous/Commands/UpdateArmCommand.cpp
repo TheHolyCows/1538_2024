@@ -29,9 +29,13 @@ bool UpdateArmCommand::IsComplete(CowRobot *robot)
         return true;
     }
 
-    // optional at target code
+    // gonna ignore wrist since that is less important
+    if (robot->m_Pivot->AtTarget())
+    {
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 void UpdateArmCommand::Start(CowRobot *robot)
