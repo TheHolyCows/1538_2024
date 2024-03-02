@@ -48,6 +48,8 @@ void CowBase::DisabledInit()
     m_Bot->GetDriveController()->ResetHeadingLock();
 
     m_Bot->GetDrivetrain()->SetBrakeMode(true);
+    
+    m_Bot->m_Vision->SetLEDState(Vision::LEDState::OFF);
 }
 
 void CowBase::AutonomousInit()
