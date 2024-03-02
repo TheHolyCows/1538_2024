@@ -40,6 +40,8 @@ void OperatorController::Handle(CowRobot *bot)
         // wpi::Lerp(NEAR_ANGLE, FAR_ANGLE, (dist - NEAR_DIST) / (FAR_DIST - NEAR_DIST));
 
         printf("%f\n", dist);
+        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
+        bot->m_Wrist->SetAngle(rangePivot, bot->m_Pivot->GetSetpoint());
         if(dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") && bot->m_Shooter->IsReady())
         {
             bot->m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);

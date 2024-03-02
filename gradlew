@@ -246,6 +246,6 @@ eval "set -- $(
     )" '"$@"'
 
 # must add some custom commands here because exec will not return here
-./1538_tools/generate_constants_file.py -s ./src -c bbot_constants.ini
+./1538_tools/generate_constants_file.py -s ./src -c constants.ini
 
 exec "$JAVACMD" "$@"
