@@ -142,7 +142,7 @@ void OperatorController::Handle(CowRobot *bot)
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
         }
     }
     else // switch in low position and not climbing
@@ -175,7 +175,7 @@ void OperatorController::Handle(CowRobot *bot)
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
         }
     }
 

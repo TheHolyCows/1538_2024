@@ -56,7 +56,7 @@ void Vision::Handle()
     {
         if (m_LEDState == LEDState::BLINK_SLOW)
         {
-            if(m_TickCount == 0)
+            if(m_TickCount == 1)
             {
                 LEDOn();
             }
@@ -71,7 +71,7 @@ void Vision::Handle()
         }
         else if (m_LEDState == LEDState::BLINK_FAST)
         {
-            if(m_TickCount == 0)
+            if(m_TickCount == 1)
             {
                 LEDOn();
             }
