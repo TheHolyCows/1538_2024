@@ -48,8 +48,6 @@ void Vision::LEDOff()
 
 void Vision::Handle()
 {
-    m_TickCount++;
-
     if (m_LEDState == LEDState::OFF)
     {
         LEDOff();
@@ -87,4 +85,6 @@ void Vision::Handle()
             }
         }
     }
+
+    m_TickCount++;
 }
