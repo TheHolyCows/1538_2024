@@ -142,18 +142,22 @@ void CowBase::DisabledPeriodic()
     // set wrist and pivot to current locations
     m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
     //m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
+
+    m_Bot->m_Vision->Vision::Handle();
 }
 
 void CowBase::AutonomousPeriodic()
 {
     m_Bot->FuseVisionPose();
     m_Bot->Handle();
+    m_Bot->m_Vision->Vision::Handle();
 }
 
 void CowBase::TeleopPeriodic()
 {
     m_Bot->FuseVisionPose();
     m_Bot->Handle();
+    m_Bot->m_Vision->Vision::Handle();
 }
 
 int main()
