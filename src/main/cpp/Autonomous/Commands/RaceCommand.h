@@ -7,11 +7,10 @@
 
 class RaceCommand : public RobotCommand {
 private:
-    RobotCommand* m_LeadCommand;
-    std::vector<RobotCommand*> m_OtherCommands;
+    std::vector<RobotCommand*> m_Commands;
 
 public:
-    RaceCommand(RobotCommand* leadCommand, std::vector<RobotCommand*> otherCommands);
+    RaceCommand(std::vector<RobotCommand*> otherCommands);
     ~RaceCommand() override;
 
     bool IsComplete(CowRobot *robot) override;
