@@ -34,7 +34,8 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
 
     // frc::SmartDashboard::PutNumber("rotation axis", rotation);
 
-    double heading = m_Gyro.GetYawDegrees();
+    // double heading = m_Gyro.GetYawDegrees();
+    double heading = m_Drivetrain.GetPoseRot();
     if (fabs(rotation) > CONSTANT("STICK_DEADBAND"))
     {
         omega           = ProcessDriveAxis(rotation, CONSTANT("DESIRED_MIN_ANG_VEL"), CONSTANT("DESIRED_MAX_ANG_VEL"), false);

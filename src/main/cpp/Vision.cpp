@@ -5,21 +5,28 @@ Vision::Vision()
     m_TickCount = 0;
 }
 
-Vision::PoseWithLatency Vision::GetRobotPose()
+Vision::Sample Vision::GetRobotPose()
 {
-    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose_wpiblue", std::vector<double>(7));
+    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose_wpiblue", std::vector<double>(11));
 
-    frc::Pose2d pose2d { units::meter_t {limelightValues[0]},
+    frc::Pose3d pose3d { units::meter_t {limelightValues[0]},
                          units::meter_t {limelightValues[1]},
-                         units::degree_t {limelightValues[5]} }; 	
+                         units::meter_t {limelightValues[2]},
+                         frc::Rotation3d(
+                            units::radian_t{ limelightValues[3] },
+                            units::radian_t{ limelightValues[4] },
+                            units::radian_t{ limelightValues[5] }
+                         )};
 
-    units::second_t totalLatency = units::millisecond_t{ limelightValues[6] };
+    Vision::Sample sample;
+    sample.pose3d = pose3d;
+    sample.totalLatency = units::millisecond_t{ limelightValues[6] };
+    sample.tagCount = limelightValues[7];
+    sample.tagSpan = limelightValues[7];
+    sample.averageTagDistance = limelightValues[7];
+    sample.averageTagArea = limelightValues[7];
 
-    Vision::PoseWithLatency poseWithLatency;
-    poseWithLatency.pose2d = pose2d;
-    poseWithLatency.totalLatency = totalLatency;
-
-    return poseWithLatency;
+    return sample;
 }
 
 void Vision::SetLEDState(Vision::LEDState ledState)

@@ -112,12 +112,8 @@ void CowRobot::PrintToDS()
 
 void CowRobot::FuseVisionPose()
 {
-    Vision::PoseWithLatency pose = m_Vision->GetRobotPose();
-
-    if (pose.pose2d.X().value() != 0 && pose.pose2d.Y().value() != 0)
-    {
-        m_Drivetrain->AddVisionMeasurement(pose.pose2d, pose.totalLatency);
-    }
+    Vision::Sample sample = m_Vision->GetRobotPose();
+    m_Drivetrain->AddVisionMeasurement(sample);
 }
 
 // Used to handle the recurring logic funtions inside the robot.

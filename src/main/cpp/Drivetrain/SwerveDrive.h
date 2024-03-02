@@ -10,6 +10,7 @@
 #include "SwerveModule.h"
 #include "SwerveModuleSim.h"
 #include "SwerveModuleInterface.h"
+#include "../Vision.h"
 
 #include <algorithm>
 #include <array>
@@ -74,7 +75,7 @@ public:
 
     void SetBrakeMode(bool brakeMode);
 
-    void AddVisionMeasurement(frc::Pose2d pose, units::second_t latency);
+    void AddVisionMeasurement(Vision::Sample sample);
 
     void ResetConstants();
     void ResetEncoders();
