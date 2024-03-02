@@ -41,7 +41,6 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
     {
         omega           = ProcessDriveAxis(rotation, CONSTANT("DESIRED_MIN_ANG_VEL"), CONSTANT("DESIRED_MAX_ANG_VEL"), false);
         m_HeadingLocked = false;
-        m_VisionTargeting = false;
     }
     else
     {
@@ -81,6 +80,13 @@ void SwerveDriveController::Drive(double x, double y, double rotation, bool fiel
     }
 
     m_Drivetrain.SetVelocity(x, y, omega, fieldRelative, centerOfRotationX, centerOfRotationY);
+}
+
+void SwerveDriveController::DriveManual(double x, double y, double rotation)
+{
+    m_VisionTargeting = false;
+
+    Drive(x, y, rotation, true);
 }
 
 void SwerveDriveController::DriveLookAt(double x, double y, double targetX, double targetY)

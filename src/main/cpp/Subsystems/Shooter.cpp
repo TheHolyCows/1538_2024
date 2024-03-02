@@ -258,7 +258,6 @@ void Shooter::Handle()
             {
                 m_IntakeState = IntakeState::DETECT_HOLD;
                 m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
-                m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
             }
 
             break;
@@ -270,6 +269,8 @@ void Shooter::Handle()
             request.Position = m_IntakeGoalPosition;
 
             m_Intake->Set(request);
+
+            m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
             
             break;
         }

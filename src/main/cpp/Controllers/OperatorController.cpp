@@ -9,8 +9,6 @@ OperatorController::OperatorController(GenericControlBoard *controlboard)
 
 void OperatorController::Handle(CowRobot *bot)
 {   
-    // Vision::GetInstance()->SetInverted(inverted);
-
     if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
     {
         bot->GetDrivetrain()->SetLocked(true);
@@ -63,10 +61,9 @@ void OperatorController::Handle(CowRobot *bot)
         // the driver station, and +rotation is a counter clockwise rotation
 
         // TODO: Flip depending on alliance color
-        bot->GetDriveController()->Drive(m_CB->GetLeftDriveStickY(),
-                                         -m_CB->GetLeftDriveStickX(),
-                                         -m_CB->GetRightDriveStickX(),
-                                         true);
+        bot->GetDriveController()->DriveManual(m_CB->GetLeftDriveStickY(),
+                                               -m_CB->GetLeftDriveStickX(),
+                                               -m_CB->GetRightDriveStickX());
     }
     // intake calibration - remove in PROD
     if (m_CB->GetOperatorButton(BUTTON_AMP))
