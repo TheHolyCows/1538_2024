@@ -36,7 +36,7 @@ void Vision::SetLEDState(Vision::LEDState ledState)
 
 void Vision::LEDOn()
 {
-   nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 3);
+    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 3);
     m_IsLEDOn = true; 
 }
 
