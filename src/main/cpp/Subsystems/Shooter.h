@@ -12,6 +12,7 @@
 #include "../Cowlib/CowLPF.h"
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowLogger.h"
+#include "../Vision.h"
 
 #include <cmath>
 
@@ -19,7 +20,7 @@ class Shooter
 {
 public:
 
-    Shooter(const int shooterID1, const int shooterID2, const int intakeID);
+    Shooter(const int shooterID1, const int shooterID2, const int intakeID, Vision* vision);
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
@@ -32,6 +33,8 @@ public:
 
     double GetShooterVelocity();
     double GetShooterCurrent();
+
+    bool IsReady();
 
     void StopIntake();
     void CalibrateIntake();
@@ -67,6 +70,8 @@ private:
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
     std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
     std::unique_ptr<CowMotor::TalonFX> m_Intake;
+
+    Vision *m_Vision;
 
     IntakeState m_IntakeState;
     ShooterState m_ShooterState;

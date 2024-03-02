@@ -39,5 +39,6 @@ private:
     std::unique_ptr<frc::ProfiledPIDController<units::degrees>> m_HeadingPIDController;
 
     bool m_HeadingLocked;
+    bool m_VisionTargeting;
     double m_TargetHeading;
 };

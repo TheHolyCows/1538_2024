@@ -12,6 +12,7 @@
 #include "CowLib/CowPID.h"
 #include "CowLib/CowTimer.h"
 #include "CowLib/Utility.h"
+#include "CowLib/CowInterp.h"
 #include "CowPigeon.h"
 #include "Drivetrain/SwerveDrive.h"
 #include "Drivetrain/SwerveDriveController.h"
@@ -40,6 +41,7 @@ public:
     Elevator *m_Elevator;
     Wrist *m_Wrist;
     Vision *m_Vision;
+    CowLib::interpolating_map<double, double> m_PivotRangeMap;
 
 private:
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowDriveSynchronizedSignals();

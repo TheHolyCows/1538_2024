@@ -1,6 +1,6 @@
 #include "Shooter.h"
 
-Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID)
+Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID, Vision *vision)
 {
     m_Shooter1 = std::make_unique<CowMotor::TalonFX>(shooterID1, "cowbus");
     m_Shooter1->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
@@ -13,6 +13,8 @@ Shooter::Shooter(const int shooterID1, const int shooterID2, const int intakeID)
     m_Intake = std::make_unique<CowMotor::TalonFX>(intakeID, "cowbus");
     m_Intake->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_Intake->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+
+    m_Vision = vision;
 
     m_IntakeState = IntakeState::IDLE;
     m_ShooterState = ShooterState::IDLE;
@@ -73,6 +75,15 @@ double Shooter::GetShooterCurrent()
     return m_Shooter1->GetCurrent() + m_Shooter2->GetCurrent();
 }
 
+bool Shooter::IsReady()
+{
+    if (m_IntakeState == IntakeState::DETECT_HOLD && m_ShooterState == ShooterState::READY)
+    {
+        return true;
+    }
+    return false;
+}
+
 void Shooter::StopIntake()
 {
     if (m_IntakeState != IntakeState::DETECT_HOLD)
@@ -123,7 +134,7 @@ void Shooter::StopShooter()
 
 void Shooter::Shoot()
 {
-    if (m_IntakeState == IntakeState::DETECT_HOLD && m_ShooterState == ShooterState::READY)
+    if(IsReady())
     {
         m_IntakeState = IntakeState::SHOOT;
     }
@@ -247,6 +258,7 @@ void Shooter::Handle()
             {
                 m_IntakeState = IntakeState::DETECT_HOLD;
                 m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
+                m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
             }
 
             break;
@@ -270,6 +282,7 @@ void Shooter::Handle()
             request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
 
             m_Intake->Set(request);
+            m_Vision->SetLEDState(Vision::LEDState::OFF);
 
             break;
         }

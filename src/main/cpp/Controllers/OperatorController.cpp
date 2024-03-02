@@ -35,10 +35,15 @@ void OperatorController::Handle(CowRobot *bot)
         bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - 1.0, goalY);
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
+        double rangePivot = bot->m_PivotRangeMap[dist];
 
         // wpi::Lerp(NEAR_ANGLE, FAR_ANGLE, (dist - NEAR_DIST) / (FAR_DIST - NEAR_DIST));
 
         printf("%f\n", dist);
+        if(dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") && bot->m_Shooter->IsReady())
+        {
+            bot->m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
+        }
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {

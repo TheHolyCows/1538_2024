@@ -31,9 +31,8 @@ CowRobot::CowRobot()
     m_Pivot = new Pivot(9, 10, 29, CONSTANT("PIVOT_ENCODER_OFFSET"));
     m_Elevator = new Elevator(11, 12);
     m_Wrist = new Wrist(13, 30, CONSTANT("WRIST_ENCODER_OFFSET"));
-    m_Shooter = new Shooter(15, 16, 14);
     m_Vision = new Vision();
-    
+    m_Shooter = new Shooter(15, 16, 14, m_Vision);
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetCowDriveSynchronizedSignals());
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetCowBusSynchronizedSignals());
@@ -79,6 +78,13 @@ void CowRobot::Reset()
     m_Elevator->ResetConstants();
     m_Wrist->ResetConstants();
     m_Shooter->ResetConstants();
+    m_PivotRangeMap.clear();
+
+    m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_1"), CONSTANT("PIVOT_RANGE_VALUE_1"));
+    m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_2"), CONSTANT("PIVOT_RANGE_VALUE_2"));
+    m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_3"), CONSTANT("PIVOT_RANGE_VALUE_3"));
+    m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_4"), CONSTANT("PIVOT_RANGE_VALUE_4"));
+    m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_5"), CONSTANT("PIVOT_RANGE_VALUE_5"));
     // m_Controller->ResetConstants(); TODO: error
 
     // Vision::GetInstance()->Reset();
