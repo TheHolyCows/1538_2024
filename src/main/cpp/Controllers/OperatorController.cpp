@@ -1,7 +1,5 @@
 #include "OperatorController.h"
 
-
-
 OperatorController::OperatorController(GenericControlBoard *controlboard)
     : m_CB(controlboard)
 {
@@ -29,6 +27,8 @@ void OperatorController::Handle(CowRobot *bot)
         double goalX = 54.3941666667;
         double goalY = 18.2016666667;
 
+        frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->ExtrapolateFuture(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
+
         double robotX = bot->GetDrivetrain()->GetPoseX();
         double robotY = bot->GetDrivetrain()->GetPoseY();
 
@@ -36,8 +36,6 @@ void OperatorController::Handle(CowRobot *bot)
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
         double rangePivot = bot->m_PivotRangeMap[dist];
-
-        // wpi::Lerp(NEAR_ANGLE, FAR_ANGLE, (dist - NEAR_DIST) / (FAR_DIST - NEAR_DIST));
 
         printf("%f\n", dist);
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));

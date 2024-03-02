@@ -27,7 +27,7 @@ private:
     CowPigeon *m_Gyro;
 
     CowLib::CowSwerveKinematics *m_Kinematics;
-    CowLib::CowSwerveOdometry *m_Odometry;
+    std::shared_ptr<CowLib::CowSwerveOdometry> m_Odometry;
     frc::Pose2d m_Pose;
     frc::ChassisSpeeds m_PrevChassisSpeeds;
 
@@ -46,6 +46,7 @@ public:
     ~SwerveDrive();
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
+    std::shared_ptr<CowLib::CowSwerveOdometry> Odometry();
 
     void SetVelocity(double x,
                      double y,
