@@ -3,7 +3,11 @@
 namespace CowLib
 {
     PoseBuffer::PoseBuffer(size_t bufferSize)
-        : m_BufferSize(bufferSize)
+        : m_BufferSize(bufferSize),
+          m_SumVX(0_mps),
+          m_SumVY(0_mps),
+          m_SumOmega(0_rad_per_s),
+          m_PreviousInput(std::nullopt)
     {
 
     }
@@ -27,10 +31,10 @@ namespace CowLib
             return std::nullopt;
         }
 
+        units::second_t extrapolationTime = timestamp - prevTimestamp;
         units::meters_per_second_t vxAvg = m_SumVX / m_Buffer.size();
         units::meters_per_second_t vyAvg = m_SumVY / m_Buffer.size();
         units::radians_per_second_t omegaAvg = m_SumOmega / m_Buffer.size();
-        units::second_t extrapolationTime = timestamp - prevTimestamp;
 
         return frc::Pose2d(
             prevPose.X() + (vxAvg * extrapolationTime),
