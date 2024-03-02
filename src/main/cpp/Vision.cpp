@@ -58,30 +58,30 @@ void Vision::Handle()
     {
         if (m_LEDState == LEDState::BLINK_SLOW)
         {
-            if(m_TickCount < CONSTANT("BLINK_SLOW_INTERVAL"))
+            if(m_TickCount == 0)
             {
                 LEDOn();
             }
-            else if (m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") && m_TickCount < CONSTANT("BLINK_SLOW_INTERVAL") * 2)
+            else if (m_TickCount == CONSTANT("BLINK_SLOW_INTERVAL"))
             {
                 LEDOff();
             }
-            else 
+            else if ( m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") * 2)
             {
                 m_TickCount = 0;
             }
         }
         else if (m_LEDState == LEDState::BLINK_FAST)
         {
-            if(m_TickCount < CONSTANT("BLINK_FAST_INTERVAL"))
+            if(m_TickCount == 0)
             {
                 LEDOn();
             }
-            else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") && m_TickCount < CONSTANT("BLINK_FAST_INTERVAL") * 2)
+            else if (m_TickCount == CONSTANT("BLINK_FAST_INTERVAL"))
             {
                 LEDOff();
             }
-            else 
+            else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") * 2)
             {
                 m_TickCount = 0;
             }
