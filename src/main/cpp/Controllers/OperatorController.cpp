@@ -27,7 +27,7 @@ void OperatorController::Handle(CowRobot *bot)
         double goalX = 54.3941666667;
         double goalY = 18.2016666667;
 
-        frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->ExtrapolateFuture(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
+        frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
 
         double robotX = bot->GetDrivetrain()->GetPoseX();
         double robotY = bot->GetDrivetrain()->GetPoseY();

@@ -133,7 +133,7 @@ namespace CowLib
         return m_Pose.Rotation().Degrees().value();
     }
 
-    std::optional<frc::Pose2d> CowSwerveOdometry::ExtrapolateFuture(double lookahead)
+    std::optional<frc::Pose2d> CowSwerveOdometry::Lookahead(double lookahead)
     {
         return m_PoseBuffer.Extrapolate(frc::Timer::GetFPGATimestamp() + units::second_t{ lookahead });
     }

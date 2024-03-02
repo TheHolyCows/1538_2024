@@ -55,7 +55,7 @@ namespace CowLib
         double GetY();
         double GetRotation();
 
-        std::optional<frc::Pose2d> ExtrapolateFuture(double lookahead);
+        std::optional<frc::Pose2d> Lookahead(double lookahead);
 
         frc::Pose2d GetWPIPose();
 
