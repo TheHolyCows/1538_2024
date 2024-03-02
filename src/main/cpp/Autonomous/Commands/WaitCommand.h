@@ -11,10 +11,10 @@ private:
 
     bool m_DoNothing;
 
-    double m_TimeToWait;
+    units::second_t m_TimeToWait;
 
 public:
-    explicit WaitCommand(double timeToWait, bool doNothing);
+    explicit WaitCommand(units::second_t timeToWait, bool doNothing);
     ~WaitCommand() override;
 
     bool IsComplete(CowRobot *robot) override;

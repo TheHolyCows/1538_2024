@@ -1,6 +1,6 @@
 #include "WaitCommand.h"
 
-WaitCommand::WaitCommand(double timeToWait, bool doNothing)
+WaitCommand::WaitCommand(units::second_t timeToWait, bool doNothing)
 {
     m_Timer = new CowLib::CowTimer();
 
@@ -16,7 +16,7 @@ WaitCommand::~WaitCommand()
 
 bool WaitCommand::IsComplete(CowRobot *robot)
 {
-    return m_Timer->HasElapsed(m_TimeToWait);
+    return m_Timer->HasElapsed(m_TimeToWait.value());
 }
 
 void WaitCommand::Start(CowRobot* robot)
