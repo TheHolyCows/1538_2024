@@ -53,7 +53,7 @@ AutoModes::AutoModes()
                                         { new WaitCommand(3_s,false),
                                           new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_BEGIN, true)
                                         }));
-    m_Modes["subsys test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_LAUNCH_SETPOINT"), CONSTANT("PIVOT_LAUNCH_SETPOINT"), false));
+    m_Modes["subsys test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_LAUNCH_SETPOINT"), CONSTANT("PIVOT_LAUNCH_SETPOINT"), true));
     m_Modes["subsys test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
     m_Modes["subsys test"].push_back(new StationaryVisionCommand(1.5_s));
     m_Modes["subsys test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
