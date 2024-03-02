@@ -68,6 +68,9 @@ namespace CowLib
         auto [lastTimestamp, lastPose] = m_Buffer.back();
         units::second_t extrapolationTime = timestamp - lastTimestamp;
 
-        return frc::Pose2d(vxAvg * extrapolationTime, vyAvg * extrapolationTime, omegaAvg * extrapolationTime);
+        return frc::Pose2d(
+            lastPose.X() + (vxAvg * extrapolationTime),
+            lastPose.Y() + (vyAvg * extrapolationTime),
+            lastPose.Rotation().Radians() + (omegaAvg * extrapolationTime));
     }
 }
