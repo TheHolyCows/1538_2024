@@ -8,16 +8,23 @@ OperatorController::OperatorController(GenericControlBoard *controlboard)
 }
 
 void OperatorController::Handle(CowRobot *bot)
-{   
-    if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
+{
+    Vision::LEDState ledState = Vision::LEDState::OFF;
+
+    if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::DETECT_HOLD)
     {
-        bot->GetDrivetrain()->SetLocked(true);
-        bot->GetDrivetrain()->SetVelocity(0, 0, 0);
+        ledState = Vision::LEDState::BLINK_SLOW;
     }
-    else
-    {
-        bot->GetDrivetrain()->SetLocked(false);
-    }
+
+    // if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
+    // {
+    //     bot->GetDrivetrain()->SetLocked(true);
+    //     bot->GetDrivetrain()->SetVelocity(0, 0, 0);
+    // }
+    // else
+    // {
+    //     bot->GetDrivetrain()->SetLocked(false);
+    // }
 
     if (m_CB->GetDriveAxis(5) > 0.8 || m_CB->GetDriveAxis(6) > 0.8)
     {
@@ -44,9 +51,12 @@ void OperatorController::Handle(CowRobot *bot)
         printf("%f\n", dist);
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
         bot->m_Wrist->SetAngle(rangePivot, bot->m_Pivot->GetSetpoint());
-        if(dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") && bot->m_Shooter->IsReady())
+
+        if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
+            bot->GetDriveController()->GetHeadingError() < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR") &&
+            bot->m_Shooter->IsReady())
         {
-            bot->m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
+            ledState = Vision::LEDState::BLINK_FAST;
         }
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
@@ -178,6 +188,8 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
         }
     }
+
+    bot->m_Vision->SetLEDState(ledState);
 
     // TODO: determine if this is the best way of doig this or to leave as is
     //    imo this adds needless complexity and would require break the "set() in disabled"

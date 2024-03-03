@@ -45,6 +45,16 @@ void Shooter::ResetConstants()
     m_Intake->ConfigPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
 }
 
+Shooter::IntakeState Shooter::GetIntakeState()
+{
+    return m_IntakeState;
+}
+
+Shooter::ShooterState Shooter::GetShooterState()
+{
+    return m_ShooterState;
+}
+
 double Shooter::GetIntakePosition()
 {
     return m_Intake->GetPosition();
@@ -142,14 +152,14 @@ void Shooter::Shoot()
 
 void Shooter::Handle()
 {
-    if (m_IntakeState == IntakeState::DETECT_HOLD)
-    {
-        m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
-    }
-    else
-    {
-        m_Vision->SetLEDState(Vision::LEDState::OFF);
-    }
+    // if (m_IntakeState == IntakeState::DETECT_HOLD)
+    // {
+    //     m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
+    // }
+    // else
+    // {
+    //     m_Vision->SetLEDState(Vision::LEDState::OFF);
+    // }
 
     // Intake state machine
     switch (m_IntakeState)

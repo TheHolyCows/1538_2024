@@ -98,6 +98,11 @@ void SwerveDriveController::DriveLookAt(double x, double y, double targetX, doub
     Drive(x, y, 0.0, true);
 }
 
+double SwerveDriveController::GetHeadingError()
+{
+    return m_HeadingPIDController->GetPositionError().value();
+}
+
 void SwerveDriveController::LockHeading(double x, double y, bool useRawInputs)
 {
     double currentHeading = m_Gyro.GetYawDegrees();

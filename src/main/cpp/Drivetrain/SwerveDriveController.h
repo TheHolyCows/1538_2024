@@ -14,13 +14,10 @@ public:
     ~SwerveDriveController() = default;
 
     void Drive(double x, double y, double rotation, bool fieldRelative);
-
     void DriveManual(double x, double y, double rotation);
     void DriveLookAt(double x, double y, double targetX, double targetY);
 
-    // 2023
-    // void CubeAlign(double x);
-    // void ConeAlign(double x, double yInput);
+    double GetHeadingError();
 
     void LockHeading(double x, double y, bool useRawInputs=false);
 
