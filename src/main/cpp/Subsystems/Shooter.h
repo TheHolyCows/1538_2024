@@ -66,8 +66,14 @@ public:
 
     void Shoot();
 
+    IntakeState GetIntakeState(void);
+    ShooterState GetShooterState(void);
+
+    void UpdateIntakeState(IntakeState state);
+    void UpdateShooterState(ShooterState state);
+
     void Handle();
-    
+
 private:
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
     std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
@@ -77,10 +83,10 @@ private:
 
     IntakeState m_IntakeState;
     ShooterState m_ShooterState;
- 
+
     double m_IntakeCalibrationStartTime;
     double m_DetectStartTime;
     double m_IntakeGoalPosition;
- 
+
     uint32_t m_CycleCount;
 };

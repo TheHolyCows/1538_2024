@@ -7,20 +7,18 @@
 
 #include <memory>
 
-class VisionAlignCommand : public RobotCommand
+class StationaryVisionCommand : public RobotCommand
 {
 private:
     std::unique_ptr<CowLib::CowTimer> m_Timer;
 
     CowPigeon& m_Gyro;
 
-    const double m_Timeout;
-
-    ARM_CARGO m_Cargo;
+    const units::second_t m_Timeout;
 
 public:
-    VisionAlignCommand(double timeout, ARM_CARGO cargo);
-    ~VisionAlignCommand() override = default;
+    StationaryVisionCommand(units::second_t timeout);
+    ~StationaryVisionCommand() override = default;
 
     bool IsComplete(CowRobot *robot) override;
 

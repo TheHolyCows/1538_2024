@@ -14,6 +14,14 @@
 // #include "Commands/VisionAlignCommand.h"
 #include "Commands/WaitCommand.h"
 #include "Commands/ParallelCommand.h"
+#include "Commands/StationaryVisionCommand.h"
+#include "Commands/UpdateArmCommand.h"
+#include "Commands/UpdateIntakeStateCommand.h"
+#include "Commands/UpdateShooterStateCommand.h"
+
+#include "../Subsystems/Shooter.h"
+#include "../Subsystems/Wrist.h"
+#include "../Subsystems/Pivot.h"
 
 #include <deque>
 #include <frc/Errors.h>

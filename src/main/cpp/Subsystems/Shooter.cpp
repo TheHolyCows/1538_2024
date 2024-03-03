@@ -150,6 +150,26 @@ void Shooter::Shoot()
     }
 }
 
+Shooter::IntakeState Shooter::GetIntakeState()
+{
+    return m_IntakeState;
+}
+
+Shooter::ShooterState Shooter::GetShooterState()
+{
+    return m_ShooterState;
+}
+
+void Shooter::UpdateIntakeState(IntakeState state)
+{
+    m_IntakeState = state;
+}
+
+void Shooter::UpdateShooterState(ShooterState state)
+{
+    m_ShooterState = state;
+}
+
 void Shooter::Handle()
 {
     // if (m_IntakeState == IntakeState::DETECT_HOLD)

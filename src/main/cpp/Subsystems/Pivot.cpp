@@ -92,6 +92,36 @@ void Pivot::BrakeMode(bool brakeMode)
     }
 }
 
+bool Pivot::AtTarget()
+{
+    double setpoint = GetSetpoint();
+    double angle = GetAngle();
+
+    if (std::abs(setpoint - angle) < 2.0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+    // percent difference doesnt work well at higher values
+    // double delta = std::abs(setpoint - angle);
+    // double avg = (setpoint + angle) / 2.0;
+
+    // double pctDiff = (delta / avg);
+    
+    // if (pctDiff < 0.03)
+    // {
+    //     return true;
+    // }
+    // else
+    // {
+    //     return false;
+    // }
+}
+
 void Pivot::ResetConstants()
 {
     m_PivotMotor1->ConfigPID(CONSTANT("PIVOT_P"),
