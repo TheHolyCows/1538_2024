@@ -18,7 +18,7 @@ Wrist::Wrist(const int motorId1, const int encoderId, double encoderOffset)
     m_WristMotor->FuseCANCoder(encoderId, CONSTANT("WRIST_GEAR_RATIO"));
 
     // set initial position to stop us breaking wrist
-    SetAngle(CONSTANT("WRIST_GROUND_SETPOINT"), CONSTANT("PIVOT_GROUND_SETPOINT"));
+    SetAngle(CONSTANT("WRIST_GROUND_SETPOINT"), 0);
 
     ResetConstants();
 }
