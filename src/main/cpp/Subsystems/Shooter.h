@@ -65,10 +65,7 @@ public:
     void StopShooter();
 
     void Shoot();
-
-    IntakeState GetIntakeState(void);
-    ShooterState GetShooterState(void);
-
+    
     void UpdateIntakeState(IntakeState state);
     void UpdateShooterState(ShooterState state);
 
