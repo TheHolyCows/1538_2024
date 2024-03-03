@@ -79,6 +79,7 @@ private:
     double m_IntakeCalibrationStartTime;
     double m_DetectStartTime;
     double m_IntakeGoalPosition;
+    double m_ShooterStartTime;
  
     uint32_t m_CycleCount;
 };

@@ -124,6 +124,7 @@ void Shooter::PrimeShooter()
         m_ShooterState != ShooterState::READY)
     {
         m_ShooterState = ShooterState::SPIN_UP;
+        m_ShooterStartTime = 0.0;
     }
 }
 
@@ -324,6 +325,13 @@ void Shooter::Handle()
         }
         case ShooterState::SPIN_UP:
         {
+            if (m_ShooterStartTime == 0.0)
+            {
+                m_ShooterStartTime = frc::Timer::GetFPGATimestamp().value();
+            }
+
+            double elapsed = frc::Timer::GetFPGATimestamp().value() - m_ShooterStartTime;
+
             CowMotor::Control::TorqueCurrent request = {};
             request.Current = CONSTANT("SHOOTER_CURRENT");
             request.MaxDutyCycle = CONSTANT("SHOOTER_MAX_DUTY_CYCLE");
@@ -331,7 +339,7 @@ void Shooter::Handle()
             m_Shooter1->Set(request);
             m_Shooter2->Set(request);
 
-            if (GetShooterVelocity() > CONSTANT("SHOOTER_SPINUP_VEL_THRESHOLD"))
+            if (GetShooterVelocity() > CONSTANT("SHOOTER_SPINUP_VEL_THRESHOLD") || elapsed > 3.0)
             {
                 m_ShooterState = ShooterState::READY;
             }
