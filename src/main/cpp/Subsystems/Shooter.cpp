@@ -162,14 +162,14 @@ void Shooter::Shoot()
 
 void Shooter::Handle()
 {
-    // if (m_IntakeState == IntakeState::DETECT_HOLD)
-    // {
-    //     m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
-    // }
-    // else
-    // {
-    //     m_Vision->SetLEDState(Vision::LEDState::OFF);
-    // }
+    if (m_IntakeState == IntakeState::DETECT_HOLD)
+    {
+        m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
+    }
+    else
+    {
+        m_Vision->SetLEDState(Vision::LEDState::OFF);
+    }
 
     // Intake state machine
     switch (m_IntakeState)
