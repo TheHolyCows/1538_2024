@@ -106,7 +106,7 @@ void OperatorController::Handle(CowRobot *bot)
         bot->m_Shooter->StopShooter();
     }
 
-    if (m_CB->GetOperatorButton(SWITCH_CLIMB))
+    if (!m_CB->GetOperatorButton(SWITCH_CLIMB))
     {
         if (!m_ClimberLatch)
         {
@@ -120,7 +120,7 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_DOWN"));
         }
     }
-    else if (m_CB->GetOperatorButton(SWITCH_HI_LO))
+    else if (!m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
         m_ClimberLatch = false;
 
