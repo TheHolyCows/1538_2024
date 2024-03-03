@@ -26,6 +26,24 @@ public:
 
     void ResetConstants();
 
+    enum class IntakeState {
+        IDLE,
+        CALIBRATION_BEGIN,
+        CALIBRATION_ACTIVE,
+        CALIBRATION_END,
+        DETECT_BEGIN,
+        DETECT_ACTIVE,
+        DETECT_HOLD,
+        SHOOT,
+        EXHAUST
+    };
+
+    enum class ShooterState {
+        IDLE,
+        SPIN_UP,
+        READY
+    };
+
     double GetIntakePosition();
     double GetIntakeVelocity();
     double GetIntakeAcceleration();
@@ -46,27 +64,15 @@ public:
 
     void Shoot();
 
+    IntakeState GetIntakeState(void);
+    ShooterState GetShooterState(void);
+
+    void UpdateIntakeState(IntakeState state);
+    void UpdateShooterState(ShooterState state);
+    
     void Handle();
     
 private:
-    enum class IntakeState {
-        IDLE,
-        CALIBRATION_BEGIN,
-        CALIBRATION_ACTIVE,
-        CALIBRATION_END,
-        DETECT_BEGIN,
-        DETECT_ACTIVE,
-        DETECT_HOLD,
-        SHOOT,
-        EXHAUST
-    };
-
-    enum class ShooterState {
-        IDLE,
-        SPIN_UP,
-        READY
-    };
-
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
     std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
     std::unique_ptr<CowMotor::TalonFX> m_Intake;

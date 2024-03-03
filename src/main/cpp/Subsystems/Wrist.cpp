@@ -103,6 +103,11 @@ void Wrist::BrakeMode(bool brakeMode)
     }
 }
 
+bool Wrist::AtTarget()
+{
+    return true;
+}
+
 void Wrist::ResetConstants()
 {
     m_WristMotor->ConfigPID(CONSTANT("WRIST_P"),
