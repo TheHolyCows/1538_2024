@@ -1,4 +1,4 @@
-#include "PoseBuffer.h"
+#include "CowLib/Swerve/PoseBuffer.h"
 
 namespace CowLib
 {
@@ -37,9 +37,9 @@ namespace CowLib
         units::radians_per_second_t omegaAvg = m_SumOmega / m_Buffer.size();
 
         return frc::Pose2d(
-            prevPose.X() - (vxAvg * extrapolationTime),
-            prevPose.Y() - (vyAvg * extrapolationTime),
-            prevPose.Rotation().Radians() - (omegaAvg * extrapolationTime));
+            prevPose.X() + (vxAvg * extrapolationTime),
+            prevPose.Y() + (vyAvg * extrapolationTime),
+            prevPose.Rotation().Radians() + (omegaAvg * extrapolationTime));
     }
 
     void PoseBuffer::Update(units::second_t timestamp, frc::Pose2d pose)
