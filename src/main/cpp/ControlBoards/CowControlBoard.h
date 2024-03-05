@@ -41,5 +41,7 @@ public:
     bool GetOperatorButton(int) override;
     double GetOperatorAxis(int) override;
 
+    double GetBiasSwitch() override;
+
     ~CowControlBoard();
 };

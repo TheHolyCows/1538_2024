@@ -84,6 +84,11 @@ double CowControlBoard::GetOperatorAxis(int axis)
     return m_OperatorControlStick->GetRawAxis(axis);
 }
 
+double CowControlBoard::GetBiasSwitch()
+{
+    return m_OperatorPanel->GetRawAxis(1);
+}
+
 CowControlBoard::~CowControlBoard()
 {
     delete m_DriverControlStick;

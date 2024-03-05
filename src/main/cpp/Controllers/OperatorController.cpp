@@ -50,7 +50,7 @@ void OperatorController::Handle(CowRobot *bot)
 
         printf("%f\n", dist);
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
-        bot->m_Wrist->SetAngle(rangePivot, bot->m_Pivot->GetSetpoint());
+        bot->m_Wrist->SetAngle(rangePivot, (bot->m_Pivot->GetSetpoint() + (m_CB->GetBiasSwitch() * CONSTANT("WRIST_OFFSET_SCALAR"))));
 
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
             bot->GetDriveController()->GetHeadingError() < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR") &&
