@@ -44,7 +44,7 @@ SwerveDriveController::SwerveDriveController(SwerveDrive &drivetrain)
     : m_Drivetrain(drivetrain),
       m_Gyro(*CowPigeon::GetInstance()),
       m_State(IdleState{}),
-      m_HeadingPIDController(0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degrees>::Constraints()),
+      m_HeadingPIDController(0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degrees>::Constraints(), 10_ms),
       m_IsOnTarget(false)
 {
     m_HeadingPIDController.EnableContinuousInput(units::degree_t{ 0.0 }, units::degree_t{ 360.0 });
@@ -54,7 +54,6 @@ SwerveDriveController::SwerveDriveController(SwerveDrive &drivetrain)
 
 void SwerveDriveController::ResetConstants()
 {
-    printf("%f %f\n", CONSTANT("HEADING_V"), CONSTANT("HEADING_A"));
     m_HeadingPIDController.SetPID(CONSTANT("HEADING_P"), CONSTANT("HEADING_I"), CONSTANT("HEADING_D"));
     m_HeadingPIDController.SetConstraints(frc::TrapezoidProfile<units::degrees>::Constraints{
         units::degrees_per_second_t{ CONSTANT("HEADING_V") },
@@ -221,9 +220,12 @@ void SwerveDriveController::Handle()
                 CONSTANT("DESIRED_MIN_SPEED"),
                 CONSTANT("DESIRED_MAX_SPEED"));
 
-            double targetAngle = std::atan2(state.req.targetY - m_Drivetrain.GetPoseY(), state.req.targetX - m_Drivetrain.GetPoseX());
+            frc::Pose2d lookaheadPose = m_Drivetrain.Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(m_Drivetrain.GetPose());
+
+            double targetAngle = std::atan2(
+                state.req.targetY - lookaheadPose.Y().convert<units::foot>().value(),
+                state.req.targetX - lookaheadPose.X().convert<units::foot>().value());
             targetAngle = (targetAngle / 3.1415) * 180;
-            printf("%f\n", targetAngle);
 
             if (state.req.robotSide == RobotSide::FRONT)
             {

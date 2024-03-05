@@ -133,8 +133,8 @@ void CowRobot::Handle()
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowBusSynchronizedSignals());
 
     m_Controller->Handle(this);
-    m_DriveController->Handle();
     m_Drivetrain->Handle();
+    m_DriveController->Handle();
     
     m_Pivot->Handle();
     m_Elevator->Handle(m_Pivot);

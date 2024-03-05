@@ -59,11 +59,15 @@ namespace CowLib
         {
             auto [prevTimestamp, prevPose] = m_PreviousInput.value();
             units::second_t deltaTime = timestamp - prevTimestamp;
-            frc::Transform2d transform = pose - prevPose;
+            units::meter_t deltaX = pose.X() - prevPose.X();
+            units::meter_t deltaY = pose.Y() - prevPose.Y();
+            units::radian_t deltaTheta = pose.Rotation().Radians() - prevPose.Rotation().Radians();
+
+            printf("%f %f %f %f\n", deltaTime, prevPose.X().value(), pose.X().value(), deltaX.value());
             Sample sample = {
-                .vx = transform.X() / deltaTime,
-                .vy = transform.Y() / deltaTime,
-                .omega = transform.Rotation().Radians() / deltaTime
+                .vx = deltaX / deltaTime,
+                .vy = deltaY / deltaTime,
+                .omega = deltaTheta / deltaTime
             };
 
             m_Buffer.push_back(sample);
