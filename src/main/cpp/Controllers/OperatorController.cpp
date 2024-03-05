@@ -43,7 +43,7 @@ void OperatorController::Handle(CowRobot *bot)
         robotX = lookaheadPose.X().convert<units::foot>().value();
         robotY = lookaheadPose.Y().convert<units::foot>().value();
 
-        bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - 1.0, goalY);
+        bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - CONSTANT("GOAL_X_OFFSET"), goalY - CONSTANT("GOAL_Y_OFFSET"));
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
         double rangePivot = bot->m_PivotRangeMap[dist];
