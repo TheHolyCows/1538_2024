@@ -33,6 +33,10 @@ public:
     void Handle(CowRobot *bot);
 
     double m_TrackingCooldownTimer;
+
+    double m_LastShotDistance;
+    double m_LastShotPivot;
+    double m_LastShotWrist;
 };
 
 #endif /* __OPERATOR_CONTROLLER_H__ */
