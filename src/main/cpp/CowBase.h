@@ -33,7 +33,7 @@ private:
     int m_DisabledCount = 0;
 
     // no more kInvaid
-    frc::DriverStation::Alliance m_Alliance = frc::DriverStation::Alliance::kRed;
+    std::optional<frc::DriverStation::Alliance> m_Alliance = std::nullopt;
 
 public:
     CowBase();
