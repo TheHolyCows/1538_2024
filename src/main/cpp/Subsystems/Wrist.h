@@ -27,6 +27,8 @@ public:
     void SetAngle(double angle, double pivotSetpoint, bool force = false);
 
     void BrakeMode(bool brakeMode);
+
+    bool AtTarget(void);
     
     void ResetConstants(void);
 

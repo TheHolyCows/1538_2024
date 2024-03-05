@@ -1,23 +1,33 @@
 #include "OperatorController.h"
 
 OperatorController::OperatorController(GenericControlBoard *controlboard)
-    : m_CB(controlboard)
+    : m_CB(controlboard),
+      m_LastShotDistance(0.0),
+      m_LastShotPivot(0.0),
+      m_LastShotWrist(0.0)
 {
     m_TrackingCooldownTimer = 0.0;
     m_ClimberLatch = false;
 }
 
 void OperatorController::Handle(CowRobot *bot)
-{   
-    if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
+{
+    Vision::LEDState ledState = Vision::LEDState::OFF;
+
+    if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::DETECT_HOLD)
     {
-        bot->GetDrivetrain()->SetLocked(true);
-        bot->GetDrivetrain()->SetVelocity(0, 0, 0);
+        ledState = Vision::LEDState::BLINK_SLOW;
     }
-    else
-    {
-        bot->GetDrivetrain()->SetLocked(false);
-    }
+
+    // if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
+    // {
+    //     bot->GetDrivetrain()->SetLocked(true);
+    //     bot->GetDrivetrain()->SetVelocity(0, 0, 0);
+    // }
+    // else
+    // {
+    //     bot->GetDrivetrain()->SetLocked(false);
+    // }
 
     if (m_CB->GetDriveAxis(5) > 0.8 || m_CB->GetDriveAxis(6) > 0.8)
     {
@@ -36,7 +46,7 @@ void OperatorController::Handle(CowRobot *bot)
         robotX = lookaheadPose.X().convert<units::foot>().value();
         robotY = lookaheadPose.Y().convert<units::foot>().value();
 
-        bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - 1.0, goalY);
+        bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - CONSTANT("GOAL_X_OFFSET"), goalY - CONSTANT("GOAL_Y_OFFSET"));
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
         double rangePivot = bot->m_PivotRangeMap[dist];
@@ -44,9 +54,19 @@ void OperatorController::Handle(CowRobot *bot)
         printf("%f\n", dist);
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
         bot->m_Wrist->SetAngle(rangePivot, bot->m_Pivot->GetSetpoint());
-        if(dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") && bot->m_Shooter->IsReady())
+
+        if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
+            bot->GetDriveController()->GetHeadingError() < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR") &&
+            bot->m_Shooter->IsReady())
         {
-            bot->m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
+            ledState = Vision::LEDState::BLINK_FAST;
+        }
+
+        if (m_CB->GetOperatorButton(BUTTON_SHOOT))
+        {
+            m_LastShotDistance = dist;
+            m_LastShotPivot = bot->m_Pivot->GetAngle();
+            m_LastShotWrist = bot->m_Pivot->GetAngle();
         }
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
@@ -96,7 +116,7 @@ void OperatorController::Handle(CowRobot *bot)
         bot->m_Shooter->StopShooter();
     }
 
-    if (m_CB->GetOperatorButton(SWITCH_CLIMB))
+    if (!m_CB->GetOperatorButton(SWITCH_CLIMB))
     {
         if (!m_ClimberLatch)
         {
@@ -110,7 +130,7 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_DOWN"));
         }
     }
-    else if (m_CB->GetOperatorButton(SWITCH_HI_LO))
+    else if (!m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
         m_ClimberLatch = false;
 
@@ -132,12 +152,12 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
         }
-        else if (m_CB->GetOperatorButton(BUTTON_HP))
-        {
-            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
-            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
-        }
+        // else if (m_CB->GetOperatorButton(BUTTON_HP))
+        // {
+        //     bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+        //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+        //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
+        // }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
@@ -165,12 +185,12 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
         }
-        else if (m_CB->GetOperatorButton(BUTTON_HP))
-        {
-            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
-            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
-        }
+        // else if (m_CB->GetOperatorButton(BUTTON_HP))
+        // {
+        //     bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+        //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+        //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
+        // }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
@@ -178,6 +198,13 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
         }
     }
+
+    if (m_CB->GetOperatorButton(BUTTON_HP))
+    {
+        printf("dist: %f, pivot: %f, wrist: %f\n", m_LastShotDistance, m_LastShotPivot, m_LastShotWrist);
+    }
+
+    bot->m_Vision->SetLEDState(ledState);
 
     // TODO: determine if this is the best way of doig this or to leave as is
     //    imo this adds needless complexity and would require break the "set() in disabled"

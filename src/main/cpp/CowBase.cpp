@@ -162,7 +162,9 @@ void CowBase::TeleopPeriodic()
     m_Bot->m_Vision->Handle();
 }
 
+#ifndef RUNNING_FRC_TESTS
 int main()
 {
     return frc::StartRobot<CowBase>();
 }
+#endif

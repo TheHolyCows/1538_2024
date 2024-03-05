@@ -45,6 +45,26 @@ void Shooter::ResetConstants()
     m_Intake->ConfigPID(CONSTANT("INTAKE_P"), CONSTANT("INTAKE_I"), CONSTANT("INTAKE_D"));
 }
 
+Shooter::IntakeState Shooter::GetIntakeState()
+{
+    return m_IntakeState;
+}
+
+Shooter::ShooterState Shooter::GetShooterState()
+{
+    return m_ShooterState;
+}
+
+void Shooter::UpdateIntakeState(IntakeState state)
+{
+    m_IntakeState = state;
+}
+
+void Shooter::UpdateShooterState(ShooterState state)
+{
+    m_ShooterState = state;
+}
+
 double Shooter::GetIntakePosition()
 {
     return m_Intake->GetPosition();

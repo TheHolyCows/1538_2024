@@ -19,12 +19,32 @@
 class Shooter
 {
 public:
+    enum class IntakeState {
+        IDLE,
+        CALIBRATION_BEGIN,
+        CALIBRATION_ACTIVE,
+        CALIBRATION_END,
+        DETECT_BEGIN,
+        DETECT_ACTIVE,
+        DETECT_HOLD,
+        SHOOT,
+        EXHAUST
+    };
+
+    enum class ShooterState {
+        IDLE,
+        SPIN_UP,
+        READY
+    };
 
     Shooter(const int shooterID1, const int shooterID2, const int intakeID, Vision* vision);
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
     void ResetConstants();
+
+    IntakeState GetIntakeState();
+    ShooterState GetShooterState();
 
     double GetIntakePosition();
     double GetIntakeVelocity();
@@ -45,28 +65,13 @@ public:
     void StopShooter();
 
     void Shoot();
+    
+    void UpdateIntakeState(IntakeState state);
+    void UpdateShooterState(ShooterState state);
 
     void Handle();
-    
+
 private:
-    enum class IntakeState {
-        IDLE,
-        CALIBRATION_BEGIN,
-        CALIBRATION_ACTIVE,
-        CALIBRATION_END,
-        DETECT_BEGIN,
-        DETECT_ACTIVE,
-        DETECT_HOLD,
-        SHOOT,
-        EXHAUST
-    };
-
-    enum class ShooterState {
-        IDLE,
-        SPIN_UP,
-        READY
-    };
-
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
     std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
     std::unique_ptr<CowMotor::TalonFX> m_Intake;
@@ -75,7 +80,7 @@ private:
 
     IntakeState m_IntakeState;
     ShooterState m_ShooterState;
- 
+
     double m_IntakeCalibrationStartTime;
     double m_DetectStartTime;
     double m_IntakeGoalPosition;

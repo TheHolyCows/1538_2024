@@ -4,7 +4,7 @@
 #include "./CowSwerveKinematics.h"
 #include "./CowSwerveModulePosition.h"
 #include "./CowSwerveModuleState.h"
-#include "./PoseBuffer.h"
+#include "CowLib/Swerve/PoseBuffer.h"
 #include "frc/smartdashboard/Field2d.h"
 #include "frc/smartdashboard/SmartDashboard.h"
 
