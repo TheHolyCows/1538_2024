@@ -35,7 +35,7 @@ public:
 private:
     LEDState m_LEDState;
     LEDState m_LEDBlinkInterval;
+    int m_TickCount;
     double m_StateChangeTime;
     bool m_IsLEDOn;
-    int m_TickCount;
 };
