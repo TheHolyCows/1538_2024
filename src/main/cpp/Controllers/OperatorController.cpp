@@ -1,7 +1,10 @@
 #include "OperatorController.h"
 
 OperatorController::OperatorController(GenericControlBoard *controlboard)
-    : m_CB(controlboard)
+    : m_CB(controlboard),
+      m_LastShotDistance(0.0),
+      m_LastShotPivot(0.0),
+      m_LastShotWrist(0.0)
 {
     m_TrackingCooldownTimer = 0.0;
     m_ClimberLatch = false;
@@ -57,6 +60,13 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Shooter->IsReady())
         {
             ledState = Vision::LEDState::BLINK_FAST;
+        }
+
+        if (m_CB->GetOperatorButton(BUTTON_SHOOT))
+        {
+            m_LastShotDistance = dist;
+            m_LastShotPivot = bot->m_Pivot->GetAngle();
+            m_LastShotWrist = bot->m_Pivot->GetAngle();
         }
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
@@ -142,12 +152,12 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
         }
-        else if (m_CB->GetOperatorButton(BUTTON_HP))
-        {
-            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
-            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
-        }
+        // else if (m_CB->GetOperatorButton(BUTTON_HP))
+        // {
+        //     bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+        //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+        //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
+        // }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
@@ -175,18 +185,23 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
         }
-        else if (m_CB->GetOperatorButton(BUTTON_HP))
-        {
-            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
-            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
-        }
+        // else if (m_CB->GetOperatorButton(BUTTON_HP))
+        // {
+        //     bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+        //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+        //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
+        // }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
         }
+    }
+
+    if (m_CB->GetOperatorButton(BUTTON_HP))
+    {
+        printf("dist: %f, pivot: %f, wrist: %f\n", m_LastShotDistance, m_LastShotPivot, m_LastShotWrist);
     }
 
     bot->m_Vision->SetLEDState(ledState);
