@@ -6,37 +6,83 @@
 
 #include <frc/controller/ProfiledPIDController.h>
 #include <memory>
+#include <optional>
+#include <variant>
 
 class SwerveDriveController
 {
 public:
+    enum class RobotSide
+    {
+        FRONT,
+        RIGHT,
+        BACK,
+        LEFT
+    };
+
+    struct DriveManualRequest
+    {
+        double inputX = 0;
+        double inputY = 0;
+        double inputRotation = 0;
+    };
+
+    struct DriveLockHeadingRequest
+    {
+        double inputX = 0;
+        double inputY = 0;
+    };
+
+    struct DriveLookAtRequest
+    {
+        double inputX = 0;
+        double inputY = 0;
+        double targetX = 0;
+        double targetY = 0;
+        RobotSide robotSide = RobotSide::FRONT;
+    };
+
     SwerveDriveController(SwerveDrive &drivetrain);
     ~SwerveDriveController() = default;
 
-    void Drive(double x, double y, double rotation, bool fieldRelative);
-    void DriveManual(double x, double y, double rotation);
-    void DriveLookAt(double x, double y, double targetX, double targetY);
-
-    double GetHeadingError();
-
-    void LockHeading(double x, double y, bool useRawInputs=false);
-
+    void ResetConstants();
     void ResetHeadingLock();
 
-    void ResetConstants();
+    bool IsOnTarget();
+
+    void Request(DriveManualRequest req);
+    void Request(DriveLockHeadingRequest req);
+    void Request(DriveLookAtRequest req);
+
+    void Handle();
 
 private:
-    double ProcessDriveAxis(double input, double scaleMin, double scaleMax, bool reverse);
+    struct IdleState
+    {
+        
+    };
+
+    struct DriveManualState
+    {
+        DriveManualRequest req;
+        std::optional<double> targetHeading;
+    };
+
+    struct DriveLockHeadingState
+    {
+        DriveLockHeadingRequest req;
+        std::optional<double> targetHeading;
+    };
+
+    struct DriveLookAtState
+    {
+        DriveLookAtRequest req;
+    };
 
     SwerveDrive &m_Drivetrain;
-
     CowPigeon &m_Gyro;
 
-    std::unique_ptr<CowLib::CowExponentialFilter> m_ExponentialFilter;
-
-    std::unique_ptr<frc::ProfiledPIDController<units::degrees>> m_HeadingPIDController;
-
-    bool m_HeadingLocked;
-    bool m_VisionTargeting;
-    double m_TargetHeading;
+    std::variant<IdleState, DriveManualState, DriveLockHeadingState, DriveLookAtState> m_State;
+    frc::ProfiledPIDController<units::degrees> m_HeadingPIDController;
+    bool m_IsOnTarget;
 };

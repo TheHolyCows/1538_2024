@@ -29,12 +29,24 @@ void OperatorController::Handle(CowRobot *bot)
     //     bot->GetDrivetrain()->SetLocked(false);
     // }
 
-    if (m_CB->GetDriveAxis(5) > 0.8 || m_CB->GetDriveAxis(6) > 0.8)
+    if (m_CB->GetVisionTargetButton())
     {
         // TODO: Move to constants
         double goalX = 54.3941666667;
         double goalY = 18.2016666667;
 
+        // Drivetrain rotation targetting
+        SwerveDriveController::DriveLookAtRequest req = {
+            .inputX = m_CB->GetLeftDriveStickY(),
+            .inputY = -m_CB->GetLeftDriveStickX(),
+            .targetX = goalX,
+            .targetY = goalY,
+            .robotSide = SwerveDriveController::RobotSide::BACK
+        };
+
+        bot->GetDriveController()->Request(req);
+
+        // Pivot and wrist targetting
         frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
 
         double robotX = bot->GetDrivetrain()->GetPoseX();
@@ -46,7 +58,15 @@ void OperatorController::Handle(CowRobot *bot)
         robotX = lookaheadPose.X().convert<units::foot>().value();
         robotY = lookaheadPose.Y().convert<units::foot>().value();
 
-        bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - CONSTANT("GOAL_X_OFFSET"), goalY - CONSTANT("GOAL_Y_OFFSET"));
+        SwerveDriveController::DriveLookAtRequest req = {
+            .inputX = m_CB->GetLeftDriveStickY(),
+            .inputY = -m_CB->GetLeftDriveStickX(),
+            .targetX = goalX - CONSTANT("GOAL_X_OFFSET"),
+            .targetY = goalY - CONSTANT("GOAL_Y_OFFSET"),
+            .robotSide = SwerveDriveController::RobotSide::BACK
+        };
+
+        bot->GetDriveController()->Request(req);
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
         double rangePivot = bot->m_PivotRangeMap[dist];
@@ -56,7 +76,7 @@ void OperatorController::Handle(CowRobot *bot)
         bot->m_Wrist->SetAngle(rangePivot, bot->m_Pivot->GetSetpoint());
 
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
-            bot->GetDriveController()->GetHeadingError() < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR") &&
+            bot->GetDriveController()->IsOnTarget() &&
             bot->m_Shooter->IsReady())
         {
             ledState = Vision::LEDState::BLINK_FAST;
@@ -71,7 +91,12 @@ void OperatorController::Handle(CowRobot *bot)
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {
-        bot->GetDriveController()->LockHeading(m_CB->GetLeftDriveStickY(), m_CB->GetLeftDriveStickX());
+        SwerveDriveController::DriveLockHeadingRequest req = {
+            .inputX = m_CB->GetLeftDriveStickY(),
+            .inputY = -m_CB->GetLeftDriveStickX()
+        };
+
+        bot->GetDriveController()->Request(req);
     }
     else
     {
@@ -81,9 +106,13 @@ void OperatorController::Handle(CowRobot *bot)
         // the driver station, and +rotation is a counter clockwise rotation
 
         // TODO: Flip depending on alliance color
-        bot->GetDriveController()->DriveManual(m_CB->GetLeftDriveStickY(),
-                                               -m_CB->GetLeftDriveStickX(),
-                                               -m_CB->GetRightDriveStickX());
+        SwerveDriveController::DriveManualRequest req = {
+            .inputX = m_CB->GetLeftDriveStickY(),
+            .inputY = -m_CB->GetLeftDriveStickX(),
+            .inputRotation = -m_CB->GetRightDriveStickX()
+        };
+
+        bot->GetDriveController()->Request(req);
     }
     // intake calibration - remove in PROD
     if (m_CB->GetOperatorButton(BUTTON_AMP))

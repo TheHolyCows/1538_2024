@@ -25,6 +25,8 @@ namespace CowLib
         double m_Exponent;
     };
 
+    double ExponentialFilter(double input, double exponent);
+
 } /* namespace CowLib */
 
 #endif /* __COWLIB_EXPONENTIALFILTER_H__ */
