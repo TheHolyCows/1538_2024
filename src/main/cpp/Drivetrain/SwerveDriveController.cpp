@@ -150,7 +150,7 @@ void SwerveDriveController::Handle()
         [&](DriveManualState &state) {            
             auto [xVel, yVel] = FilterXY(
                 state.req.inputX,
-                state.req.inputX,
+                state.req.inputY,
                 CONSTANT("DESIRED_MIN_SPEED"),
                 CONSTANT("DESIRED_MAX_SPEED"));
 
@@ -186,7 +186,7 @@ void SwerveDriveController::Handle()
                 state.targetHeading = std::nullopt;
             }
 
-            if (xVel != 0.0 || yVel != 0.0)
+            if (xVel != 0.0 || yVel != 0.0 || filteredRotation != 0.0)
             {
                 m_Drivetrain.SetVelocity(xVel, yVel, omega);
             }
@@ -222,6 +222,8 @@ void SwerveDriveController::Handle()
                 CONSTANT("DESIRED_MAX_SPEED"));
 
             double targetAngle = std::atan2(state.req.targetY - m_Drivetrain.GetPoseY(), state.req.targetX - m_Drivetrain.GetPoseX());
+            targetAngle = (targetAngle / 3.1415) * 180;
+            printf("%f\n", targetAngle);
 
             if (state.req.robotSide == RobotSide::FRONT)
             {

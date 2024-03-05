@@ -35,17 +35,6 @@ void OperatorController::Handle(CowRobot *bot)
         double goalX = 54.3941666667;
         double goalY = 18.2016666667;
 
-        // Drivetrain rotation targetting
-        SwerveDriveController::DriveLookAtRequest req = {
-            .inputX = m_CB->GetLeftDriveStickY(),
-            .inputY = -m_CB->GetLeftDriveStickX(),
-            .targetX = goalX,
-            .targetY = goalY,
-            .robotSide = SwerveDriveController::RobotSide::BACK
-        };
-
-        bot->GetDriveController()->Request(req);
-
         // Pivot and wrist targetting
         frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
 
