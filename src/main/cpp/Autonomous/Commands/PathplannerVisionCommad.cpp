@@ -1,35 +1,29 @@
-#include "PathplannerSwerveTrajectoryCommand.h"
+#include "PathplannerVisionCommand.h"
 
-PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std::string &pathName,
-                                                                       units::feet_per_second_t maxVelocity,
-                                                                       units::feet_per_second_squared_t maxAccel,
-                                                                       bool stopAtEnd,
-                                                                       bool resetOdometry)
+PathplannerVisionCommand::PathplannerVisionCommand(const std::string &pathName,
+                                                    units::feet_per_second_t maxVelocity,
+                                                    units::feet_per_second_squared_t maxAccel,
+                                                    double startOverridePct,
+                                                    double endOverridePct,
+                                                    bool stopAtEnd,
+                                                    bool resetOdometry)
 {
     // This is to make sure that it is loading trajectories on start and not on demand
     m_Timer         = new CowLib::CowTimer();
     m_Stop          = stopAtEnd;
     m_ResetOdometry = resetOdometry;
+    m_StartOverridePercent = startOverridePct;
+    m_EndOverridePercent = endOverridePct;
 
 
     // Load path from file
     m_Path = pathplanner::PathPlannerPath::fromPathFile(pathName);
 
     // read in path file and modify velocity and acceleration based on values passed to this function
-    const std::string filePath = frc::filesystem::GetDeployDirectory()
-			+ "/pathplanner/paths/" + pathName + ".path";
-    std::ifstream pathFile(filePath);
-    wpi::json data = wpi::json::parse(pathFile);
-    pathFile.close();
+    wpi::json data = CowLib::ParsePathFile(pathName);
 
-    data["globalConstraints"]["maxVelocity"] = units::meters_per_second_t(maxVelocity).value();
-    data["globalConstraints"]["maxAcceleration"] = units::meters_per_second_squared_t(maxAccel).value();
-
-
-    // does not work - should use hot reload???
-    // std::ofstream outFile(filePath);
-    // outFile << data;
-    // outFile.close();
+    CowLib::UpdatePathplannerVelocity(&data,maxVelocity);
+    CowLib::UpdatePathplannerAcceleration(&data,maxAccel);
 
     m_Path->hotReload(data);
 
@@ -68,18 +62,18 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, startingSpeeds, m_StartRotation);
 }
 
-PathplannerSwerveTrajectoryCommand::~PathplannerSwerveTrajectoryCommand()
+PathplannerVisionCommand::~PathplannerVisionCommand()
 {
     delete m_Timer;
     delete m_HolonomicController;
 }
 
-bool PathplannerSwerveTrajectoryCommand::IsComplete(CowRobot *robot)
+bool PathplannerVisionCommand::IsComplete(CowRobot *robot)
 {
     return m_Timer->HasElapsed(m_TotalTime);
 }
 
-void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
+void PathplannerVisionCommand::Start(CowRobot *robot)
 {
     // m_Trajectory = std::make_shared<CowLibTrajectory>(m_Path,
                                             // robot->GetDrivetrain()->GetChassisSpeeds(),
@@ -100,7 +94,7 @@ void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
     m_Timer->Start();
 }
 
-void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
+void PathplannerVisionCommand::Handle(CowRobot *robot)
 {
 
     frc::Pose2d currentPose = robot->GetDrivetrain()->GetPose();
@@ -110,7 +104,16 @@ void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
 
     // this is called in the PathPlanner implementation of this method, not sure why
     targetState = targetState.reverse();
-    
+
+    // override rotation
+    double percentCompletion = m_Timer->Get() / m_TotalTime * 100;
+    if (percentCompletion >= m_StartOverridePercent && percentCompletion <= m_EndOverridePercent)
+    {
+        // need to also adjust heading from reference state for FeedForward ?
+        //   maybe... this whole thing does compensate if you wish to override rotation already...
+        // targetState.targetHolonomicRotation = frc::Rotation2d { };
+    }
+
 
     CowLib::CowChassisSpeeds chassisSpeeds
         = CowLib::CowChassisSpeeds::FromWPI(m_HolonomicController->calculateRobotRelativeSpeeds(currentPose, targetState));
@@ -119,7 +122,7 @@ void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
     robot->GetDrivetrain()->SetVelocity(chassisSpeeds, false);
 }
 
-void PathplannerSwerveTrajectoryCommand::Finish(CowRobot *robot)
+void PathplannerVisionCommand::Finish(CowRobot *robot)
 {
     if (m_Stop)
     {
@@ -130,12 +133,12 @@ void PathplannerSwerveTrajectoryCommand::Finish(CowRobot *robot)
     m_Timer->Stop();
 }
 
-frc::Pose2d PathplannerSwerveTrajectoryCommand::GetStartingPose()
+frc::Pose2d PathplannerVisionCommand::GetStartingPose()
 {
     return m_Path->getPreviewStartingHolonomicPose();
 }
 
-frc::Rotation2d PathplannerSwerveTrajectoryCommand::GetEndRot()
+frc::Rotation2d PathplannerVisionCommand::GetEndRot()
 {
     return m_EndRotation;
 }
