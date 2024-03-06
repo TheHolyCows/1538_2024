@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../CowLib/CowExponentialFilter.h"
+#include "../CowLib/CowLPF.h"
 #include "../CowPigeon.h"
 #include "SwerveDrive.h"
 
@@ -40,6 +41,7 @@ public:
         double targetX = 0;
         double targetY = 0;
         RobotSide robotSide = RobotSide::FRONT;
+        double lookaheadTime = 0;
     };
 
     SwerveDriveController(SwerveDrive &drivetrain);
@@ -84,5 +86,6 @@ private:
 
     std::variant<IdleState, DriveManualState, DriveLockHeadingState, DriveLookAtState> m_State;
     frc::ProfiledPIDController<units::degrees> m_HeadingPIDController;
+    CowLib::CowLPF m_LPF;
     bool m_IsOnTarget;
 };

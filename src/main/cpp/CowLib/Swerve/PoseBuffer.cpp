@@ -63,7 +63,6 @@ namespace CowLib
             units::meter_t deltaY = pose.Y() - prevPose.Y();
             units::radian_t deltaTheta = pose.Rotation().Radians() - prevPose.Rotation().Radians();
 
-            printf("%f %f %f %f\n", deltaTime, prevPose.X().value(), pose.X().value(), deltaX.value());
             Sample sample = {
                 .vx = deltaX / deltaTime,
                 .vy = deltaY / deltaTime,

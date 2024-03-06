@@ -34,6 +34,8 @@ private:
 
     bool m_Locked;
 
+    Vision::Sample m_PreviousVisionSample;
+
 public:
     struct ModuleConstants
     {

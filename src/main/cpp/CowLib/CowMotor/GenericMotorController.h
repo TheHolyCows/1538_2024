@@ -155,12 +155,18 @@ namespace CowMotor
         COUNTER_CLOCKWISE
     };
 
+    enum FeedForwardType
+    {
+        LINEAR,
+        COSINE
+    };
+
     class GenericMotorController
     {
     public:
         virtual Status ConfigNeutralMode(NeutralMode neutralMode) = 0;
         virtual Status ConfigPositivePolarity(Direction positivePolarity) = 0;
-        virtual Status ConfigPID(double kp, double ki, double kd, double kf = 0) = 0;
+        virtual Status ConfigPID(double kp, double ki, double kd, double kf = 0, FeedForwardType ffType = FeedForwardType::LINEAR) = 0;
         virtual Status ConfigStatorCurrentLimit(double current) = 0;
 
         virtual Status Set(Control::DutyCycle request) = 0;

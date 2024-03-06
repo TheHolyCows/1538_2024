@@ -130,13 +130,22 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
-    Status TalonFX::ConfigPID(double kp, double ki, double kd, double kf)
+    Status TalonFX::ConfigPID(double kp, double ki, double kd, double kf, FeedForwardType ffType)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
         config.Slot0.kP = kp;
         config.Slot0.kI = ki;
         config.Slot0.kD = kd;
         config.Slot0.kS = kf;
+
+        if (ffType == FeedForwardType::LINEAR)
+        {
+            config.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+        }
+        else
+        {
+            config.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+        }
 
         return ApplyConfig(config);
     }

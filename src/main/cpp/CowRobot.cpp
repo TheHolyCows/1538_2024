@@ -114,6 +114,7 @@ void CowRobot::FuseVisionPose()
 {
     Vision::Sample sample = m_Vision->GetRobotPose();
     m_Drivetrain->AddVisionMeasurement(sample);
+    printf("%f %f\n", m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY());
 }
 
 // Used to handle the recurring logic funtions inside the robot.
@@ -144,12 +145,12 @@ void CowRobot::Handle()
     // logger code below should have checks for debug mode before sending out data
     CowLib::CowLogger::GetInstance()->Handle();
     // log the following every 200 ms
-    // if (m_DSUpdateCount % 20 == 0)
-    // {
-    //     // m_DSUpdateCount is reset in PrintToDS
-    //     CowLib::CowLogger::LogGyro(m_Gyro);
-    //     CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
-    // }
+    if (m_DSUpdateCount % 20 == 0)
+    {
+        // m_DSUpdateCount is reset in PrintToDS
+        CowLib::CowLogger::LogGyro(m_Gyro);
+        CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
+    }
 
     //    // APRIL TAG BOTPOSE
     //    std::optional<Vision::BotPoseResult> visionPose = Vision::GetInstance()->GetBotPose();

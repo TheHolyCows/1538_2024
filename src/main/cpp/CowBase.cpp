@@ -150,15 +150,15 @@ void CowBase::DisabledPeriodic()
 
 void CowBase::AutonomousPeriodic()
 {
-    m_Bot->FuseVisionPose();
     m_Bot->Handle();
+    m_Bot->FuseVisionPose();
     m_Bot->m_Vision->Handle();
 }
 
 void CowBase::TeleopPeriodic()
 {
-    m_Bot->FuseVisionPose();
     m_Bot->Handle();
+    m_Bot->FuseVisionPose();
     m_Bot->m_Vision->Handle();
 }
 

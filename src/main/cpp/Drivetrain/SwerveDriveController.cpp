@@ -45,7 +45,8 @@ SwerveDriveController::SwerveDriveController(SwerveDrive &drivetrain)
       m_Gyro(*CowPigeon::GetInstance()),
       m_State(IdleState{}),
       m_HeadingPIDController(0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degrees>::Constraints(), 10_ms),
-      m_IsOnTarget(false)
+      m_IsOnTarget(false),
+      m_LPF(CONSTANT("HEADING_LPF_BETA"))
 {
     m_HeadingPIDController.EnableContinuousInput(units::degree_t{ 0.0 }, units::degree_t{ 360.0 });
 
@@ -58,6 +59,8 @@ void SwerveDriveController::ResetConstants()
     m_HeadingPIDController.SetConstraints(frc::TrapezoidProfile<units::degrees>::Constraints{
         units::degrees_per_second_t{ CONSTANT("HEADING_V") },
         units::degrees_per_second_squared_t{ CONSTANT("HEADING_A") } });
+
+    m_LPF.UpdateBeta(CONSTANT("HEADING_LPF_BETA"));
 }
 
 void SwerveDriveController::ResetHeadingLock()
@@ -98,7 +101,7 @@ void SwerveDriveController::Request(DriveManualRequest req)
         };
 
         // Reset the heading PID controller to clear previous error and integral accumulator
-        m_HeadingPIDController.Reset(units::degree_t{ 0_deg });
+        m_HeadingPIDController.Reset(units::degree_t{ m_Drivetrain.GetPoseRot() });
     }
 }
 
@@ -121,7 +124,7 @@ void SwerveDriveController::Request(DriveLockHeadingRequest req)
         m_State = newState;
 
         // Reset the heading PID controller to clear previous error and integral accumulator
-        m_HeadingPIDController.Reset(units::degree_t{ 0_deg });
+        m_HeadingPIDController.Reset(units::degree_t{ m_Drivetrain.GetPoseRot() });
     }
 }
 
@@ -135,7 +138,8 @@ void SwerveDriveController::Request(DriveLookAtRequest req)
     // previous error and integral accumulator
     if (!std::holds_alternative<DriveLookAtState>(m_State))
     {
-        m_HeadingPIDController.Reset(units::degree_t{ 0_deg });
+        m_HeadingPIDController.Reset(units::degree_t{ m_Drivetrain.GetPoseRot() });
+        m_LPF.ReInit(m_Drivetrain.GetPoseRot(), m_Drivetrain.GetPoseRot());
     }
 }
 
@@ -220,11 +224,12 @@ void SwerveDriveController::Handle()
                 CONSTANT("DESIRED_MIN_SPEED"),
                 CONSTANT("DESIRED_MAX_SPEED"));
 
-            frc::Pose2d lookaheadPose = m_Drivetrain.Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(m_Drivetrain.GetPose());
+            frc::Pose2d lookaheadPose = m_Drivetrain.Odometry()->Lookahead(state.req.lookaheadTime).value_or(m_Drivetrain.GetPose());
 
             double targetAngle = std::atan2(
                 state.req.targetY - lookaheadPose.Y().convert<units::foot>().value(),
                 state.req.targetX - lookaheadPose.X().convert<units::foot>().value());
+                
             targetAngle = (targetAngle / 3.1415) * 180;
 
             if (state.req.robotSide == RobotSide::FRONT)
@@ -243,6 +248,8 @@ void SwerveDriveController::Handle()
             {
                 targetAngle += 270;
             }
+
+            targetAngle = m_LPF.Calculate(targetAngle);
 
             double omega = m_HeadingPIDController.Calculate(
                 units::degree_t{ m_Drivetrain.GetPoseRot() },

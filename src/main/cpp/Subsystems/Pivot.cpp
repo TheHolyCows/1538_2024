@@ -126,7 +126,9 @@ void Pivot::ResetConstants()
 {
     m_PivotMotor1->ConfigPID(CONSTANT("PIVOT_P"),
                              CONSTANT("PIVOT_I"),
-                             CONSTANT("PIVOT_D"));
+                             CONSTANT("PIVOT_D"),
+                             CONSTANT("PIVOT_S"),
+                             CowMotor::FeedForwardType::COSINE);
 
     m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),
                                      CONSTANT("PIVOT_A"));
