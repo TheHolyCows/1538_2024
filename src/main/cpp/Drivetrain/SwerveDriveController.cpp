@@ -249,7 +249,7 @@ void SwerveDriveController::Handle()
                 targetAngle += 270;
             }
 
-            targetAngle = m_LPF.Calculate(targetAngle);
+            // targetAngle = m_LPF.Calculate(targetAngle);
 
             double omega = m_HeadingPIDController.Calculate(
                 units::degree_t{ m_Drivetrain.GetPoseRot() },
