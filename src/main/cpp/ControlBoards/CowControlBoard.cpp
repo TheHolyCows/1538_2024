@@ -86,7 +86,18 @@ double CowControlBoard::GetOperatorAxis(int axis)
 
 double CowControlBoard::GetBiasSwitch()
 {
-    return m_OperatorPanel->GetRawAxis(1);
+    double rawValue = m_OperatorPanel->GetRawAxis(1);
+    double initValue = rawValue * 10;
+    double roundedValue = round(initValue);
+
+    if (abs(roundedValue - initValue) < CONSTANT("WRIST_ERROR_THRESHOLD"))
+    {
+        return roundedValue;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 CowControlBoard::~CowControlBoard()

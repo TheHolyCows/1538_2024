@@ -8,8 +8,10 @@
 
 #include "ButtonMap.h"
 #include "GenericControlBoard.h"
+#include "../CowConstants.h"
 
 #include <frc/Joystick.h>
+#include <math.h>
 
 class CowControlBoard : public GenericControlBoard
 {

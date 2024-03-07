@@ -46,11 +46,11 @@ void OperatorController::Handle(CowRobot *bot)
         bot->GetDriveController()->DriveLookAt(m_CB->GetLeftDriveStickY(), -m_CB->GetLeftDriveStickX(), goalX - 1.0, goalY);
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
-        double rangePivot = bot->m_PivotRangeMap[dist];
+        double rangePivot = bot->m_PivotRangeMap[dist] + (m_CB->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP"));
 
         printf("%f\n", dist);
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
-        bot->m_Wrist->SetAngle(rangePivot, (bot->m_Pivot->GetSetpoint() + (m_CB->GetBiasSwitch() * CONSTANT("WRIST_OFFSET_SCALAR"))));
+        bot->m_Wrist->SetAngle(rangePivot, bot->m_Pivot->GetSetpoint());
 
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
             bot->GetDriveController()->GetHeadingError() < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR") &&
