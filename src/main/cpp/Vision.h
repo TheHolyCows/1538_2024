@@ -23,6 +23,8 @@ public:
         double tagSpan;
         double averageTagDistance;
         double averageTagArea;
+
+        auto operator<=>(const Sample&) const = default;
     };
     
     Vision();

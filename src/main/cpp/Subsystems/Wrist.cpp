@@ -15,7 +15,7 @@ Wrist::Wrist(const int motorId1, const int encoderId, double encoderOffset)
     // SetAngle(CONSTANT("WRIST_STARTING_ANGLE"),CONSTANT("PIVOT_STARTING_ANGLE"));
     m_WristPosRequest.EnableFOC = true;
 
-    m_WristMotor->FuseCANCoder(encoderId, CONSTANT("WRIST_GEAR_RATIO"));
+    m_WristMotor->ConfigFusedCANCoder(encoderId, CONSTANT("WRIST_GEAR_RATIO"));
 
     // set initial position to stop us breaking wrist
     SetAngle(CONSTANT("WRIST_GROUND_SETPOINT"), 0);

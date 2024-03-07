@@ -35,6 +35,18 @@ void OperatorController::Handle(CowRobot *bot)
         double goalX = 54.3941666667;
         double goalY = 18.2016666667;
 
+        // Drivetrain targetting
+        SwerveDriveController::DriveLookAtRequest req = {
+            .inputX = m_CB->GetLeftDriveStickY(),
+            .inputY = -m_CB->GetLeftDriveStickX(),
+            .targetX = goalX - CONSTANT("GOAL_X_OFFSET"),
+            .targetY = goalY - CONSTANT("GOAL_Y_OFFSET"),
+            .robotSide = SwerveDriveController::RobotSide::BACK,
+            .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
+        };
+
+        bot->GetDriveController()->Request(req);
+
         // Pivot and wrist targetting
         frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
 
@@ -46,16 +58,6 @@ void OperatorController::Handle(CowRobot *bot)
 
         robotX = lookaheadPose.X().convert<units::foot>().value();
         robotY = lookaheadPose.Y().convert<units::foot>().value();
-
-        SwerveDriveController::DriveLookAtRequest req = {
-            .inputX = m_CB->GetLeftDriveStickY(),
-            .inputY = -m_CB->GetLeftDriveStickX(),
-            .targetX = goalX - CONSTANT("GOAL_X_OFFSET"),
-            .targetY = goalY - CONSTANT("GOAL_Y_OFFSET"),
-            .robotSide = SwerveDriveController::RobotSide::BACK
-        };
-
-        bot->GetDriveController()->Request(req);
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
         double rangePivot = bot->m_PivotRangeMap[dist];

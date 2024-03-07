@@ -60,23 +60,35 @@ namespace CowMotor
         return signals;
     }
 
-    ctre::phoenix::StatusCode TalonFX::FuseCANCoder(int id, double rotorToSensorRatio)
+    ctre::phoenix::StatusCode TalonFX::ConfigFusedCANCoder(int id, double rotorToSensorRatio)
     {        
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
-        config.Feedback.FeedbackRemoteSensorID = id;
         config.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
+        config.Feedback.FeedbackRemoteSensorID = id;
         config.Feedback.SensorToMechanismRatio = 1.0;
         config.Feedback.RotorToSensorRatio = rotorToSensorRatio;
 
         return ApplyConfig(config);
     }
 
-    ctre::phoenix::StatusCode TalonFX::ConfigRemoteCANCoder(int id)
+    ctre::phoenix::StatusCode TalonFX::ConfigRemoteCANCoder(int id, double rotorToSensorRatio)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
-        config.Feedback.FeedbackRemoteSensorID = id;
         config.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::RemoteCANcoder;
+        config.Feedback.FeedbackRemoteSensorID = id;
         config.Feedback.SensorToMechanismRatio = 1.0;
+        config.Feedback.RotorToSensorRatio = rotorToSensorRatio;
+
+        return ApplyConfig(config);
+    }
+
+    ctre::phoenix::StatusCode TalonFX::ConfigSyncCANCoder(int id, double rotorToSensorRatio)
+    {
+        ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
+        config.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::SyncCANcoder;
+        config.Feedback.FeedbackRemoteSensorID = id;
+        config.Feedback.SensorToMechanismRatio = 1.0 / rotorToSensorRatio;
+        config.Feedback.RotorToSensorRatio = rotorToSensorRatio;
 
         return ApplyConfig(config);
     }

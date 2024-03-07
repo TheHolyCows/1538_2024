@@ -32,6 +32,7 @@ SwerveDrive::SwerveDrive(ModuleConstants moduleConstants[4], double wheelBase)
         }
     }
 
+    ResetOdometry(frc::Pose2d(40_ft, 20_ft, 180_deg));
     Reset();
 }
 
@@ -222,14 +223,12 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
 
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 {
-    if (sample.tagCount >= 2 && sample.averageTagArea != m_PreviousVisionSample.averageTagArea)
+    if (sample.tagCount > 0 && sample != m_PreviousVisionSample)
     {
         units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
         double stdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_STD_DEV_SCALE");
         
         m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {stdDev, stdDev, stdDev});
-
-        frc::Pose2d p2d = sample.pose3d.ToPose2d();
 
         m_PreviousVisionSample = sample;
     }
@@ -271,7 +270,6 @@ void SwerveDrive::Reset()
 {
     ResetConstants();
     ResetEncoders();
-    ResetOdometry(frc::Pose2d(40_ft, 20_ft, 180_deg));
 }
 
 void SwerveDrive::Handle()

@@ -40,8 +40,9 @@ namespace CowMotor
 
         std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
         std::vector<ctre::phoenix6::BaseStatusSignal*> GetUnsynchronizedSignals();
-        ctre::phoenix::StatusCode FuseCANCoder(int id, double rotorToSensorRatio);
-        ctre::phoenix::StatusCode ConfigRemoteCANCoder(int id);
+        ctre::phoenix::StatusCode ConfigFusedCANCoder(int id, double rotorToSensorRatio);
+        ctre::phoenix::StatusCode ConfigRemoteCANCoder(int id, double rotorToSensorRatio);
+        ctre::phoenix::StatusCode ConfigSyncCANCoder(int id, double rotorToSensorRatio);
         ctre::phoenix::StatusCode ConfigContinuousWrap(bool enable);
         ctre::phoenix::StatusCode ConfigMotionMagic(double kv, double ka);
         

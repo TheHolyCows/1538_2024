@@ -23,7 +23,7 @@ SwerveModule::SwerveModule(const int id,
 
     m_RotationMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_RotationMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
-    m_RotationMotor->FuseCANCoder(encoderId, CONSTANT("SWERVE_ROTATION_GEAR_RATIO"));
+    m_RotationMotor->ConfigFusedCANCoder(encoderId, CONSTANT("SWERVE_ROTATION_GEAR_RATIO"));
     m_RotationMotor->ConfigContinuousWrap(true);
 
     m_DriveControlRequest.EnableFOC = true;
