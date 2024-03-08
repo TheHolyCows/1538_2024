@@ -12,10 +12,10 @@
 namespace CowLib
 {
 
-static wpi::json ParsePathFile(std::string pathname);
+wpi::json ParsePathFile(std::string pathname);
 
-static void UpdatePathplannerVelocity(wpi::json *data, units::feet_per_second_t velocity);
-static void UpdatePathplannerAcceleration(wpi::json *data, units::feet_per_second_squared_t acceleration);
+void UpdatePathplannerVelocity(wpi::json *data, units::feet_per_second_t velocity);
+void UpdatePathplannerAcceleration(wpi::json *data, units::feet_per_second_squared_t acceleration);
 
 
 

@@ -63,7 +63,7 @@ void PathplannerSwerveCommand::Start(CowRobot *robot)
         m_Path->hotReload(m_PathData);
     }
 
-    m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, curSpeeds, curPose);
+    m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, curSpeeds, curPose.Rotation());
 
     m_TotalTime = m_Trajectory->getTotalTime().value();
 
