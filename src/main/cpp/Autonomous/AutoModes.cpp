@@ -48,7 +48,8 @@ AutoModes::AutoModes()
     m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-1", 6_fps, 8_fps_sq, true, true));
     m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
 
-
+    // currently this will just follow a path - need to implement pulling a target from vison
+    // should probably pass in a vision target to constructor
     m_Modes["drive test"].push_back(new PathplannerVisionCommand("drive1-2", 6_fps, 8_fps_sq, 30.0, 70.0, true, false));
 
 

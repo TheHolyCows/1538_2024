@@ -1,6 +1,6 @@
-#include "PathplannerVisionCommand.h"
+#include "ExampleVisionCommand.h"
 
-PathplannerVisionCommand::PathplannerVisionCommand(const std::string &pathName,
+ExampleVisionCommand::ExampleVisionCommand(const std::string &pathName,
                                                                        units::feet_per_second_t maxVelocity,
                                                                        units::feet_per_second_squared_t maxAccel,
                                                                        frc::Pose2d visionTarget,
@@ -69,18 +69,18 @@ PathplannerVisionCommand::PathplannerVisionCommand(const std::string &pathName,
     m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, startingSpeeds, m_StartRotation);
 }
 
-PathplannerVisionCommand::~PathplannerVisionCommand()
+ExampleVisionCommand::~ExampleVisionCommand()
 {
     delete m_Timer;
     delete m_HolonomicController;
 }
 
-bool PathplannerVisionCommand::IsComplete(CowRobot *robot)
+bool ExampleVisionCommand::IsComplete(CowRobot *robot)
 {
     return m_Timer->HasElapsed(m_TotalTime);
 }
 
-void PathplannerVisionCommand::Start(CowRobot *robot)
+void ExampleVisionCommand::Start(CowRobot *robot)
 {
     // m_Trajectory = std::make_shared<CowLibTrajectory>(m_Path,
                                             // robot->GetDrivetrain()->GetChassisSpeeds(),
@@ -103,7 +103,7 @@ void PathplannerVisionCommand::Start(CowRobot *robot)
     m_Timer->Start();
 }
 
-void PathplannerVisionCommand::Handle(CowRobot *robot)
+void ExampleVisionCommand::Handle(CowRobot *robot)
 {
 
     frc::Pose2d currentPose = robot->GetDrivetrain()->GetPose();
@@ -128,7 +128,7 @@ void PathplannerVisionCommand::Handle(CowRobot *robot)
     robot->GetDrivetrain()->SetVelocity(chassisSpeeds, false);
 }
 
-void PathplannerVisionCommand::Finish(CowRobot *robot)
+void ExampleVisionCommand::Finish(CowRobot *robot)
 {
     if (m_Stop)
     {
@@ -139,12 +139,12 @@ void PathplannerVisionCommand::Finish(CowRobot *robot)
     m_Timer->Stop();
 }
 
-frc::Pose2d PathplannerVisionCommand::GetStartingPose()
+frc::Pose2d ExampleVisionCommand::GetStartingPose()
 {
     return m_Path->getPreviewStartingHolonomicPose();
 }
 
-frc::Rotation2d PathplannerVisionCommand::GetEndRot()
+frc::Rotation2d ExampleVisionCommand::GetEndRot()
 {
     return m_EndRotation;
 }
