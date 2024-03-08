@@ -8,8 +8,10 @@
 
 #include "ButtonMap.h"
 #include "GenericControlBoard.h"
+#include "../CowConstants.h"
 
 #include <frc/Joystick.h>
+#include <math.h>
 
 class CowControlBoard : public GenericControlBoard
 {
@@ -40,6 +42,8 @@ public:
 
     bool GetOperatorButton(int) override;
     double GetOperatorAxis(int) override;
+
+    double GetBiasSwitch() override;
 
     ~CowControlBoard();
 };

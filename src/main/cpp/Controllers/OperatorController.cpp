@@ -60,7 +60,7 @@ void OperatorController::Handle(CowRobot *bot)
         robotY = lookaheadPose.Y().convert<units::foot>().value();
 
         double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
-        double rangePivot = bot->m_PivotRangeMap[dist];
+        double rangePivot = bot->m_PivotRangeMap[dist] + (m_CB->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP"));
 
         printf("%f\n", dist);
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));

@@ -26,5 +26,7 @@ public:
     virtual bool GetOperatorButton(int) = 0;
     virtual double GetOperatorAxis(int) = 0;
 
+    virtual double GetBiasSwitch() = 0;
+
     virtual ~GenericControlBoard(){};
 };
