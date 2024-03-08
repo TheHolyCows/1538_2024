@@ -102,29 +102,39 @@ void CowBase::DisabledPeriodic()
         m_Bot->Reset();
     }
 
-    // if (m_ControlBoard->GetAutoSelectButton())
-    // {
-    //     /*
-    //      * POSITION FIRST_OWNERSHIP SECOND_OWNERSHIP DRIVE
-    //      * iterates over AutoModes
-    //      */
-    //     AutoModes::GetInstance()->NextMode();
-    //     CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
-    //     printf("%s\n", AutoModes::GetInstance()->GetName().c_str());
-    // }
+    if (m_ControlBoard->GetAutoSelectButton())
+    {
+        /*
+         * POSITION FIRST_OWNERSHIP SECOND_OWNERSHIP DRIVE
+         * iterates over AutoModes
+         */
+        AutoModes::GetInstance()->NextMode();
+        
+        if (m_Alliance.has_value())
+        {
+            CowLib::CowLogger::LogAutoMode(m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
+        }
+        else
+        {
+            CowLib::CowLogger::LogAutoMode(AutoModes::GetInstance()->GetName().c_str());
+        }
 
-    // if (m_Bot)
-    // {
-    //     // TODO: add this back in
-    //     // m_Bot->GetArm()->DisabledCalibration();
-    // }
+        printf("%s\n", AutoModes::GetInstance()->GetName().c_str());
+    }
 
     m_Bot->FuseVisionPose();
 
     if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
     {
-        m_Alliance = frc::DriverStation::Alliance::kRed;
-        CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
+        m_Alliance = frc::DriverStation::GetAlliance();
+        if (m_Alliance.has_value())
+        {
+            CowLib::CowLogger::LogAutoMode(m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
+        }
+        else
+        {
+            CowLib::CowLogger::LogAutoMode(AutoModes::GetInstance()->GetName().c_str());
+        }
         m_DisabledCount = 1;
 
         if (m_ControlBoard->GetOperatorButton(2)) // climb down

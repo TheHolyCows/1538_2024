@@ -130,6 +130,24 @@ namespace CowLib
     }
 
     /**
+     * override of CowLogger::LogAutoMode()
+    */
+    void CowLogger::LogAutoMode(const char *name)
+    {
+        CowAutoLog logPacket;
+        logPacket.hdr.msgType = CowLogger::AUTO_LOG;
+        logPacket.hdr.msgLen  = sizeof(logPacket);
+
+        logPacket.alliance = 3;
+
+        // sub 1 from len to allow space for '\0'
+        memset(logPacket.name, 0x0, sizeof(logPacket.name));
+        strncpy(logPacket.name, name, sizeof(logPacket.name) - 1);
+
+        SendLog(&logPacket, sizeof(logPacket));
+    }
+
+    /**
      * CowLogger::LogAutoMode
      * log the gyro from the robot, these values are relative to the starting orientation
      * of the bot

@@ -71,6 +71,7 @@ namespace CowLib
 
         void RegisterMotor(uint32_t, CowMotor::GenericMotorController *);
         static void LogAutoMode(frc::DriverStation::Alliance, const char *);
+        static void LogAutoMode(const char *);
         static void LogGyro(CowPigeon *);
         static void LogPose(double, double, double);
         static void LogMsg(CowLogLevel, const char *fmt, ...);
