@@ -45,12 +45,10 @@ public:
 
     void Finish(CowRobot *robot) override;
 
-    frc::Pose2d GetStartingPose();
-    
-    frc::Rotation2d GetEndRot();
-
 private:
     CowLib::CowTimer *m_Timer;
+
+    wpi::json m_PathData;
 
     std::shared_ptr<pathplanner::PathPlannerPath> m_Path;
     std::shared_ptr<pathplanner::CowLibTrajectory> m_Trajectory;
@@ -58,13 +56,8 @@ private:
 
     double m_TotalTime;
     bool m_Stop;
-    bool m_ResetOdometry;
+    bool m_OverrideInitPose;
 
     double m_StartOverridePercent;
     double m_EndOverridePercent;
-
-    frc::Pose2d m_StartPose;
-    frc::Pose2d m_EndPose;
-    frc::Rotation2d m_StartRotation;
-    frc::Rotation2d m_EndRotation;
 };
