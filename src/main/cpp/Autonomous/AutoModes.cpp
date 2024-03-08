@@ -49,6 +49,9 @@ AutoModes::AutoModes()
     m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
 
 
+    m_Modes["drive test"].push_back(new PathplannerVisionCommand("drive1-2", 6_fps, 8_fps_sq, 30.0, 70.0, true, false));
+
+
     /* test subsystems */
     m_Modes["subsys test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
