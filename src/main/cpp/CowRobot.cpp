@@ -114,7 +114,6 @@ void CowRobot::FuseVisionPose()
 {
     Vision::Sample sample = m_Vision->GetRobotPose();
     m_Drivetrain->AddVisionMeasurement(sample);
-    printf("%f %f\n", m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY());
 }
 
 // Used to handle the recurring logic funtions inside the robot.
