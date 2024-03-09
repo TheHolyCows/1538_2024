@@ -31,16 +31,12 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (m_CB->GetVisionTargetButton())
     {
-        // TODO: Move to constants
-        double goalX = 54.3941666667;
-        double goalY = 18.2016666667;
-
         // Drivetrain targetting
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
             .inputY = -m_CB->GetLeftDriveStickX(),
-            .targetX = goalX - CONSTANT("GOAL_X_OFFSET"),
-            .targetY = goalY - CONSTANT("GOAL_Y_OFFSET"),
+            .targetX = CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
+            .targetY = CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
             .robotSide = SwerveDriveController::RobotSide::BACK,
             .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
         };
@@ -50,23 +46,19 @@ void OperatorController::Handle(CowRobot *bot)
         // Pivot and wrist targetting
         frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(bot->GetDrivetrain()->GetPose());
 
-        double robotX = bot->GetDrivetrain()->GetPoseX();
-        double robotY = bot->GetDrivetrain()->GetPoseY();
+        double robotX = lookaheadPose.X().convert<units::foot>().value();
+        double robotY = lookaheadPose.Y().convert<units::foot>().value();
 
-        // printf("%f %f %f %f\n", robotX, robotY, robotX - lookaheadPose.X().convert<units::foot>().value(), robotY - lookaheadPose.Y().convert<units::foot>().value());
-        // printf("%f,%f\n", robotX, lookaheadPose.X().convert<units::foot>().value());
-
-        robotX = lookaheadPose.X().convert<units::foot>().value();
-        robotY = lookaheadPose.Y().convert<units::foot>().value();
-
-        double dist = sqrtf(powf(goalY - robotY, 2) + powf(goalX - robotX, 2));
+        double dist = sqrtf(powf(CONSTANT("GOAL_Y") - robotY, 2) + powf(CONSTANT("GOAL_X") - robotX, 2));
         double wristBiasAngle = m_CB->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
         double rangePivot = bot->m_PivotRangeMap[dist] + wristBiasAngle;
 
         printf("bias: %f, dist: %f\n", wristBiasAngle, dist);
+
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
         bot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), bot->m_Pivot->GetSetpoint());
 
+        // LED
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
             bot->GetDriveController()->IsOnTarget() &&
             bot->m_Shooter->IsReady())
@@ -74,11 +66,12 @@ void OperatorController::Handle(CowRobot *bot)
             ledState = Vision::LEDState::BLINK_FAST;
         }
 
+        // Record data from previous shot
         if (m_CB->GetOperatorButton(BUTTON_SHOOT))
         {
             m_LastShotDistance = dist;
-            m_LastShotPivot = bot->m_Pivot->GetAngle();
-            m_LastShotWrist = bot->m_Pivot->GetAngle();
+            m_LastShotPivot = bot->m_Pivot->GetSetpoint();
+            m_LastShotWrist = rangePivot + CONSTANT("WRIST_OFFSET_BIAS");
         }
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading

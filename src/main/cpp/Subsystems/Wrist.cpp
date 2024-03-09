@@ -62,7 +62,6 @@ void Wrist::SetAngle(double angle, double pivotSetpoint, bool force)
     // double angleSetpoint = angle + pivotSetpoint + 90;
     double angleSetpoint = 180 - (pivotSetpoint + angle) - CONSTANT("WRIST_VERT_OFFSET");
     
-    
     if (angleSetpoint > CONSTANT("WRIST_MAX_ANGLE"))
     {
         angleSetpoint = CONSTANT("WRIST_MAX_ANGLE");

@@ -165,15 +165,6 @@ void Shooter::Shoot()
 
 void Shooter::Handle()
 {
-    if (m_IntakeState == IntakeState::DETECT_HOLD)
-    {
-        m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
-    }
-    else
-    {
-        m_Vision->SetLEDState(Vision::LEDState::OFF);
-    }
-
     // Intake state machine
     switch (m_IntakeState)
     {
@@ -301,8 +292,6 @@ void Shooter::Handle()
             request.Position = m_IntakeGoalPosition;
 
             m_Intake->Set(request);
-
-            // m_Vision->SetLEDState(Vision::LEDState::BLINK_FAST);
             
             break;
         }
@@ -315,7 +304,6 @@ void Shooter::Handle()
             request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
 
             m_Intake->Set(request);
-            // m_Vision->SetLEDState(Vision::LEDState::OFF);
 
             break;
         }
