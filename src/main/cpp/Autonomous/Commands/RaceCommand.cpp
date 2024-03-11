@@ -23,6 +23,7 @@ bool RaceCommand::IsComplete(CowRobot *robot)
             return true;
         }
     }
+    return false;
 }
 
 void RaceCommand::Start(CowRobot* robot)

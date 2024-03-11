@@ -7,11 +7,10 @@
 
 #include "Commands/HoldPositionCommand.h"
 #include "Commands/LambdaCommand.h"
-#include "Commands/PathplannerSwerveTrajectoryCommand.h"
+#include "Commands/PathplannerSwerveCommand.h"
+#include "Commands/PathplannerVisionCommand.h"
 #include "Commands/RaceCommand.h"
 #include "Commands/SeriesCommand.h"
-#include "Commands/SwerveTrajectoryCommand.h"
-// #include "Commands/VisionAlignCommand.h"
 #include "Commands/WaitCommand.h"
 #include "Commands/ParallelCommand.h"
 #include "Commands/StationaryVisionCommand.h"

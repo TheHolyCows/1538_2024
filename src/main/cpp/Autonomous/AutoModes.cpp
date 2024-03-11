@@ -24,7 +24,7 @@ AutoModes::AutoModes()
 
     auto pathWithEvents = [](const std::string &pathName,
                              const std::vector<TrajectoryEvent> &events,
-                             bool resetOdometry                     = false,
+                             bool overrideInitPose = false,
                              units::feet_per_second_t speed         = 20.21_fps,
                              units::feet_per_second_squared_t accel = 14_fps_sq)
     {
@@ -35,7 +35,7 @@ AutoModes::AutoModes()
             series.push_back(event.command);
         }
 
-        return new ParallelCommand({ new PathplannerSwerveTrajectoryCommand(pathName, speed, accel, true, resetOdometry),
+        return new ParallelCommand({ new PathplannerSwerveCommand(pathName, speed, accel, true, overrideInitPose),
                                      new SeriesCommand(series) });
     };
 
@@ -43,9 +43,17 @@ AutoModes::AutoModes()
     /**
      * START AUTO MODE DEFS BELOW
     */
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-1", 6_fps, 8_fps_sq, true, true));
-    // m_Modes["testing"].push_back(new PathplannerSwerveTrajectoryCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
 
+    /* test drive */
+    m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-1", 6_fps, 8_fps_sq, true, true));
+    m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
+
+    // currently this will just follow a path - need to implement pulling a target from vison
+    // should probably pass in a vision target to constructor
+    m_Modes["drive test"].push_back(new PathplannerVisionCommand("drive1-2", 6_fps, 8_fps_sq, 30.0, 70.0, true, false));
+
+
+    /* test subsystems */
     m_Modes["subsys test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
                                         false));
@@ -57,8 +65,6 @@ AutoModes::AutoModes()
     m_Modes["subsys test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
     m_Modes["subsys test"].push_back(new StationaryVisionCommand(1.5_s));
     m_Modes["subsys test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
-
-
 
     // Initialize auto mode selector
     m_Iterator = m_Modes.begin();

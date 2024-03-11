@@ -1,8 +1,9 @@
-#include "PathplannerSwerveTrajectoryCommand.h"
+#include "ExampleVisionCommand.h"
 
-PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std::string &pathName,
+ExampleVisionCommand::ExampleVisionCommand(const std::string &pathName,
                                                                        units::feet_per_second_t maxVelocity,
                                                                        units::feet_per_second_squared_t maxAccel,
+                                                                       frc::Pose2d visionTarget,
                                                                        bool stopAtEnd,
                                                                        bool resetOdometry)
 {
@@ -68,18 +69,18 @@ PathplannerSwerveTrajectoryCommand::PathplannerSwerveTrajectoryCommand(const std
     m_Trajectory = std::make_shared<pathplanner::CowLibTrajectory>(m_Path, startingSpeeds, m_StartRotation);
 }
 
-PathplannerSwerveTrajectoryCommand::~PathplannerSwerveTrajectoryCommand()
+ExampleVisionCommand::~ExampleVisionCommand()
 {
     delete m_Timer;
     delete m_HolonomicController;
 }
 
-bool PathplannerSwerveTrajectoryCommand::IsComplete(CowRobot *robot)
+bool ExampleVisionCommand::IsComplete(CowRobot *robot)
 {
     return m_Timer->HasElapsed(m_TotalTime);
 }
 
-void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
+void ExampleVisionCommand::Start(CowRobot *robot)
 {
     // m_Trajectory = std::make_shared<CowLibTrajectory>(m_Path,
                                             // robot->GetDrivetrain()->GetChassisSpeeds(),
@@ -90,6 +91,8 @@ void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
     if (m_ResetOdometry)
     {
         robot->GetDrivetrain()->ResetOdometry(m_StartPose);
+        // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"cur pose: x:%lf y:%lf rot:%lf",curPose.X(), curPose.Y(), curPose.Rotation().Degrees());
+        // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"target pose: x:%lf y:%lf rot:%lf",m_StartPose.X(), m_StartPose.Y(), m_StartPose.Rotation().Degrees());
     }
 
     m_TotalTime = m_Trajectory->getTotalTime().value();
@@ -100,7 +103,7 @@ void PathplannerSwerveTrajectoryCommand::Start(CowRobot *robot)
     m_Timer->Start();
 }
 
-void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
+void ExampleVisionCommand::Handle(CowRobot *robot)
 {
 
     frc::Pose2d currentPose = robot->GetDrivetrain()->GetPose();
@@ -110,16 +113,22 @@ void PathplannerSwerveTrajectoryCommand::Handle(CowRobot *robot)
 
     // this is called in the PathPlanner implementation of this method, not sure why
     targetState = targetState.reverse();
+
+    targetState.targetHolonomicRotation = frc::Rotation2d{45_deg};
     
+    // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"cur pose: x:%lf y:%lf rot:%lf",currentPose.X(), currentPose.Y(), currentPose.Rotation().Degrees());
+    // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"target pose: x:%lf y:%lf rot:%lf",targetState.getTargetHolonomicPose().X(), targetState.getTargetHolonomicPose().Y(), targetState.getTargetHolonomicPose().Rotation().Degrees());
 
     CowLib::CowChassisSpeeds chassisSpeeds
         = CowLib::CowChassisSpeeds::FromWPI(m_HolonomicController->calculateRobotRelativeSpeeds(currentPose, targetState));
+    // CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG,"target speeds: x:%lf y:%lf rot:%lf",chassisSpeeds.vx, chassisSpeeds.vy, chassisSpeeds.omega);
+ 
 
 
     robot->GetDrivetrain()->SetVelocity(chassisSpeeds, false);
 }
 
-void PathplannerSwerveTrajectoryCommand::Finish(CowRobot *robot)
+void ExampleVisionCommand::Finish(CowRobot *robot)
 {
     if (m_Stop)
     {
@@ -130,12 +139,12 @@ void PathplannerSwerveTrajectoryCommand::Finish(CowRobot *robot)
     m_Timer->Stop();
 }
 
-frc::Pose2d PathplannerSwerveTrajectoryCommand::GetStartingPose()
+frc::Pose2d ExampleVisionCommand::GetStartingPose()
 {
     return m_Path->getPreviewStartingHolonomicPose();
 }
 
-frc::Rotation2d PathplannerSwerveTrajectoryCommand::GetEndRot()
+frc::Rotation2d ExampleVisionCommand::GetEndRot()
 {
     return m_EndRotation;
 }
