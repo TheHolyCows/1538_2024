@@ -101,7 +101,7 @@ void SwerveDriveController::Request(DriveManualRequest req)
         };
 
         // Reset the heading PID controller to clear previous error and integral accumulator
-        m_HeadingPIDController.Reset(units::degree_t{ m_Drivetrain.GetPoseRot() });
+        m_HeadingPIDController.Reset(units::degree_t{ m_Gyro.GetYawDegrees() });
     }
 }
 
@@ -130,17 +130,18 @@ void SwerveDriveController::Request(DriveLockHeadingRequest req)
 
 void SwerveDriveController::Request(DriveLookAtRequest req)
 {
-    m_State = DriveLookAtState {
-        .req = req
-    };
-
     // If this is a state transition, reset the heading PID controller to clear
     // previous error and integral accumulator
     if (!std::holds_alternative<DriveLookAtState>(m_State))
     {
+        printf("resetting pid with %f\n", m_Drivetrain.GetPoseRot());
         m_HeadingPIDController.Reset(units::degree_t{ m_Drivetrain.GetPoseRot() });
         m_LPF.ReInit(m_Drivetrain.GetPoseRot(), m_Drivetrain.GetPoseRot());
     }
+
+    m_State = DriveLookAtState {
+        .req = req
+    };
 }
 
 void SwerveDriveController::Handle()
@@ -172,14 +173,14 @@ void SwerveDriveController::Handle()
                 {
                     double targetHeading = state.targetHeading.value();
                     omega = m_HeadingPIDController.Calculate(
-                        units::degree_t{ m_Drivetrain.GetPoseRot() },
+                        units::degree_t{ m_Gyro.GetYawDegrees() },
                         units::degree_t{ targetHeading });
 
-                    m_IsOnTarget = m_HeadingPIDController.GetPositionError().value() < CONSTANT("SWERVE_DRIVE_CONTROLLER_ON_TARGET_THRESHOLD");
+                    m_IsOnTarget = std::fabs(m_HeadingPIDController.GetPositionError().value()) < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR");
                 }
                 else if (m_Gyro.GetYawVelocityDegrees() < CONSTANT("HEADING_CAPTURE_THRESHOLD"))
                 {
-                    state.targetHeading = m_Drivetrain.GetPoseRot();
+                    state.targetHeading = m_Gyro.GetYawDegrees();
                     m_HeadingPIDController.Reset(units::degree_t{ state.targetHeading.value() });
                 }
             }
@@ -215,7 +216,7 @@ void SwerveDriveController::Handle()
                 units::degree_t{ state.targetHeading.value() });
 
             m_Drivetrain.SetVelocity(xVel, yVel, omega);
-            m_IsOnTarget = m_HeadingPIDController.GetPositionError().value() < CONSTANT("SWERVE_DRIVE_CONTROLLER_ON_TARGET_THRESHOLD");
+            m_IsOnTarget = std::fabs(m_HeadingPIDController.GetPositionError().value()) < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR");
         },
         [&](DriveLookAtState &state) {
             auto [xVel, yVel] = FilterXY(
@@ -249,14 +250,14 @@ void SwerveDriveController::Handle()
                 targetAngle += 270;
             }
 
-            targetAngle = m_LPF.Calculate(targetAngle);
+            // targetAngle = m_LPF.Calculate(targetAngle);
 
             double omega = m_HeadingPIDController.Calculate(
                 units::degree_t{ m_Drivetrain.GetPoseRot() },
                 units::degree_t{ targetAngle });
 
             m_Drivetrain.SetVelocity(xVel, yVel, omega);
-            m_IsOnTarget = m_HeadingPIDController.GetPositionError().value() < CONSTANT("SWERVE_DRIVE_CONTROLLER_ON_TARGET_THRESHOLD");
+            m_IsOnTarget = std::fabs(m_HeadingPIDController.GetPositionError().value()) < CONSTANT("SHOOTING_THRESHOLD_HEADING_ERROR");
         }
     }, m_State);
 }
