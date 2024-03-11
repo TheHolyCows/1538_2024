@@ -91,7 +91,7 @@ public:
 
     SwerveDriveController *GetDriveController() { return m_DriveController; }
 
-    void FuseVisionPose();
+    void SampleSensors();
 
     void Handle();
 
@@ -99,7 +99,5 @@ public:
 
     void ClimbSM(void);
 };
-
-
 
 #endif

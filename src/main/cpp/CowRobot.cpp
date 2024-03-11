@@ -34,8 +34,8 @@ CowRobot::CowRobot()
     m_Vision = new Vision();
     m_Shooter = new Shooter(15, 16, 14, m_Vision);
 
-    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetCowDriveSynchronizedSignals());
-    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetCowBusSynchronizedSignals());
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowDriveSynchronizedSignals());
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowBusSynchronizedSignals());
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetCowDriveSynchronizedSignals()
@@ -110,10 +110,14 @@ void CowRobot::PrintToDS()
     }
 }
 
-void CowRobot::FuseVisionPose()
+void CowRobot::SampleSensors()
 {
     Vision::Sample sample = m_Vision->GetRobotPose();
     m_Drivetrain->AddVisionMeasurement(sample);
+
+    // Synchronize and sample time-critical sensors
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowDriveSynchronizedSignals());
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowBusSynchronizedSignals());
 }
 
 // Used to handle the recurring logic funtions inside the robot.
@@ -128,10 +132,6 @@ void CowRobot::Handle()
         return;
     }
 
-    // Synchronize and sample time-critical sensors
-    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowDriveSynchronizedSignals());
-    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowBusSynchronizedSignals());
-
     m_Controller->Handle(this);
     m_Drivetrain->Handle();
     m_DriveController->Handle();
@@ -141,15 +141,15 @@ void CowRobot::Handle()
     m_Wrist->Handle(m_Pivot);
     m_Shooter->Handle();
 
-    // logger code below should have checks for debug mode before sending out data
-    CowLib::CowLogger::GetInstance()->Handle();
-    // log the following every 200 ms
-    if (m_DSUpdateCount % 20 == 0)
-    {
-        // m_DSUpdateCount is reset in PrintToDS
-        CowLib::CowLogger::LogGyro(m_Gyro);
-        CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
-    }
+    // // logger code below should have checks for debug mode before sending out data
+    // CowLib::CowLogger::GetInstance()->Handle();
+    // // log the following every 200 ms
+    // if (m_DSUpdateCount % 20 == 0)
+    // {
+    //     // m_DSUpdateCount is reset in PrintToDS
+    //     CowLib::CowLogger::LogGyro(m_Gyro);
+    //     CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
+    // }
 
     //    // APRIL TAG BOTPOSE
     //    std::optional<Vision::BotPoseResult> visionPose = Vision::GetInstance()->GetBotPose();
@@ -165,7 +165,7 @@ void CowRobot::Handle()
     // bool direction = (zVal - m_PrevZ) > 0 ? true : false;
     // m_PrevZ = zVal;
 
-    PrintToDS();
+    // PrintToDS();
 
     // double xAccel = m_Accelerometer->GetX();
     // // frc::SmartDashboard::PutNumber("x accel", xAccel);

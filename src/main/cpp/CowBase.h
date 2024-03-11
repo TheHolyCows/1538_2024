@@ -38,10 +38,14 @@ private:
 public:
     CowBase();
     ~CowBase() override;
+
     void RobotInit() override;
     void DisabledInit() override;
     void AutonomousInit() override;
     void TeleopInit() override;
+
+    void RobotPeriodic();
+    void RobotEnabledPeriodic();
     void DisabledPeriodic() override;
     void AutonomousPeriodic() override;
     void TeleopPeriodic() override;

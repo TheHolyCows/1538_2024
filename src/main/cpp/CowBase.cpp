@@ -42,7 +42,7 @@ void CowBase::RobotInit()
 
 void CowBase::DisabledInit()
 {
-    CowConstants::GetInstance()->RestoreData();
+    // CowConstants::GetInstance()->RestoreData();
     printf("DISABLED INIT -------------------\n");
 
     m_Bot->GetDriveController()->ResetHeadingLock();
@@ -82,8 +82,21 @@ void CowBase::TeleopInit()
     // m_Bot->GetArm()->SetBrakeMode(); TODO: add back in
 }
 
+void CowBase::RobotPeriodic()
+{
+    m_Bot->SampleSensors();
+    m_Bot->m_Vision->Handle();
+}
+
+void CowBase::RobotEnabledPeriodic()
+{
+    m_Bot->Handle();
+}
+
 void CowBase::DisabledPeriodic()
 {
+    RobotPeriodic();
+
     // log motor info
     CowLib::CowLogger::GetInstance()->Handle();
 
@@ -122,8 +135,6 @@ void CowBase::DisabledPeriodic()
         printf("%s\n", AutoModes::GetInstance()->GetName().c_str());
     }
 
-    m_Bot->FuseVisionPose();
-
     if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
     {
         m_Alliance = frc::DriverStation::GetAlliance();
@@ -154,22 +165,18 @@ void CowBase::DisabledPeriodic()
     // set wrist and pivot to current locations
     m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
     //m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
-
-    m_Bot->m_Vision->Handle();
 }
 
 void CowBase::AutonomousPeriodic()
 {
-    m_Bot->Handle();
-    m_Bot->FuseVisionPose();
-    m_Bot->m_Vision->Handle();
+    RobotPeriodic();
+    RobotEnabledPeriodic();
 }
 
 void CowBase::TeleopPeriodic()
 {
-    m_Bot->Handle();
-    m_Bot->FuseVisionPose();
-    m_Bot->m_Vision->Handle();
+    RobotPeriodic();
+    RobotEnabledPeriodic();
 }
 
 #ifndef RUNNING_FRC_TESTS
