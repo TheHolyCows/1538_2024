@@ -142,14 +142,14 @@ void CowRobot::Handle()
     m_Shooter->Handle();
 
     // // logger code below should have checks for debug mode before sending out data
-    // CowLib::CowLogger::GetInstance()->Handle();
-    // // log the following every 200 ms
-    // if (m_DSUpdateCount % 20 == 0)
-    // {
-    //     // m_DSUpdateCount is reset in PrintToDS
-    //     CowLib::CowLogger::LogGyro(m_Gyro);
-    //     CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
-    // }
+    CowLib::CowLogger::GetInstance()->Handle();
+    // log the following every 200 ms
+    if (m_DSUpdateCount % 20 == 0)
+    {
+        // m_DSUpdateCount is reset in PrintToDS
+        CowLib::CowLogger::LogGyro(m_Gyro);
+        CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
+    }
 
     //    // APRIL TAG BOTPOSE
     //    std::optional<Vision::BotPoseResult> visionPose = Vision::GetInstance()->GetBotPose();
