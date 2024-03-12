@@ -43,6 +43,8 @@ public:
     Vision *m_Vision;
     CowLib::interpolating_map<double, double> m_PivotRangeMap;
 
+    std::optional<frc::DriverStation::Alliance> m_Alliance = std::nullopt;
+
     double m_BiasForAuto = 0.0;
 
 private:

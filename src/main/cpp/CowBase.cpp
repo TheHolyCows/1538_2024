@@ -127,9 +127,9 @@ void CowBase::DisabledPeriodic()
          */
         AutoModes::GetInstance()->NextMode();
         
-        if (m_Alliance.has_value())
+        if (m_Bot->m_Alliance.has_value())
         {
-            CowLib::CowLogger::LogAutoMode(m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
+            CowLib::CowLogger::LogAutoMode(m_Bot->m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
         }
         else
         {
@@ -141,10 +141,10 @@ void CowBase::DisabledPeriodic()
 
     if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
     {
-        m_Alliance = frc::DriverStation::GetAlliance();
-        if (m_Alliance.has_value())
+        m_Bot->m_Alliance = frc::DriverStation::GetAlliance();
+        if (m_Bot->m_Alliance.has_value())
         {
-            CowLib::CowLogger::LogAutoMode(m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
+            CowLib::CowLogger::LogAutoMode(m_Bot->m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
         }
         else
         {
