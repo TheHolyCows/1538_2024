@@ -223,7 +223,18 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
 
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 {
-    if (sample.tagCount > 0 && sample != m_PreviousVisionSample)
+    std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
+
+    for (auto module : m_Modules)
+    {
+        modulePositions[module->GetID()] = module->GetPosition();
+    }
+
+    m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
+
+    m_Pose = m_Odometry->GetWPIPose();
+    
+    if (sample.tagCount > 0 && sample != m_PreviousVisionSample && sample.averageTagDistance  < CONSTANT("MAX_TAG_DIST"))
     {
         units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
         double stdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_STD_DEV_SCALE");
@@ -274,15 +285,15 @@ void SwerveDrive::Reset()
 
 void SwerveDrive::Handle()
 {
-    std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
+    // std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
 
     for (auto module : m_Modules)
     {
         module->Handle();
-        modulePositions[module->GetID()] = module->GetPosition();
+        // modulePositions[module->GetID()] = module->GetPosition();
     }
+    // will this make our pose a frame behind?
+    // m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
 
-    m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
-
-    m_Pose = m_Odometry->GetWPIPose();
+    // m_Pose = m_Odometry->GetWPIPose();
 }
