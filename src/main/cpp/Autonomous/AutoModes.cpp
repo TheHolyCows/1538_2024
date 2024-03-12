@@ -45,12 +45,37 @@ AutoModes::AutoModes()
     */
 
     /* test drive */
-    m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-1", 6_fps, 8_fps_sq, true, true));
-    m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
+    m_Modes["drive test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
+                                        CONSTANT("PIVOT_STOW_SETPOINT"),
+                                        false));
+    m_Modes["drive test"].push_back(pathWithEvents("drive3-1",
+                                                { { 1.5_s, new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
+                                                                                CONSTANT("PIVOT_GROUND_SETPOINT"),
+                                                                                false) } },
+                                                true,
+                                                14_fps,
+                                                8_fps_sq));
+    m_Modes["drive test"].push_back(pathWithEvents("drive3-2",
+                                                { { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_BEGIN, false) },
+                                                  { 0.7_s, new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
+                                                                                CONSTANT("PIVOT_STOW_SETPOINT"),
+                                                                                false) },
+                                                  { 0.5_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
+                                                false,
+                                                14_fps,
+                                                8_fps_sq));
+    m_Modes["drive test"].push_back(new WaitCommand(0.3_s,false));
+    m_Modes["drive test"].push_back(new StationaryVisionCommand(1.0_s));
+    m_Modes["drive test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
+    m_Modes["drive test"].push_back(new WaitCommand(1_s,false));
+    m_Modes["drive test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
+    m_Modes["drive test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
+    // PathplannerSwerveCommand("drive3-1", 14_fps, 8_fps_sq, true, true));
+    // m_Modes["drive test"].push_back(new PathplannerSwerveCommand("drive1-2", 6_fps, 8_fps_sq, true, false));
 
     // currently this will just follow a path - need to implement pulling a target from vison
     // should probably pass in a vision target to constructor
-    m_Modes["drive test"].push_back(new PathplannerVisionCommand("drive1-2", 6_fps, 8_fps_sq, 30.0, 70.0, true, false));
+    // m_Modes["drive test"].push_back(new PathplannerVisionCommand("drive1-2", 6_fps, 8_fps_sq, 30.0, 70.0, true, false));
 
 
     /* test subsystems */
@@ -65,6 +90,9 @@ AutoModes::AutoModes()
     m_Modes["subsys test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
     m_Modes["subsys test"].push_back(new StationaryVisionCommand(1.5_s));
     m_Modes["subsys test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
+    m_Modes["subsys test"].push_back(new WaitCommand(3_s,false));
+    m_Modes["subsys test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
+    m_Modes["subsys test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
 
     // Initialize auto mode selector
     m_Iterator = m_Modes.begin();
