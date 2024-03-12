@@ -58,6 +58,11 @@ void PathplannerSwerveCommand::Start(CowRobot *robot)
         // this is where we take the pose from the robot (preferably vision)
         //   and override the starting point in the path with it
         //   if it is setting to 0,0 make sure we are calling SwerveDrive::Handle() in disabled
+        std::cout << "orig x: " << m_PathData["waypoints"][0]["anchor"]["x"] << std::endl;
+        std::cout << "orig y: " << m_PathData["waypoints"][0]["anchor"]["y"] << std::endl;
+        std::cout << "pose x: " << curPose.X().value() << std::endl;
+        std::cout << "pose y: " << curPose.Y().value() << std::endl;
+
         m_PathData["waypoints"][0]["anchor"]["x"] = curPose.X().value();
         m_PathData["waypoints"][0]["anchor"]["y"] = curPose.Y().value();
         m_Path->hotReload(m_PathData);
@@ -82,7 +87,7 @@ void PathplannerSwerveCommand::Handle(CowRobot *robot)
         = m_Trajectory->sample(units::second_t{ m_Timer->Get() });
 
     // this is called in the PathPlanner implementation of this method, not sure why
-    targetState = targetState.reverse();
+    // targetState = targetState.reverse();
 
     CowLib::CowChassisSpeeds chassisSpeeds
         = CowLib::CowChassisSpeeds::FromWPI(m_HolonomicController->calculateRobotRelativeSpeeds(currentPose, targetState));
