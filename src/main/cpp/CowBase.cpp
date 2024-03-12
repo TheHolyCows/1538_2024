@@ -75,7 +75,11 @@ void CowBase::TeleopInit()
     m_Bot->GetDrivetrain()->SetBrakeMode(true);
 
     m_Bot->StartTime();
+
+    // should set the controls correctly based on where we end up in auto
+    CowPigeon::GetInstance()->SetYaw(m_Bot->m_Drivetrain->GetPoseRot() + 180);
     // m_Bot->GetGyro()->FinalizeCalibration();
+
     std::cout << "setting controller " << m_OpController << std::endl;
     m_Bot->SetController(m_OpController);
     std::cout << "controller set successfully" << std::endl;
