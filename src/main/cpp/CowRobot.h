@@ -43,6 +43,8 @@ public:
     Vision *m_Vision;
     CowLib::interpolating_map<double, double> m_PivotRangeMap;
 
+    double m_BiasForAuto = 0.0;
+
 private:
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowDriveSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowBusSynchronizedSignals();

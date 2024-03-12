@@ -36,7 +36,7 @@ void StationaryVisionCommand::Handle(CowRobot *robot)
     double robotY = lookaheadPose.Y().convert<units::foot>().value();
 
     double dist = sqrtf(powf(CONSTANT("GOAL_Y") - robotY, 2) + powf(CONSTANT("GOAL_X") - robotX, 2));
-    double wristBiasAngle = -3.0;
+    double wristBiasAngle = robot->m_BiasForAuto;
     double rangePivot = robot->m_PivotRangeMap[dist] + wristBiasAngle;
 
     robot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));

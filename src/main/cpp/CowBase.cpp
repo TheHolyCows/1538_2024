@@ -164,6 +164,8 @@ void CowBase::DisabledPeriodic()
             m_Bot->m_Wrist->BrakeMode(true);
             m_Bot->m_Elevator->BrakeMode(true);
         }
+
+        m_Bot->m_BiasForAuto = m_ControlBoard->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
     }
     
     // set wrist and pivot to current locations
