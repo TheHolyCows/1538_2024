@@ -25,10 +25,6 @@ void StationaryVisionCommand::Start(CowRobot *robot)
 
 void StationaryVisionCommand::Handle(CowRobot *robot)
 {
-    // TODO: Move to constants
-    double goalX = 54.3941666667;
-    double goalY = 18.2016666667;
-
     // Pivot and wrist targetting
     frc::Pose2d lookaheadPose = robot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(robot->GetDrivetrain()->GetPose());
 
@@ -43,12 +39,13 @@ void StationaryVisionCommand::Handle(CowRobot *robot)
     robot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), robot->m_Pivot->GetSetpoint());
 
     SwerveDriveController::DriveLookAtRequest req = {
-        .inputX = 0.0,
-        .inputY = 0.0,
-        .targetX = goalX - 1.0,
-        .targetY = goalY,
-        .robotSide = SwerveDriveController::RobotSide::BACK
-    };
+            .inputX = 0.0,
+            .inputY = 0.0,
+            .targetX = CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
+            .targetY = CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
+            .robotSide = SwerveDriveController::RobotSide::BACK,
+            .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
+        };
 
     robot->GetDriveController()->Request(req);
 
