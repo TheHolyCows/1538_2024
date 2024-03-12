@@ -8,6 +8,10 @@
 
 class Vision {
 public:
+
+    const frc::Translation2d BLUE_SPEAKER = { 0_ft, 18.2016666667_ft };
+    const frc::Translation2d RED_SPEAKER = { 54.3941666667_ft, 18.2016666667_ft };
+
     enum class LEDState
     {
         OFF,
