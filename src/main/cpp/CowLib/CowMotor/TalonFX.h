@@ -44,7 +44,7 @@ namespace CowMotor
         ctre::phoenix::StatusCode ConfigRemoteCANCoder(int id, double rotorToSensorRatio);
         ctre::phoenix::StatusCode ConfigSyncCANCoder(int id, double rotorToSensorRatio);
         ctre::phoenix::StatusCode ConfigContinuousWrap(bool enable);
-        ctre::phoenix::StatusCode ConfigMotionMagic(double kv, double ka);
+        ctre::phoenix::StatusCode ConfigMotionMagic(double kv, double ka, double kj);
         
 
         Status ConfigNeutralMode(NeutralMode neutralMode) override;

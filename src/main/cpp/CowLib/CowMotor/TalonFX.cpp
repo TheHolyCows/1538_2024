@@ -101,11 +101,12 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
-    ctre::phoenix::StatusCode TalonFX::ConfigMotionMagic(double kv, double ka)
+    ctre::phoenix::StatusCode TalonFX::ConfigMotionMagic(double kv, double ka, double kj)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
         config.MotionMagic.MotionMagicCruiseVelocity = kv;
         config.MotionMagic.MotionMagicAcceleration = ka;
+        config.MotionMagic.MotionMagicJerk = kj;
 
         return ApplyConfig(config);
     }

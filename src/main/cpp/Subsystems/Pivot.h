@@ -45,7 +45,7 @@ private:
 
     std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
 
-    CowMotor::Control::MotionMagicPositionDutyCycle m_PivotPosRequest = { };
+    CowMotor::Control::DynamicMotionMagicTorqueCurrent m_PivotPosRequest = { };
     CowMotor::Control::Follower m_FollowerRequest = { };
 
 };

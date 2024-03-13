@@ -1,5 +1,7 @@
 #include "Pivot.h"
 
+#include <iostream>
+
 Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double encoderOffset)
 {
     m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
@@ -16,7 +18,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double
     m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
     SetAngle(CONSTANT("PIVOT_STARTING_ANGLE"));
-    m_PivotPosRequest.EnableFOC = true;
+    
 
     m_FollowerRequest.MasterID = motorId1;
     m_FollowerRequest.OpposeMasterDirection = true;
@@ -59,6 +61,21 @@ void Pivot::SetAngle(double angle)
     else if (angle < CONSTANT("PIVOT_MIN_ANGLE"))
     {
         angle = CONSTANT("PIVOT_MIN_ANGLE");
+    }
+
+    if (angle / 360.0 > m_PivotPosRequest.Position)
+    {
+        // Moving up
+        m_PivotPosRequest.Velocity = CONSTANT("PIVOT_UP_V");
+        m_PivotPosRequest.Acceleration = CONSTANT("PIVOT_UP_A");
+        m_PivotPosRequest.Jerk = CONSTANT("PIVOT_UP_J");
+    }
+    else if (angle / 360.0 < m_PivotPosRequest.Position)
+    {
+        // Moving down
+        m_PivotPosRequest.Velocity = CONSTANT("PIVOT_DOWN_V");
+        m_PivotPosRequest.Acceleration = CONSTANT("PIVOT_DOWN_A");
+        m_PivotPosRequest.Jerk = CONSTANT("PIVOT_DOWN_J");
     }
 
     m_PivotPosRequest.Position = angle / 360.0;
@@ -130,8 +147,8 @@ void Pivot::ResetConstants()
                              CONSTANT("PIVOT_S"),
                              CowMotor::FeedForwardType::COSINE);
 
-    m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),
-                                     CONSTANT("PIVOT_A"));
+    // m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),
+    //                                  CONSTANT("PIVOT_A"));
 
 
     // m_PivotMotor2->ConfigPID(CONSTANT("PIVOT_P"),
@@ -144,6 +161,9 @@ void Pivot::ResetConstants()
 
 void Pivot::Handle()
 {
+    double angleRad = (GetAngle() / 180) * 3.1415;
+    m_PivotPosRequest.FeedForward = std::cos(angleRad) * CONSTANT("PIVOT_FF");
+
     if (m_PivotMotor1)
     {
         m_PivotMotor1->Set(m_PivotPosRequest);

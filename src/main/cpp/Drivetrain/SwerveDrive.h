@@ -84,6 +84,7 @@ public:
     void ResetOdometry(frc::Pose2d pose);
     void Reset();
 
+    void SampleSensors();
     void Handle();
 };
 

@@ -222,24 +222,14 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
 }
 
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
-{
-    std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
-
-    for (auto module : m_Modules)
-    {
-        modulePositions[module->GetID()] = module->GetPosition();
-    }
-
-    m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
-
-    m_Pose = m_Odometry->GetWPIPose();
-    
+{    
     if (sample.tagCount > 0 && sample != m_PreviousVisionSample && sample.averageTagDistance  < CONSTANT("MAX_TAG_DIST"))
     {
         units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
-        double stdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_STD_DEV_SCALE");
+        double translationStdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE");
+        double rotationStdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE");
         
-        m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {stdDev, stdDev, stdDev});
+        m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {translationStdDev, translationStdDev, rotationStdDev});
 
         m_PreviousVisionSample = sample;
     }
@@ -281,6 +271,20 @@ void SwerveDrive::Reset()
 {
     ResetConstants();
     ResetEncoders();
+}
+
+void SwerveDrive::SampleSensors()
+{
+    std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
+
+    for (auto module : m_Modules)
+    {
+        modulePositions[module->GetID()] = module->GetPosition();
+    }
+
+    m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
+
+    m_Pose = m_Odometry->GetWPIPose();
 }
 
 void SwerveDrive::Handle()

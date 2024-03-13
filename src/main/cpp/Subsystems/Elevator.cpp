@@ -42,7 +42,8 @@ void Elevator::ResetConstants()
 
     m_Motor1->ConfigMotionMagic(
         CONSTANT("ELEVATOR_KV") / CONSTANT("ELEVATOR_INCHES_PER_TURN"),
-        CONSTANT("ELEVATOR_KA") / CONSTANT("ELEVATOR_INCHES_PER_TURN"));
+        CONSTANT("ELEVATOR_KA") / CONSTANT("ELEVATOR_INCHES_PER_TURN"),
+        0.0);
 }
 
 double Elevator::GetPosition()

@@ -112,12 +112,13 @@ void CowRobot::PrintToDS()
 
 void CowRobot::SampleSensors()
 {
-    Vision::Sample sample = m_Vision->GetRobotPose();
-    m_Drivetrain->AddVisionMeasurement(sample);
-
     // Synchronize and sample time-critical sensors
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowDriveSynchronizedSignals());
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowBusSynchronizedSignals());
+
+    Vision::Sample sample = m_Vision->GetRobotPose();
+    m_Drivetrain->AddVisionMeasurement(sample);
+    m_Drivetrain->SampleSensors();
 }
 
 // Used to handle the recurring logic funtions inside the robot.
@@ -165,7 +166,7 @@ void CowRobot::Handle()
     // bool direction = (zVal - m_PrevZ) > 0 ? true : false;
     // m_PrevZ = zVal;
 
-    // PrintToDS();
+    PrintToDS();
 
     // double xAccel = m_Accelerometer->GetX();
     // // frc::SmartDashboard::PutNumber("x accel", xAccel);

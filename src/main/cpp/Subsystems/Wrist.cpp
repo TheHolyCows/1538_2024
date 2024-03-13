@@ -114,14 +114,22 @@ void Wrist::ResetConstants()
                             CONSTANT("WRIST_D"));
 
     m_WristMotor->ConfigMotionMagic(CONSTANT("WRIST_V"),
-                                    CONSTANT("WRIST_A"));
+                                    CONSTANT("WRIST_A"),
+                                    CONSTANT("WRIST_J"));
 
     m_CanSetAngle = true;
 }
 
 void Wrist::Handle(Pivot *pivot)
 {
-    m_WristPosRequest.Position = m_TargetAngle;
+    if (pivot->GetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE"))
+    {
+        m_WristPosRequest.Position = std::max(0.321, m_TargetAngle);
+    }
+    else
+    {
+        m_WristPosRequest.Position = m_TargetAngle;
+    }
 
     // need to divide by 360
     // if (pivot->GetAngle() <= CONSTANT("PIVOT_WRIST_DANGER"))  // 30
