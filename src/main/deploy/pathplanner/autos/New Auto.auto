@@ -8,13 +8,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "drive1-1"
+            "pathName": "red-top_start-root"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "drive1-2"
+            "pathName": "red-top_start-1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "red-top_start-2"
           }
         }
       ]
