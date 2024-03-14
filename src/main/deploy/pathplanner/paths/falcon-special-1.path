@@ -1,0 +1,74 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2437546130441748,
+        "y": 4.707756291404166
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8292964403332503,
+        "y": 4.344720358484939
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.531946633080141,
+        "y": 4.19247948338978
+      },
+      "prevControl": {
+        "x": 2.086934844340443,
+        "y": 4.20419031993556
+      },
+      "nextControl": {
+        "x": 2.815095954695481,
+        "y": 4.185028185452535
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.7590314210585614,
+        "y": 5.234743935964334
+      },
+      "prevControl": {
+        "x": 1.7590314210585614,
+        "y": 4.356431195030721
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "falcon-special-1_end"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.2,
+    "maxAcceleration": 2.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -10.124671655397824,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -36.86989764584401,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
