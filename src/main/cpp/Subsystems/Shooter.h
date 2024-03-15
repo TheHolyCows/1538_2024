@@ -22,10 +22,6 @@ class Shooter
 public:
     enum class IntakeState {
         IDLE,
-        CALIBRATION_BEGIN,
-        CALIBRATION_ACTIVE,
-        CALIBRATION_END,
-        DETECT_BEGIN,
         DETECT_ACTIVE,
         DETECT_HOLD,
         SHOOT,
@@ -59,7 +55,6 @@ public:
     bool IsReady();
 
     void StopIntake();
-    void CalibrateIntake();
     void Intake();
     void Exhaust();
 
@@ -84,7 +79,6 @@ private:
     IntakeState m_IntakeState;
     ShooterState m_ShooterState;
 
-    double m_IntakeCalibrationStartTime;
     double m_IntakeGoalPosition;
     double m_ShooterStartTime;
     double m_ShooterRPS;

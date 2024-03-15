@@ -56,7 +56,7 @@ AutoModes::AutoModes()
                                                 14_fps,
                                                 8_fps_sq));
     m_Modes["drive test"].push_back(pathWithEvents("drive3-2",
-                                                { { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_BEGIN, false) },
+                                                { { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
                                                   { 0.7_s, new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                                                 CONSTANT("PIVOT_STOW_SETPOINT"),
                                                                                 false) },
@@ -84,7 +84,7 @@ AutoModes::AutoModes()
                                         false));
     m_Modes["subsys test"].push_back(new RaceCommand(
                                         { new WaitCommand(3_s,false),
-                                          new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_BEGIN, true)
+                                          new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, true)
                                         }));
     m_Modes["subsys test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_LAUNCH_SETPOINT"), CONSTANT("PIVOT_LAUNCH_SETPOINT"), true));
     m_Modes["subsys test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
@@ -110,7 +110,7 @@ AutoModes::AutoModes()
                                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                         false));
     m_Modes["red amp"].push_back(pathWithEvents("red-amp_start-root",
-                                                { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_BEGIN, false) },
+                                                { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
                                                   { 1.3_s, new UpdateArmCommand(CONSTANT("WRIST_LAUNCH_SETPOINT"),
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) },

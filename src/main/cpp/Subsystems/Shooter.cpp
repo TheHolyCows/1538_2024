@@ -118,24 +118,13 @@ void Shooter::StopIntake()
     }
 }
 
-void Shooter::CalibrateIntake()
-{
-    if (m_IntakeState != IntakeState::CALIBRATION_BEGIN &&
-        m_IntakeState != IntakeState::CALIBRATION_ACTIVE &&
-        m_IntakeState != IntakeState::CALIBRATION_END)
-    {
-        m_IntakeState = IntakeState::CALIBRATION_BEGIN;
-    }
-}
-
 void Shooter::Intake()
 {
-    if (m_IntakeState != IntakeState::DETECT_BEGIN &&
-        m_IntakeState != IntakeState::DETECT_ACTIVE &&
+    if (m_IntakeState != IntakeState::DETECT_ACTIVE &&
         m_IntakeState != IntakeState::DETECT_HOLD &&
         m_IntakeState != IntakeState::SHOOT)
     {
-        m_IntakeState = IntakeState::DETECT_BEGIN;
+        m_IntakeState = IntakeState::DETECT_ACTIVE;
     }
 }
 
@@ -185,64 +174,7 @@ void Shooter::Handle()
             break;
         }
 
-        // Calibration
-        case IntakeState::CALIBRATION_BEGIN:
-        {
-            CowMotor::Control::TorqueCurrent request = {};
-            m_Intake->Set(request);
-
-            if (GetIntakeVelocity() == 0)
-            {
-                m_IntakeState = IntakeState::CALIBRATION_ACTIVE;
-                m_IntakeCalibrationStartTime = 0;
-            }
-
-            break;
-        }
-        case IntakeState::CALIBRATION_ACTIVE:
-        {
-            CowMotor::Control::TorqueCurrent request = {};
-            request.Current = CONSTANT("INTAKE_SPINUP_CURRENT");
-            request.MaxDutyCycle = CONSTANT("INTAKE_MAX_DUTY_CYCLE");
-            m_Intake->Set(request);
-
-            if (m_IntakeCalibrationStartTime == 0)
-            {
-                m_IntakeCalibrationStartTime = frc::Timer::GetFPGATimestamp().value();
-            }
-
-            double elapsed = frc::Timer::GetFPGATimestamp().value() - m_IntakeCalibrationStartTime;
-
-            printf("%f,%f,%f\n", elapsed, GetIntakeAcceleration(), GetIntakeCurrent());
-
-            if (elapsed > CONSTANT("INTAKE_CALIBRATION_PERIOD"))
-            {
-                m_IntakeState = IntakeState::CALIBRATION_END;
-            }
-
-            break;
-        }
-        case IntakeState::CALIBRATION_END:
-        {
-            CowMotor::Control::TorqueCurrent request = {};
-            m_Intake->Set(request);
-
-            break;
-        }
-
         // Detect
-        case IntakeState::DETECT_BEGIN:
-        {
-            CowMotor::Control::TorqueCurrent request = {};
-            m_Intake->Set(request);
-
-            if (GetIntakeVelocity() == 0)
-            {
-                m_IntakeState = IntakeState::DETECT_ACTIVE;
-            }
-
-            break;
-        }
         case IntakeState::DETECT_ACTIVE:
         {
             CowMotor::Control::TorqueCurrent request = {};
