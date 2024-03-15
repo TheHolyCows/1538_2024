@@ -69,12 +69,12 @@ void SwerveDriveController::ResetHeadingLock()
     // heading states
     if (std::holds_alternative<DriveManualState>(m_State))
     {
-        DriveManualState &state = std::get<DriveManualState>(m_State); 
+        DriveManualState &state = std::get<DriveManualState>(m_State);
         state.targetHeading = std::nullopt;
     }
     else if (std::holds_alternative<DriveLockHeadingState>(m_State))
     {
-        DriveLockHeadingState &state = std::get<DriveLockHeadingState>(m_State); 
+        DriveLockHeadingState &state = std::get<DriveLockHeadingState>(m_State);
         state.targetHeading = std::nullopt;
     }
 }
@@ -89,7 +89,7 @@ void SwerveDriveController::Request(DriveManualRequest req)
     if (std::holds_alternative<DriveManualState>(m_State))
     {
         // Already in drive manual state, just update the inputs
-        DriveManualState &state = std::get<DriveManualState>(m_State); 
+        DriveManualState &state = std::get<DriveManualState>(m_State);
         state.req = req;
     }
     else
@@ -110,7 +110,7 @@ void SwerveDriveController::Request(DriveLockHeadingRequest req)
     if (std::holds_alternative<DriveLockHeadingState>(m_State))
     {
         // Already in drive lock heading state, just update the inputs
-        DriveLockHeadingState &state = std::get<DriveLockHeadingState>(m_State); 
+        DriveLockHeadingState &state = std::get<DriveLockHeadingState>(m_State);
         state.req = req;
     }
     else
@@ -134,7 +134,6 @@ void SwerveDriveController::Request(DriveLookAtRequest req)
     // previous error and integral accumulator
     if (!std::holds_alternative<DriveLookAtState>(m_State))
     {
-        printf("resetting pid with %f\n", m_Drivetrain.GetPoseRot());
         m_HeadingPIDController.Reset(units::degree_t{ m_Drivetrain.GetPoseRot() });
         m_LPF.ReInit(m_Drivetrain.GetPoseRot(), m_Drivetrain.GetPoseRot());
     }
@@ -151,7 +150,7 @@ void SwerveDriveController::Handle()
             m_Drivetrain.SetVelocity(0.0, 0.0, 0.0);
             m_IsOnTarget = true;
         },
-        [&](DriveManualState &state) {            
+        [&](DriveManualState &state) {
             auto [xVel, yVel] = FilterXY(
                 state.req.inputX,
                 state.req.inputY,
@@ -230,7 +229,7 @@ void SwerveDriveController::Handle()
             double targetAngle = std::atan2(
                 state.req.targetY - lookaheadPose.Y().convert<units::foot>().value(),
                 state.req.targetX - lookaheadPose.X().convert<units::foot>().value());
-                
+
             targetAngle = (targetAngle / 3.1415) * 180;
 
             if (state.req.robotSide == RobotSide::FRONT)

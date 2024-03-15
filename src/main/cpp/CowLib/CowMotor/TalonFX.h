@@ -45,11 +45,11 @@ namespace CowMotor
         ctre::phoenix::StatusCode ConfigSyncCANCoder(int id, double rotorToSensorRatio);
         ctre::phoenix::StatusCode ConfigContinuousWrap(bool enable);
         ctre::phoenix::StatusCode ConfigMotionMagic(double kv, double ka, double kj);
-        
+
 
         Status ConfigNeutralMode(NeutralMode neutralMode) override;
         Status ConfigPositivePolarity(Direction positivePolarity) override;
-        Status ConfigPID(double kp, double ki, double kd, double ks = 0, FeedForwardType ffType = FeedForwardType::COSINE) override;
+        Status ConfigPID(double kp, double ki, double kd, double ks = 0, double kv = 0, FeedForwardType ffType = FeedForwardType::COSINE) override;
         Status ConfigStatorCurrentLimit(double current) override;
 
         Status Set(Control::DutyCycle request) override;

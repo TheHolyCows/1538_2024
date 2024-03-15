@@ -27,12 +27,12 @@ CowRobot::CowRobot()
 
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
-
+    // lilly wuz here
     m_Pivot = new Pivot(9, 10, 29, CONSTANT("PIVOT_ENCODER_OFFSET"));
     m_Elevator = new Elevator(11, 12);
     m_Wrist = new Wrist(13, 30, CONSTANT("WRIST_ENCODER_OFFSET"));
     m_Vision = new Vision();
-    m_Shooter = new Shooter(15, 16, 14, m_Vision);
+    m_Shooter = new Shooter(15, 16, 14, 50, m_Vision);
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowDriveSynchronizedSignals());
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowBusSynchronizedSignals());
@@ -79,12 +79,17 @@ void CowRobot::Reset()
     m_Wrist->ResetConstants();
     m_Shooter->ResetConstants();
     m_PivotRangeMap.clear();
+    m_ShooterRangeMap.clear();
 
     m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_1"), CONSTANT("PIVOT_RANGE_VALUE_1"));
     m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_2"), CONSTANT("PIVOT_RANGE_VALUE_2"));
     m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_3"), CONSTANT("PIVOT_RANGE_VALUE_3"));
     m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_4"), CONSTANT("PIVOT_RANGE_VALUE_4"));
     m_PivotRangeMap.insert(CONSTANT("PIVOT_RANGE_DIST_5"), CONSTANT("PIVOT_RANGE_VALUE_5"));
+
+    m_ShooterRangeMap.insert(CONSTANT("SHOOTER_RANGE_DIST_1"), CONSTANT("SHOOTER_RANGE_VALUE_1"));
+    m_ShooterRangeMap.insert(CONSTANT("SHOOTER_RANGE_DIST_2"), CONSTANT("SHOOTER_RANGE_VALUE_2"));
+
     // m_Controller->ResetConstants(); TODO: error
 
     // Vision::GetInstance()->Reset();
@@ -136,7 +141,7 @@ void CowRobot::Handle()
     m_Controller->Handle(this);
     m_Drivetrain->Handle();
     m_DriveController->Handle();
-    
+
     m_Pivot->Handle();
     m_Elevator->Handle(m_Pivot);
     m_Wrist->Handle(m_Pivot);

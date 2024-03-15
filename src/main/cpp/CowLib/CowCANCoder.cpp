@@ -13,6 +13,7 @@ namespace CowLib
         m_Config = ctre::phoenix6::configs::CANcoderConfiguration{};
         ApplyConfig();
 
+        m_SynchronizedSignals.MagnetHealth = &m_CANCoder->GetMagnetHealth();
         m_SynchronizedSignals.Position = &m_CANCoder->GetPosition();
         m_SynchronizedSignals.AbsolutePosition = &m_CANCoder->GetPosition();
 
@@ -27,6 +28,7 @@ namespace CowLib
     std::vector<ctre::phoenix6::BaseStatusSignal*> CowCANCoder::GetSynchronizedSignals()
     {
         std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
+            m_SynchronizedSignals.MagnetHealth,
             m_SynchronizedSignals.Position,
             m_SynchronizedSignals.AbsolutePosition
         };
@@ -65,6 +67,11 @@ namespace CowLib
                        : ctre::phoenix6::signals::AbsoluteSensorRangeValue::Unsigned_0To1;
 
         ApplyConfig();
+    }
+
+    bool CowCANCoder::GetMagnetIsHealthy()
+    {
+        return m_SynchronizedSignals.MagnetHealth->GetValue() == ctre::phoenix6::signals::MagnetHealthValue::Magnet_Green;
     }
 
     double CowCANCoder::GetPosition()

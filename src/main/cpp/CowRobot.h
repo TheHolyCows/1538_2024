@@ -40,6 +40,7 @@ public:
     Wrist *m_Wrist;
     Vision *m_Vision;
     CowLib::interpolating_map<double, double> m_PivotRangeMap;
+    CowLib::interpolating_map<double, double> m_ShooterRangeMap;
 
     std::optional<frc::DriverStation::Alliance> m_Alliance = std::nullopt;
 

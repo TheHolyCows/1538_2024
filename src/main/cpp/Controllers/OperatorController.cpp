@@ -12,6 +12,7 @@ OperatorController::OperatorController(GenericControlBoard *controlboard)
 
 void OperatorController::Handle(CowRobot *bot)
 {
+    // LED
     Vision::LEDState ledState = Vision::LEDState::OFF;
 
     if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::DETECT_HOLD)
@@ -53,10 +54,16 @@ void OperatorController::Handle(CowRobot *bot)
         double wristBiasAngle = m_CB->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
         double rangePivot = bot->m_PivotRangeMap[dist] + wristBiasAngle;
 
-        printf("bias: %f, dist: %f\n", wristBiasAngle, dist);
-
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
         bot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), bot->m_Pivot->GetSetpoint());
+
+        // Shooter
+        if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
+        {
+            bot->m_Shooter->PrimeShooter(bot->m_ShooterRangeMap[dist]);
+        }
+
+        printf("bias: %f, dist: %f\n", wristBiasAngle, dist);
 
         // LED
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
@@ -86,7 +93,7 @@ void OperatorController::Handle(CowRobot *bot)
     else
     {
         // standard drive with field/bot relative option
-        
+
         // From the driver station perspective, +x is right, +y is away from
         // the driver station, and +rotation is a counter clockwise rotation
 
@@ -99,10 +106,9 @@ void OperatorController::Handle(CowRobot *bot)
 
         bot->GetDriveController()->Request(req);
     }
-    // intake calibration - remove in PROD
     if (m_CB->GetOperatorButton(BUTTON_AMP))
     {
-        bot->m_Shooter->CalibrateIntake();
+
     }
     else if (m_CB->GetOperatorButton(BUTTON_INTAKE))
     {
@@ -123,7 +129,14 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
-        bot->m_Shooter->PrimeShooter();
+        if (!m_CB->GetVisionTargetButton())
+        {
+            bot->m_Shooter->PrimeShooter(CONSTANT("SHOOTER_RANGE_VALUE_1"));
+        }
+    }
+    else if(m_CB->GetOperatorButton(BUTTON_EXHAUST))
+    {
+        bot->m_Shooter->Exhaust();
     }
     else
     {
@@ -136,11 +149,13 @@ void OperatorController::Handle(CowRobot *bot)
         {
             m_ClimberLatch = true;
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_CLIMB_ANGLE"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_CLIMB_ANGLE"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_UP"));
         }
         else if (m_CB->GetOperatorButton(BUTTON_CLIMB))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_CLIMB_ANGLE"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_CLIMB_ANGLE"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_DOWN"));
         }
     }
@@ -229,5 +244,5 @@ void OperatorController::Handle(CowRobot *bot)
     // bot->m_Pivot->SetAngle(m_PivotSetpoint);
     // bot->m_Wrist->SetAngle(m_WristSetpoint, bot->m_Pivot->GetAngle());
     // bot->m_Elevator->SetExtension(m_ElevatorSetpoint, bot->m_Pivot->GetAngle());
-    
+
 }

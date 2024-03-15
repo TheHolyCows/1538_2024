@@ -12,6 +12,7 @@
 #include "../Cowlib/CowLPF.h"
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowLogger.h"
+#include "../CowLib/CowCANCoder.h"
 #include "../Vision.h"
 
 #include <cmath>
@@ -34,10 +35,11 @@ public:
     enum class ShooterState {
         IDLE,
         SPIN_UP,
-        READY
+        READY,
+        EXHAUST
     };
 
-    Shooter(const int shooterID1, const int shooterID2, const int intakeID, Vision* vision);
+    Shooter(const int shooterID1, const int shooterID2, const int intakeID, const int cancoderID, Vision* vision);
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
@@ -61,11 +63,11 @@ public:
     void Intake();
     void Exhaust();
 
-    void PrimeShooter();
+    void PrimeShooter(double rps);
     void StopShooter();
 
     void Shoot();
-    
+
     void UpdateIntakeState(IntakeState state);
     void UpdateShooterState(ShooterState state);
 
@@ -75,6 +77,7 @@ private:
     std::unique_ptr<CowMotor::TalonFX> m_Shooter1;
     std::unique_ptr<CowMotor::TalonFX> m_Shooter2;
     std::unique_ptr<CowMotor::TalonFX> m_Intake;
+    std::unique_ptr<CowLib::CowCANCoder> m_CANCoder;
 
     Vision *m_Vision;
 
@@ -82,9 +85,9 @@ private:
     ShooterState m_ShooterState;
 
     double m_IntakeCalibrationStartTime;
-    double m_DetectStartTime;
     double m_IntakeGoalPosition;
     double m_ShooterStartTime;
- 
+    double m_ShooterRPS;
+
     uint32_t m_CycleCount;
 };

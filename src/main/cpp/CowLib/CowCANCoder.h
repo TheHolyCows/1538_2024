@@ -13,6 +13,7 @@ namespace CowLib
     private:
         struct SynchronizedSignals
         {
+            ctre::phoenix6::StatusSignal<ctre::phoenix6::signals::MagnetHealthValue> *MagnetHealth;
             ctre::phoenix6::StatusSignal<units::turn_t> *Position;
             ctre::phoenix6::StatusSignal<units::turn_t> *AbsolutePosition;
         };
@@ -41,6 +42,7 @@ namespace CowLib
         void SetInverted(bool isInverted);
         void SetInitToAbsolute(bool isAbsolute);
 
+        bool GetMagnetIsHealthy();
         double GetPosition();
         double GetAbsolutePosition();
         double GetVelocity();

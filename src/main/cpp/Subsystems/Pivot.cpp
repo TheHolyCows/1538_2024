@@ -18,7 +18,7 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double
     m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
     SetAngle(CONSTANT("PIVOT_STARTING_ANGLE"));
-    
+
 
     m_FollowerRequest.MasterID = motorId1;
     m_FollowerRequest.OpposeMasterDirection = true;
@@ -128,7 +128,7 @@ bool Pivot::AtTarget()
     // double avg = (setpoint + angle) / 2.0;
 
     // double pctDiff = (delta / avg);
-    
+
     // if (pctDiff < 0.03)
     // {
     //     return true;
@@ -145,6 +145,7 @@ void Pivot::ResetConstants()
                              CONSTANT("PIVOT_I"),
                              CONSTANT("PIVOT_D"),
                              CONSTANT("PIVOT_S"),
+                             0,
                              CowMotor::FeedForwardType::COSINE);
 
     // m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),

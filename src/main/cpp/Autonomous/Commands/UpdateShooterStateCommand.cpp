@@ -35,6 +35,11 @@ void UpdateShooterStateCommand::Start(CowRobot *robot)
     if (m_State.has_value())
     {
         state = *m_State;
+
+        if (state == Shooter::ShooterState::SPIN_UP)
+        {
+            robot->m_Shooter->PrimeShooter(47);
+        }
     }
 
     robot->m_Shooter->UpdateShooterState(state);

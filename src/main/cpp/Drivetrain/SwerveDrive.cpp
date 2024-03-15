@@ -164,8 +164,8 @@ frc::ChassisSpeeds SwerveDrive::GetChassisSpeeds() {
 
 /**
  * @brief Get the Pose X value in feet
- * 
- * @return double 
+ *
+ * @return double
  */
 double SwerveDrive::GetPoseX()
 {
@@ -174,8 +174,8 @@ double SwerveDrive::GetPoseX()
 
 /**
  * @brief Get the Pose Y value in feet
- * 
- * @return double 
+ *
+ * @return double
  */
 double SwerveDrive::GetPoseY()
 {
@@ -184,8 +184,8 @@ double SwerveDrive::GetPoseY()
 
 /**
  * @brief Get the pose rotation value in degrees
- * 
- * @return double 
+ *
+ * @return double
  */
 double SwerveDrive::GetPoseRot()
 {
@@ -222,13 +222,13 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
 }
 
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
-{    
-    if (sample.tagCount > 0 && sample != m_PreviousVisionSample && sample.averageTagDistance  < CONSTANT("MAX_TAG_DIST"))
+{
+    if (sample.tagCount > 0 && sample != m_PreviousVisionSample && sample.averageTagDistance < CONSTANT("MAX_TAG_DIST"))
     {
         units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
         double translationStdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE");
         double rotationStdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE");
-        
+
         m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {translationStdDev, translationStdDev, rotationStdDev});
 
         m_PreviousVisionSample = sample;

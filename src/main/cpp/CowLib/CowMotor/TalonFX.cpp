@@ -61,7 +61,7 @@ namespace CowMotor
     }
 
     ctre::phoenix::StatusCode TalonFX::ConfigFusedCANCoder(int id, double rotorToSensorRatio)
-    {        
+    {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
         config.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
         config.Feedback.FeedbackRemoteSensorID = id;
@@ -143,13 +143,14 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
-    Status TalonFX::ConfigPID(double kp, double ki, double kd, double kf, FeedForwardType ffType)
+    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, FeedForwardType ffType)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
         config.Slot0.kP = kp;
         config.Slot0.kI = ki;
         config.Slot0.kD = kd;
-        config.Slot0.kS = kf;
+        config.Slot0.kS = ks;
+        config.Slot0.kV = kv;
 
         if (ffType == FeedForwardType::LINEAR)
         {

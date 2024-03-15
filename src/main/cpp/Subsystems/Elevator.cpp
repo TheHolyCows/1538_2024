@@ -98,13 +98,13 @@ void Elevator::Handle(Pivot *pivot)
 {
     if (pivot->GetAngle() <= CONSTANT("PREVENT_EXTENSION_UNDER_ANGLE"))
     {
-        m_PositionRequest.Position = CONSTANT("ELEVATOR_MIN_EXTENSION");
+        // m_PositionRequest.Position = CONSTANT("ELEVATOR_MIN_EXTENSION");
     }
     else
     {
         m_PositionRequest.Position = m_TargetExtensionLength / CONSTANT("ELEVATOR_INCHES_PER_TURN");
     }
-    
+
     m_Motor1->Set(m_PositionRequest);
     m_Motor2->Set(m_FollowerRequest);
 }
