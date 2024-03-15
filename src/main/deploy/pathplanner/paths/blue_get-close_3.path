@@ -3,54 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.7590314210585614,
-        "y": 6.241875878904577
+        "x": 2.4699386770202096,
+        "y": 5.55593454044051
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0986456808862246,
-        "y": 6.487803446362955
+        "x": 1.8689009035160922,
+        "y": 5.981058819260496
       },
       "isLocked": false,
-      "linkedName": "falcon-special-2_end"
+      "linkedName": "blue_get-close_2_end"
     },
     {
       "anchor": {
-        "x": 2.6607658350837373,
-        "y": 6.780574360007493
+        "x": 2.381981929678144,
+        "y": 6.831307376900469
       },
       "prevControl": {
-        "x": 2.2157540463440397,
-        "y": 6.569779302183425
+        "x": 1.810263071954715,
+        "y": 6.582096592764614
       },
       "nextControl": {
-        "x": 3.087401412068351,
-        "y": 6.982664896473889
+        "x": 3.272159278880512,
+        "y": 7.219333400911759
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.8761397865163765,
-        "y": 5.972526638348569
+        "x": 4.962046518378749,
+        "y": 6.670053340106681
       },
       "prevControl": {
-        "x": 2.5670791427174864,
-        "y": 6.335562571267795
+        "x": 4.361008744874631,
+        "y": 7.065858703145978
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "falcon-special-3_end"
+      "linkedName": "blue-amp_far-shoot"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 30.0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -61,13 +55,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 14.743562836470728,
+    "rotation": 15.930000000000007,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

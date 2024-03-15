@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.7590314210585614,
-        "y": 5.234743935964334
+        "x": 1.4584360825864504,
+        "y": 5.55593454044051
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5553683061717036,
-        "y": 5.550936522700434
-      },
-      "isLocked": false,
-      "linkedName": "falcon-special-1_end"
-    },
-    {
-      "anchor": {
-        "x": 2.5319466330793206,
-        "y": 5.539225686157687
-      },
-      "prevControl": {
-        "x": 1.9698264788818083,
-        "y": 5.316719791787838
-      },
-      "nextControl": {
-        "x": 3.094066787276833,
-        "y": 5.761731580527536
+        "x": 1.6783279509416165,
+        "y": 5.101491345839835
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.7590314210585614,
-        "y": 6.241875878904577
+        "x": 2.4699386770202096,
+        "y": 4.368518451322617
       },
       "prevControl": {
-        "x": 2.578789979262447,
-        "y": 5.855418272893787
+        "x": 2.0008360245291907,
+        "y": 4.705685982800538
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "falcon-special-2_end"
+      "linkedName": "blue-source-close_start_end"
     }
   ],
   "rotationTargets": [],
@@ -55,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 19.44003482778808,
+    "rotation": -36.5,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": true
