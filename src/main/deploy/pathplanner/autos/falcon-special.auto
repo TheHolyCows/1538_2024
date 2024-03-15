@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.24,
+      "y": 4.71
+    },
+    "rotation": -31.80000000000001
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -8,19 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "red-top_start-root"
+            "pathName": "falcon-special-1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "red-top_start-1"
+            "pathName": "falcon-special-2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "red-top_start-2"
+            "pathName": "falcon-special-3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "falcon-special-4"
           }
         }
       ]
