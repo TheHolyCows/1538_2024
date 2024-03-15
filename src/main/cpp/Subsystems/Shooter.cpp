@@ -199,6 +199,11 @@ void Shooter::Handle()
 
             m_Intake->Set(request);
 
+            if (m_CANCoder->GetMagnetIsHealthy())
+            {
+                m_IntakeState = IntakeState::DETECT_ACTIVE;
+            }
+
             break;
         }
 
