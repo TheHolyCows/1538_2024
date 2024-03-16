@@ -38,8 +38,8 @@ void OperatorController::Handle(CowRobot *bot)
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
             .inputY = -m_CB->GetLeftDriveStickX(),
-            .targetX = targetXY.X().value(), //CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
-            .targetY = targetXY.Y().value(), //CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
+            .targetX = units::foot_t(targetXY.X()).value(), //CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
+            .targetY = units::foot_t(targetXY.Y()).value(), //CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
             .robotSide = SwerveDriveController::RobotSide::BACK,
             .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
         };

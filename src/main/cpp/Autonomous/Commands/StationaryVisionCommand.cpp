@@ -49,8 +49,8 @@ void StationaryVisionCommand::Handle(CowRobot *robot)
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = 0.0,
             .inputY = 0.0,
-            .targetX = targetXY.X().value(),
-            .targetY = targetXY.Y().value(),
+            .targetX = units::foot_t(targetXY.X()).value(),
+            .targetY = units::foot_t(targetXY.Y()).value(),
             .robotSide = SwerveDriveController::RobotSide::BACK,
             .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
         };
