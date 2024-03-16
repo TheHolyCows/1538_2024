@@ -5,12 +5,10 @@
 #include <networktables/NetworkTableInstance.h>
 #include <frc/Timer.h>
 #include <frc/geometry/Pose3d.h>
+#include <frc/DriverStation.h>
 
 class Vision {
 public:
-
-    const frc::Translation2d BLUE_SPEAKER = { 0_ft, 18.2016666667_ft };
-    const frc::Translation2d RED_SPEAKER = { 54.3941666667_ft, 18.2016666667_ft };
 
     enum class LEDState
     {
@@ -37,6 +35,13 @@ public:
     void LEDOn();
     void LEDOff();
     void Handle();
+
+    const frc::Translation2d BLUE_SPEAKER = { 0_ft, 18.2016666667_ft };
+    const frc::Translation2d RED_SPEAKER = { 54.3941666667_ft, 18.2016666667_ft };
+
+
+    double GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
+    frc::Translation2d GetTargetXY(std::optional<frc::DriverStation::Alliance> alliance);
 
 private:
     LEDState m_LEDState;

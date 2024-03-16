@@ -46,6 +46,42 @@ void Vision::LEDOff()
     m_IsLEDOn = false;
 }
 
+double Vision::GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose)
+{
+    // Pivot and wrist targetting
+    double robotX = lookaheadPose.X().convert<units::foot>().value();
+    double robotY = lookaheadPose.Y().convert<units::foot>().value();
+
+    frc::Translation2d targetXY = GetTargetXY(alliance);
+
+    // this originally got the distance to the goal regardless of offsets, now it uses offsets
+    // not sure if that is correct
+    double dist = sqrtf(powf(targetXY.Y().value() - robotY, 2) + powf(targetXY.X().value() - robotX, 2));
+    
+    return dist;
+}
+
+frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Alliance> alliance)
+{
+    // maybe swap this to look at which half of the field we're on
+    if (alliance.has_value())
+    {
+        if (alliance.value() == frc::DriverStation::Alliance::kRed)
+        {
+            frc::Translation2d toReturn = { RED_SPEAKER.X() - units::foot_t(CONSTANT("RED_GOAL_X_OFFSET")), 
+                                            RED_SPEAKER.Y() - units::foot_t(CONSTANT("RED_GOAL_Y_OFFSET"))};
+            
+        }
+        else
+        {
+            frc::Translation2d toReturn = { BLUE_SPEAKER.X() - units::foot_t(CONSTANT("BLUE_GOAL_X_OFFSET")), 
+                                            BLUE_SPEAKER.Y() - units::foot_t(CONSTANT("BLUE_GOAL_Y_OFFSET"))};
+        }
+    }
+
+    return { 0_ft, 0_ft };
+}
+
 void Vision::Handle()
 {
     if (m_LEDState == LEDState::OFF)

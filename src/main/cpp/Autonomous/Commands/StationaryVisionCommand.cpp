@@ -32,27 +32,25 @@ void StationaryVisionCommand::Start(CowRobot *robot)
 void StationaryVisionCommand::Handle(CowRobot *robot)
 {
     // Pivot and wrist targetting
-    frc::Pose2d lookaheadPose = robot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME")).value_or(robot->GetDrivetrain()->GetPose());
+    frc::Pose2d lookaheadPose = robot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME"))
+                                                                    .value_or(robot->GetDrivetrain()->GetPose());
+    double dist = robot->m_Vision->GetTargetDist(robot->m_Alliance, lookaheadPose);
 
-    double robotX = lookaheadPose.X().convert<units::foot>().value();
-    double robotY = lookaheadPose.Y().convert<units::foot>().value();
-
-    double dist = sqrtf(powf(CONSTANT("GOAL_Y") - robotY, 2) + powf(CONSTANT("GOAL_X") - robotX, 2));
-    double wristBiasAngle = robot->m_BiasForAuto;
-    double rangePivot = robot->m_PivotRangeMap[dist] + wristBiasAngle;
+    double wristBias = robot->m_BiasForAuto;
+    double wristSetpoint = robot->m_PivotRangeMap[dist] + wristBias;
 
     robot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
     // robot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), robot->m_Pivot->GetSetpoint());
 
     robot->m_Shooter->PrimeShooter(robot->m_ShooterRangeMap[dist]);
 
+    frc::Translation2d targetXY = robot->m_Vision->GetTargetXY(robot->m_Alliance);
 
-
-    SwerveDriveController::DriveLookAtRequest req = {
+        SwerveDriveController::DriveLookAtRequest req = {
             .inputX = 0.0,
             .inputY = 0.0,
-            .targetX = CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
-            .targetY = CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
+            .targetX = targetXY.X().value(),
+            .targetY = targetXY.Y().value(),
             .robotSide = SwerveDriveController::RobotSide::BACK,
             .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
         };
