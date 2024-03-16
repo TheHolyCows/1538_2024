@@ -64,7 +64,7 @@ public:
                      double centerOfRotationX = 0,
                      double centerOfRotationY = 0,
                      bool force               = false);
-    
+
     frc::Pose2d GetPose();
     frc::ChassisSpeeds GetChassisSpeeds();
 

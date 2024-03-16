@@ -1,32 +1,52 @@
 #include "Vision.h"
 
+#include <iostream>
+#include <frc/apriltag/AprilTagFieldLayout.h>
+
 Vision::Vision()
+    : m_TickCount(0)
 {
-    m_TickCount = 0;
+    m_PoseEstimator = std::make_unique<photon::PhotonPoseEstimator>(
+        frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo),
+        photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
+        photon::PhotonCamera{"Camera_Module_v1"},
+        frc::Transform3d());
+
+    m_PoseEstimator->SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
+
+    m_Camera = m_PoseEstimator->GetCamera();
+    m_Camera->SetDriverMode(false);
+    m_Camera->SetPipelineIndex(1);
+
+    ResetConsatnts();
 }
 
-Vision::Sample Vision::GetRobotPose()
+void Vision::ResetConsatnts()
 {
-    std::vector<double> limelightValues = nt::NetworkTableInstance::GetDefault().GetTable("limelight")->GetNumberArray("botpose_wpiblue", std::vector<double>(11));
+    frc::Transform3d robotToCamera(
+        frc::Translation3d(-11.064_in, 0.0_in, 7.956_in),
+        frc::Rotation3d(0_deg, 20_deg, 180_deg));
 
-    frc::Pose3d pose3d { units::meter_t {limelightValues[0]},
-                         units::meter_t {limelightValues[1]},
-                         units::meter_t {limelightValues[2]},
-                         frc::Rotation3d(
-                            units::degree_t{ limelightValues[3] },
-                            units::degree_t{ limelightValues[4] },
-                            units::degree_t{ limelightValues[5] }
-                         )};
+    m_PoseEstimator->SetRobotToCameraTransform(robotToCamera);
+}
 
-    Vision::Sample sample;
-    sample.pose3d = pose3d;
-    sample.totalLatency = units::millisecond_t{ limelightValues[6] };
-    sample.tagCount = limelightValues[7];
-    sample.tagSpan = limelightValues[8];
-    sample.averageTagDistance = limelightValues[9];
-    sample.averageTagArea = limelightValues[10];
+std::optional<Vision::Sample> Vision::GetRobotPose()
+{
+    if (m_EstimatedPose.has_value())
+    {
+        photon::EstimatedRobotPose estimatedPose = m_EstimatedPose.value();
+        Vision::Sample sample;
 
-    return sample;
+        sample.timestamp = estimatedPose.timestamp;
+        sample.pose3d = estimatedPose.estimatedPose;
+        sample.tagCount = estimatedPose.targetsUsed.size();
+
+        return sample;
+    }
+    else
+    {
+        return std::nullopt;
+    }
 }
 
 void Vision::SetLEDState(Vision::LEDState ledState)
@@ -34,16 +54,20 @@ void Vision::SetLEDState(Vision::LEDState ledState)
     m_LEDState = ledState;
 }
 
-void Vision::LEDOn()
+void Vision::SetLEDOn()
 {
-    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 3);
-    m_IsLEDOn = true; 
+    if (m_Camera->GetLEDMode() != photon::LEDMode::kOn)
+    {
+        m_Camera->SetLEDMode(photon::LEDMode::kOn);
+    }
 }
 
-void Vision::LEDOff()
+void Vision::SetLEDOff()
 {
-    nt::NetworkTableInstance::GetDefault().GetTable("limelight")->PutNumber("ledMode", 1);
-    m_IsLEDOn = false;
+    if (m_Camera->GetLEDMode() != photon::LEDMode::kOff)
+    {
+        m_Camera->SetLEDMode(photon::LEDMode::kOff);
+    }
 }
 
 double Vision::GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose)
@@ -56,8 +80,8 @@ double Vision::GetTargetDist(std::optional<frc::DriverStation::Alliance> allianc
 
     // this originally got the distance to the goal regardless of offsets, now it uses offsets
     // not sure if that is correct
-    double dist = sqrtf(powf(targetXY.Y().value() - robotY, 2) + powf(targetXY.X().value() - robotX, 2));
-    
+    double dist = sqrtf(powf(units::foot_t(targetXY.Y()).value() - robotY, 2) + powf(units::foot_t(targetXY.X()).value() - robotX, 2));
+
     return dist;
 }
 
@@ -68,58 +92,60 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
     {
         if (alliance.value() == frc::DriverStation::Alliance::kRed)
         {
-            return { RED_SPEAKER.X() - units::foot_t(CONSTANT("RED_GOAL_X_OFFSET")), 
+            return { RED_SPEAKER.X() - units::foot_t(CONSTANT("RED_GOAL_X_OFFSET")),
                      RED_SPEAKER.Y() - units::foot_t(CONSTANT("RED_GOAL_Y_OFFSET"))};
-            
+
         }
         else
         {
-            return { BLUE_SPEAKER.X() - units::foot_t(CONSTANT("BLUE_GOAL_X_OFFSET")), 
+            return { BLUE_SPEAKER.X() - units::foot_t(CONSTANT("BLUE_GOAL_X_OFFSET")),
                      BLUE_SPEAKER.Y() - units::foot_t(CONSTANT("BLUE_GOAL_Y_OFFSET"))};
         }
-        
+
     }
 
     return { 0_ft, 0_ft };
+}
+
+void Vision::SampleSensors()
+{
+    m_EstimatedPose = m_PoseEstimator->Update();
 }
 
 void Vision::Handle()
 {
     if (m_LEDState == LEDState::OFF)
     {
-        LEDOff();
+        SetLEDOff();
     }
-    else if (m_LEDState == LEDState::BLINK_SLOW || m_LEDState == LEDState::BLINK_FAST)
+    else if (m_LEDState == LEDState::BLINK_SLOW)
     {
-        if (m_LEDState == LEDState::BLINK_SLOW)
+        if (m_TickCount == 1)
         {
-            if(m_TickCount == 1)
-            {
-                LEDOn();
-            }
-            else if (m_TickCount == CONSTANT("BLINK_SLOW_INTERVAL"))
-            {
-                LEDOff();
-            }
-            else if ( m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") * 2)
-            {
-                m_TickCount = 0;
-            }
+            SetLEDOn();
         }
-        else if (m_LEDState == LEDState::BLINK_FAST)
+        else if (m_TickCount == CONSTANT("BLINK_SLOW_INTERVAL"))
         {
-            if(m_TickCount == 1)
-            {
-                LEDOn();
-            }
-            else if (m_TickCount == CONSTANT("BLINK_FAST_INTERVAL"))
-            {
-                LEDOff();
-            }
-            else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") * 2)
-            {
-                m_TickCount = 0;
-            }
+            SetLEDOff();
+        }
+        else if ( m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") * 2)
+        {
+            m_TickCount = 0;
+        }
+    }
+    else if (m_LEDState == LEDState::BLINK_FAST)
+    {
+        if (m_TickCount == 1)
+        {
+            SetLEDOn();
+        }
+        else if (m_TickCount == CONSTANT("BLINK_FAST_INTERVAL"))
+        {
+            SetLEDOff();
+        }
+        else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") * 2)
+        {
+            m_TickCount = 0;
         }
     }
 

@@ -1,5 +1,7 @@
 #include "SwerveDrive.h"
 
+#include <iostream>
+
 /**
  * @brief Construct a new SwerveDrive object
  *
@@ -228,10 +230,9 @@ void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
         return;
     }
 
-    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
     frc::Pose2d visionPose = sample.pose3d.ToPose2d();
-    double translationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE")) / std::pow(sample.tagCount, CONSTANT("POSE_CNT_EXP"));
-    double rotationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE")) / std::pow(sample.tagCount, CONSTANT("POSE_CNT_EXP"));
+    double translationStdDev = CONSTANT("POSE_XY_STD_DEV_SCALE") / std::pow(sample.tagCount, CONSTANT("POSE_CNT_EXP"));
+    double rotationStdDev = CONSTANT("POSE_ROT_STD_DEV_SCALE") / std::pow(sample.tagCount, CONSTANT("POSE_CNT_EXP"));
 
     if (sample.tagCount == 1)
     {
@@ -239,12 +240,18 @@ void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 
         if (distance < CONSTANT("POSE_SINGLE_TAG_DIST"))
         {
-            m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(visionPose, timestamp, {translationStdDev, translationStdDev, rotationStdDev});
+            m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(
+            sample.pose3d.ToPose2d(),
+            sample.timestamp,
+            {translationStdDev, translationStdDev, rotationStdDev});
         }
     }
     else
     {
-        m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(visionPose, timestamp, {translationStdDev, translationStdDev, rotationStdDev});
+        m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(
+        sample.pose3d.ToPose2d(),
+        sample.timestamp,
+        {translationStdDev, translationStdDev, rotationStdDev});
     }
 
     m_PreviousVisionSample = sample;
@@ -300,6 +307,8 @@ void SwerveDrive::SampleSensors()
     m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
 
     m_Pose = m_Odometry->GetWPIPose();
+
+    printf("%f %f %f\n", GetPoseX(), GetPoseY(), GetPoseRot());
 }
 
 void SwerveDrive::Handle()
