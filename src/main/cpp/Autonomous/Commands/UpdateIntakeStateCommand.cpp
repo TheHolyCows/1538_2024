@@ -15,7 +15,7 @@ bool UpdateIntakeStateCommand::IsComplete(CowRobot *robot)
         return true;
     }
 
-    if (m_State.has_value() && *m_State == Shooter::IntakeState::DETECT_ACTIVE)
+    if (m_State.has_value() && m_State.value() == Shooter::IntakeState::DETECT_ACTIVE)
     {
         if (robot->m_Shooter->GetIntakeState() == Shooter::IntakeState::DETECT_HOLD)
         {
@@ -36,7 +36,7 @@ void UpdateIntakeStateCommand::Start(CowRobot *robot)
 
     if (m_State.has_value())
     {
-        state = *m_State;
+        state = m_State.value();
     }
 
     robot->m_Shooter->UpdateIntakeState(state);

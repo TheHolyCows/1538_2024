@@ -13,7 +13,7 @@ bool UpdateShooterStateCommand::IsComplete(CowRobot *robot)
         return true;
     }
 
-    if (m_State.has_value() && *m_State == Shooter::ShooterState::SPIN_UP)
+    if (m_State.has_value() && m_State.value() == Shooter::ShooterState::SPIN_UP)
     {
         if (robot->m_Shooter->GetShooterState() == Shooter::ShooterState::READY)
         {
@@ -34,7 +34,7 @@ void UpdateShooterStateCommand::Start(CowRobot *robot)
 
     if (m_State.has_value())
     {
-        state = *m_State;
+        state = m_State.value();
 
         if (state == Shooter::ShooterState::SPIN_UP)
         {

@@ -11,7 +11,13 @@ bool StationaryVisionCommand::IsComplete(CowRobot *robot)
 {
     if (m_Timer->HasElapsed(m_Timeout.value()))
     {
-        robot->GetDrivetrain()->SetVelocity(0, 0, 0, true);
+        SwerveDriveController::DriveManualRequest req = {
+            .inputX = 0,
+            .inputY = 0,
+            .inputRotation = 0
+        };
+
+        robot->GetDriveController()->Request(req);
         return true;
     }
 
@@ -37,6 +43,10 @@ void StationaryVisionCommand::Handle(CowRobot *robot)
 
     robot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
     robot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), robot->m_Pivot->GetSetpoint());
+
+    robot->m_Shooter->PrimeShooter(robot->m_ShooterRangeMap[dist]);
+
+
 
     SwerveDriveController::DriveLookAtRequest req = {
             .inputX = 0.0,

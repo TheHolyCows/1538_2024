@@ -201,7 +201,7 @@ void Shooter::Handle()
 
             if (m_CANCoder->GetMagnetIsHealthy())
             {
-                m_IntakeState = IntakeState::DETECT_ACTIVE;
+                // m_IntakeState = IntakeState::DETECT_ACTIVE;
             }
 
             break;

@@ -23,7 +23,7 @@ public:
     };
 
     UpdateArmCommand(double wristSetpoint, double pivotSetpoint, bool waitForCompletion);
-    UpdateArmCommand(double setpoint, ARM_SUBSYS subsystem, bool waitForCompletion);
+    // UpdateArmCommand(double setpoint, ARM_SUBSYS subsystem, bool waitForCompletion);
     ~UpdateArmCommand() = default;
 
     bool IsComplete(CowRobot *robot) override;

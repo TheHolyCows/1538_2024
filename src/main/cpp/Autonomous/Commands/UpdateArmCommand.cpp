@@ -7,19 +7,19 @@ UpdateArmCommand::UpdateArmCommand(double wristSetpoint, double pivotSetpoint, b
     m_WaitForCompletion = waitForCompletion;
 }
 
-UpdateArmCommand::UpdateArmCommand(double setpoint, ARM_SUBSYS subsystem, bool waitForCompletion)
-{
-    if (subsystem == ARM_SUBSYS::SUB_WRIST)
-    {
-        m_WristSetpoint = setpoint;
-    }
-    else if (subsystem == ARM_SUBSYS::SUB_PIVOT)
-    {
-        m_PivotSetpoint = setpoint;
-    }
+// UpdateArmCommand::UpdateArmCommand(double setpoint, ARM_SUBSYS subsystem, bool waitForCompletion)
+// {
+//     if (subsystem == ARM_SUBSYS::SUB_WRIST)
+//     {
+//         m_WristSetpoint = setpoint;
+//     }
+//     else if (subsystem == ARM_SUBSYS::SUB_PIVOT)
+//     {
+//         m_PivotSetpoint = setpoint;
+//     }
     
-    m_WaitForCompletion = waitForCompletion;
-}
+//     m_WaitForCompletion = waitForCompletion;
+// }
 
 
 bool UpdateArmCommand::IsComplete(CowRobot *robot)
@@ -43,12 +43,13 @@ void UpdateArmCommand::Start(CowRobot *robot)
 
     if (m_PivotSetpoint.has_value())
     {
-        robot->m_Pivot->SetAngle(*m_PivotSetpoint);
+        robot->m_Pivot->SetAngle(m_PivotSetpoint.value());
+        printf("pivot: %f\n",m_PivotSetpoint.value());
     }
 
     if (m_WristSetpoint.has_value())
     {
-        robot->m_Wrist->SetAngle(*m_WristSetpoint,robot->m_Pivot->GetSetpoint());
+        robot->m_Wrist->SetAngle(m_WristSetpoint.value(),robot->m_Pivot->GetSetpoint());
     }
 }
 

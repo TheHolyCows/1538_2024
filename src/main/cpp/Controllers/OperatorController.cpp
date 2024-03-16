@@ -181,12 +181,12 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
         }
-        // else if (m_CB->GetOperatorButton(BUTTON_HP))
-        // {
-        //     bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
-        //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-        //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
-        // }
+        else if (m_CB->GetOperatorButton(BUTTON_HP))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
+        }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
@@ -214,12 +214,12 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
         }
-        // else if (m_CB->GetOperatorButton(BUTTON_HP))
-        // {
-        //     bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
-        //     bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-        //     bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
-        // }
+        else if (m_CB->GetOperatorButton(BUTTON_HP))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
+        }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
