@@ -42,7 +42,7 @@ void StationaryVisionCommand::Handle(CowRobot *robot)
     double rangePivot = robot->m_PivotRangeMap[dist] + wristBiasAngle;
 
     robot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
-    robot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), robot->m_Pivot->GetSetpoint());
+    // robot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), robot->m_Pivot->GetSetpoint());
 
     robot->m_Shooter->PrimeShooter(robot->m_ShooterRangeMap[dist]);
 
