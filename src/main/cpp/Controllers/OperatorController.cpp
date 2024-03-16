@@ -156,6 +156,12 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_CLIMB_ANGLE"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_CLIMB_DOWN"));
         }
+        else if (m_CB->GetOperatorButton(BUTTON_HP))
+        {
+            bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
+            bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HIGH"));
+        }
     }
     else if (!m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
