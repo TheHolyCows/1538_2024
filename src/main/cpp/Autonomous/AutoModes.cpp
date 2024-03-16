@@ -141,8 +141,8 @@ AutoModes::AutoModes()
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) } },
                                                 false,
-                                                20_fps,
-                                                12_fps_sq));
+                                                21.5_fps,
+                                                14.5_fps_sq));
     m_Modes["[5] red amp -> amp far"].push_back(new StationaryVisionCommand(0.3_s));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
@@ -161,8 +161,8 @@ AutoModes::AutoModes()
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) } },
                                                 false,
-                                                20_fps,
-                                                12_fps_sq));
+                                                21.5_fps,
+                                                14.5_fps_sq));
     m_Modes["[5] red amp -> amp far"].push_back(new StationaryVisionCommand(0.3_s));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
