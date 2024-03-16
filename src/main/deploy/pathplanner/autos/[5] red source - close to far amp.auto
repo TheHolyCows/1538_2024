@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.24,
-      "y": 4.71
+      "x": 15.35,
+      "y": 4.1
     },
-    "rotation": -31.80000000000001
+    "rotation": -135.0
   },
   "command": {
     "type": "sequential",
@@ -14,25 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "falcon-special-1"
+            "pathName": "red-source_get-close_start"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "falcon-special-2"
+            "pathName": "red_get-close_2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "falcon-special-3"
+            "pathName": "red_get-close_3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "falcon-special-4"
+            "pathName": "red-amp_far-1_from-shoot"
           }
         }
       ]
