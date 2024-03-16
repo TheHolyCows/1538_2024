@@ -194,6 +194,38 @@ AutoModes::AutoModes()
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
                                                         false));
 
+
+    m_Modes["[5] red source -> amp far"].push_back(new ParallelCommand(
+                                        { new UpdateArmCommand(10, 80, false),
+                                          new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false)
+                                        }
+    ));
+    m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(1.2_s,false));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
+    m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
+
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
+                                                            CONSTANT("PIVOT_GROUND_SETPOINT"),
+                                                            false));
+    m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(1.58_s,false)); 
+
+    m_Modes["[5] red source -> amp far"].push_back(pathWithEvents("red-source_get-close_start",
+                                                { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
+                                                  { 0.9_s, new UpdateArmCommand(6.451,
+                                                                                CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                                                                false) }},
+    m_Modes["[5] red source -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
+    m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));   
+
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
+                                                            CONSTANT("PIVOT_GROUND_SETPOINT"),
+                                                            false));
+    m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(1.65_s,false));
+
+
     // Initialize auto mode selector
     m_Iterator = m_Modes.begin();
 }
