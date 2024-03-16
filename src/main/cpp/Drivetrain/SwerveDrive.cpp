@@ -226,8 +226,8 @@ void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
     if (sample.tagCount > 0 && sample != m_PreviousVisionSample && sample.averageTagDistance < CONSTANT("MAX_TAG_DIST"))
     {
         units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
-        double translationStdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE");
-        double rotationStdDev = (1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE");
+        double translationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE")) / sample.tagCount;
+        double rotationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE")) / sample.tagCount;
 
         m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {translationStdDev, translationStdDev, rotationStdDev});
 
@@ -289,15 +289,8 @@ void SwerveDrive::SampleSensors()
 
 void SwerveDrive::Handle()
 {
-    // std::array<CowLib::CowSwerveModulePosition, 4> modulePositions{};
-
     for (auto module : m_Modules)
     {
         module->Handle();
-        // modulePositions[module->GetID()] = module->GetPosition();
     }
-    // will this make our pose a frame behind?
-    // m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
-
-    // m_Pose = m_Odometry->GetWPIPose();
 }

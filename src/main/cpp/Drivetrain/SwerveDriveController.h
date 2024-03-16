@@ -61,7 +61,7 @@ public:
 private:
     struct IdleState
     {
-        
+
     };
 
     struct DriveManualState

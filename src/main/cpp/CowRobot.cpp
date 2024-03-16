@@ -92,8 +92,6 @@ void CowRobot::Reset()
 
     // m_Controller->ResetConstants(); TODO: error
 
-    // Vision::GetInstance()->Reset();
-
     CowLib::CowLogger::GetInstance()->Reset();
 }
 
@@ -156,13 +154,6 @@ void CowRobot::Handle()
         CowLib::CowLogger::LogGyro(m_Gyro);
         CowLib::CowLogger::LogPose(m_Drivetrain->GetPoseX(), m_Drivetrain->GetPoseY(), m_Drivetrain->GetPoseRot());
     }
-
-    //    // APRIL TAG BOTPOSE
-    //    std::optional<Vision::BotPoseResult> visionPose = Vision::GetInstance()->GetBotPose();
-    //    if (visionPose.has_value())
-    //    {
-    //        m_Drivetrain->AddVisionMeasurement((*visionPose).pose, (*visionPose).timestamp);
-    //    }
 
     // accelerometers
     // double zVal = m_ZFilter.Calculate(m_Accelerometer->GetZ());

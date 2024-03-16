@@ -148,7 +148,7 @@ void SwerveDriveController::Handle()
     std::visit(overload {
         [&](IdleState &state) {
             m_Drivetrain.SetVelocity(0.0, 0.0, 0.0);
-            m_IsOnTarget = true;
+            m_IsOnTarget = false;
         },
         [&](DriveManualState &state) {
             auto [xVel, yVel] = FilterXY(
@@ -163,8 +163,6 @@ void SwerveDriveController::Handle()
                 CONSTANT("DESIRED_MAX_ANG_VEL"));
 
             double omega = 0.0;
-
-            m_IsOnTarget = false;
 
             if (filteredRotation == 0.0)
             {
@@ -197,6 +195,8 @@ void SwerveDriveController::Handle()
             {
                 m_Drivetrain.SetVelocity(0.0, 0.0, 0.0);
             }
+
+            m_IsOnTarget = false;
         },
         [&](DriveLockHeadingState &state) {
             if (!state.targetHeading.has_value())
