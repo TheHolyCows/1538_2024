@@ -223,16 +223,31 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
 
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 {
-    if (sample.tagCount > 0 && sample != m_PreviousVisionSample && sample.averageTagDistance < CONSTANT("MAX_TAG_DIST"))
+    if (sample.tagCount == 0 || sample == m_PreviousVisionSample)
     {
-        units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
-        double translationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE")) / sample.tagCount;
-        double rotationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE")) / sample.tagCount;
-
-        m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(sample.pose3d.ToPose2d(), timestamp, {translationStdDev, translationStdDev, rotationStdDev});
-
-        m_PreviousVisionSample = sample;
+        return;
     }
+
+    units::second_t timestamp = wpi::math::MathSharedStore::GetTimestamp() - sample.totalLatency;
+    frc::Pose2d visionPose = sample.pose3d.ToPose2d();
+    double translationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_XY_STD_DEV_SCALE")) / std::pow(sample.tagCount, CONSTANT("POSE_CNT_EXP"));
+    double rotationStdDev = ((1 - sample.averageTagArea) * CONSTANT("POSE_ROT_STD_DEV_SCALE")) / std::pow(sample.tagCount, CONSTANT("POSE_CNT_EXP"));
+
+    if (sample.tagCount == 1)
+    {
+        double distance = std::sqrt(std::pow(m_Pose.X().value() - visionPose.X().value(), 2) + std::pow(m_Pose.Y().value() - visionPose.Y().value(), 2));
+
+        if (distance < CONSTANT("POSE_SINGLE_TAG_DIST"))
+        {
+            m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(visionPose, timestamp, {translationStdDev, translationStdDev, rotationStdDev});
+        }
+    }
+    else
+    {
+        m_Odometry->GetInternalPoseEstimator()->AddVisionMeasurement(visionPose, timestamp, {translationStdDev, translationStdDev, rotationStdDev});
+    }
+
+    m_PreviousVisionSample = sample;
 }
 
 void SwerveDrive::ResetConstants()
