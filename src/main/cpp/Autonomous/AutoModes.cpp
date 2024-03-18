@@ -100,14 +100,15 @@ AutoModes::AutoModes()
     // piece 1
     m_Modes["[5] red amp -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(10, 80, false),
-                                          new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false)
+                                          new UpdateShooterSpeed(15) // 15 is lowest dist value in shooter range dist map
                                         }
     ));
+    m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(1.2_s,false));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
-    // m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
+    m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterSpeed(12.89)); // distance for shot 2 in feet
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                         false));
@@ -115,7 +116,7 @@ AutoModes::AutoModes()
     // piece 2
     m_Modes["[5] red amp -> amp far"].push_back(pathWithEvents("red-amp_start-root",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 0.9_s, new UpdateArmCommand(-0.34,
+                                                  { 0.9_s, new UpdateArmCommand(1.63,  // based on distance of 12.89 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) }},
                                                 //   { 0.3_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
@@ -126,7 +127,7 @@ AutoModes::AutoModes()
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
-    // m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
+    m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterSpeed(14.16)); // distance for shot 3 and 4 in feet
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                             CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                             false));
@@ -137,7 +138,7 @@ AutoModes::AutoModes()
                                                                                     CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                                                     false) },
                                                     { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                    { 1.7_s, new UpdateArmCommand(-3,
+                                                    { 1.7_s, new UpdateArmCommand(0.133, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) } },
                                                 false,
@@ -157,7 +158,7 @@ AutoModes::AutoModes()
                                                                               CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                                               false) },
                                                   { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 1.0_s, new UpdateArmCommand(-3,
+                                                  { 1.0_s, new UpdateArmCommand(0.133, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) } },
                                                 false,
