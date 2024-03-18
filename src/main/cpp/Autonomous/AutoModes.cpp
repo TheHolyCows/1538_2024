@@ -167,11 +167,12 @@ AutoModes::AutoModes()
     m_Modes["[5] red amp -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
+
+    // end
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
                                                         false));
-
     // piece 5
     // m_Modes["[5] red amp -> amp far"].push_back(pathWithEvents("red-amp_far-3",
     //                                             { { 0.3_s, new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
@@ -189,11 +190,6 @@ AutoModes::AutoModes()
     // m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
     // m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
 
-    // end
-    m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
-    m_Modes["[5] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
-                                                        CONSTANT("PIVOT_STOW_SETPOINT"),
-                                                        false));
 
     // Initialize auto mode selector
     m_Iterator = m_Modes.begin();
