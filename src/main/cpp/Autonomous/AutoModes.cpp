@@ -116,7 +116,7 @@ AutoModes::AutoModes()
     // piece 2
     m_Modes["[5] red amp -> amp far"].push_back(pathWithEvents("red-amp_start-root",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 0.9_s, new UpdateArmCommand(1.63,  // based on distance of 12.89 above
+                                                  { 0.9_s, new UpdateArmCommand(1.63,  // based on distance of 12.89 above - TODO: update to use distance and read from map
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false) }},
                                                 //   { 0.3_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
