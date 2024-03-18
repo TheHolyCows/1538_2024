@@ -63,6 +63,7 @@ void PathplannerSwerveCommand::Start(CowRobot *robot)
         std::cout << "pose x: " << curPose.X().value() << std::endl;
         std::cout << "pose y: " << curPose.Y().value() << std::endl;
 
+        // both values are in meters
         m_PathData["waypoints"][0]["anchor"]["x"] = curPose.X().value();
         m_PathData["waypoints"][0]["anchor"]["y"] = curPose.Y().value();
         m_Path->hotReload(m_PathData);

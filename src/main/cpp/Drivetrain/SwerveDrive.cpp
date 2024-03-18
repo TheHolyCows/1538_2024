@@ -236,6 +236,7 @@ void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 
     if (sample.tagCount == 1)
     {
+        // this distance is in meters, is that ok
         double distance = std::sqrt(std::pow(m_Pose.X().value() - visionPose.X().value(), 2) + std::pow(m_Pose.Y().value() - visionPose.Y().value(), 2));
 
         if (distance < CONSTANT("POSE_SINGLE_TAG_DIST"))
