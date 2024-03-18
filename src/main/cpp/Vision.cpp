@@ -92,14 +92,14 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
     {
         if (alliance.value() == frc::DriverStation::Alliance::kRed)
         {
-            return { RED_SPEAKER.X() - units::foot_t(CONSTANT("RED_GOAL_X_OFFSET")),
-                     RED_SPEAKER.Y() - units::foot_t(CONSTANT("RED_GOAL_Y_OFFSET"))};
+            return { units::foot_t(RED_SPEAKER.X()) - units::foot_t(CONSTANT("RED_GOAL_X_OFFSET")),
+                     units::foot_t(RED_SPEAKER.Y()) - units::foot_t(CONSTANT("RED_GOAL_Y_OFFSET"))};
 
         }
         else
         {
-            return { BLUE_SPEAKER.X() - units::foot_t(CONSTANT("BLUE_GOAL_X_OFFSET")),
-                     BLUE_SPEAKER.Y() - units::foot_t(CONSTANT("BLUE_GOAL_Y_OFFSET"))};
+            return { units::foot_t(BLUE_SPEAKER.X()) - units::foot_t(CONSTANT("BLUE_GOAL_X_OFFSET")),
+                     units::foot_t(BLUE_SPEAKER.Y()) - units::foot_t(CONSTANT("BLUE_GOAL_Y_OFFSET"))};
         }
 
     }
