@@ -30,7 +30,7 @@ public:
 
     void ResetConsatnts();
 
-    std::optional<Sample> GetRobotPose();
+    std::vector<Sample> GetRobotPose();
     void SetLEDState(LEDState ledState);
     void SampleSensors();
     void Handle();
@@ -41,10 +41,10 @@ public:
     double GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
     frc::Translation2d GetTargetXY(std::optional<frc::DriverStation::Alliance> alliance);
 private:
-    std::unique_ptr<photon::PhotonPoseEstimator> m_PoseEstimator;
-    std::shared_ptr<photon::PhotonCamera> m_Camera;
+    std::vector<std::unique_ptr<photon::PhotonPoseEstimator>> m_PoseEstimators;
+    std::vector<std::shared_ptr<photon::PhotonCamera>> m_Cameras;
 
-    std::optional<photon::EstimatedRobotPose> m_EstimatedPose;
+    std::vector<photon::EstimatedRobotPose> m_EstimatedPoses;
     nt::IntegerTopic m_NTLEDState;
     LEDState m_LEDState;
     LEDState m_LEDBlinkInterval;

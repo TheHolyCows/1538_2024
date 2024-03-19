@@ -6,47 +6,63 @@
 Vision::Vision()
     : m_TickCount(0)
 {
-    m_PoseEstimator = std::make_unique<photon::PhotonPoseEstimator>(
-        frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo),
-        photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-        photon::PhotonCamera{"Camera_Module_v1"},
-        frc::Transform3d());
+    std::vector<std::string> cameraNames = {"left", "center", "right"};
 
-    m_PoseEstimator->SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
+    for (const std::string& cameraName : cameraNames)
+    {
+        m_PoseEstimators.push_back(std::make_unique<photon::PhotonPoseEstimator>(
+            frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo),
+            photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
+            photon::PhotonCamera{"left"},
+            frc::Transform3d()));
+        m_PoseEstimators.back()->SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
 
-    m_Camera = m_PoseEstimator->GetCamera();
-    m_Camera->SetDriverMode(false);
-    m_Camera->SetPipelineIndex(1);
+        m_Cameras.push_back(m_PoseEstimators.back()->GetCamera());
+        m_Cameras.back()->SetDriverMode(false);
+        m_Cameras.back()->SetPipelineIndex(1);
+    }
 
     ResetConsatnts();
 }
 
 void Vision::ResetConsatnts()
 {
-    frc::Transform3d robotToCamera(
-        frc::Translation3d(-11.064_in, 0.0_in, 7.956_in),
+    // Left
+    frc::Transform3d robotToLeftCamera(
+        frc::Translation3d(-10.527929_in, 10.527929_in, 7.950596_in),
+        frc::Rotation3d(0_deg, 20_deg, 135_deg));
+
+    m_PoseEstimators.at(0)->SetRobotToCameraTransform(robotToLeftCamera);
+
+    // Center
+    frc::Transform3d robotToCenterCamera(
+        frc::Translation3d(-11.064_in, 0.0_in, 6.950596_in),
         frc::Rotation3d(0_deg, 20_deg, 180_deg));
 
-    m_PoseEstimator->SetRobotToCameraTransform(robotToCamera);
+    m_PoseEstimators.at(1)->SetRobotToCameraTransform(robotToCenterCamera);
+
+    // Right
+    frc::Transform3d robotToRightCamera(
+        frc::Translation3d(-10.527929_in, -10.527929_in, 7.950596_in),
+        frc::Rotation3d(0_deg, 20_deg, 225_deg));
+
+    m_PoseEstimators.at(2)->SetRobotToCameraTransform(robotToRightCamera);
 }
 
-std::optional<Vision::Sample> Vision::GetRobotPose()
+std::vector<Vision::Sample> Vision::GetRobotPose()
 {
-    if (m_EstimatedPose.has_value())
+    std::vector<Vision::Sample> samples;
+
+    for (const photon::EstimatedRobotPose& estimatedPose : m_EstimatedPoses)
     {
-        photon::EstimatedRobotPose estimatedPose = m_EstimatedPose.value();
         Vision::Sample sample;
 
         sample.timestamp = estimatedPose.timestamp;
         sample.pose3d = estimatedPose.estimatedPose;
         sample.tagCount = estimatedPose.targetsUsed.size();
+    }
 
-        return sample;
-    }
-    else
-    {
-        return std::nullopt;
-    }
+    return samples;
 }
 
 void Vision::SetLEDState(Vision::LEDState ledState)
@@ -56,18 +72,18 @@ void Vision::SetLEDState(Vision::LEDState ledState)
 
 void Vision::SetLEDOn()
 {
-    if (m_Camera->GetLEDMode() != photon::LEDMode::kOn)
-    {
-        m_Camera->SetLEDMode(photon::LEDMode::kOn);
-    }
+    // if (m_Camera->GetLEDMode() != photon::LEDMode::kOn)
+    // {
+    //     m_Camera->SetLEDMode(photon::LEDMode::kOn);
+    // }
 }
 
 void Vision::SetLEDOff()
 {
-    if (m_Camera->GetLEDMode() != photon::LEDMode::kOff)
-    {
-        m_Camera->SetLEDMode(photon::LEDMode::kOff);
-    }
+    // if (m_Camera->GetLEDMode() != photon::LEDMode::kOff)
+    // {
+    //     m_Camera->SetLEDMode(photon::LEDMode::kOff);
+    // }
 }
 
 double Vision::GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose)
@@ -109,7 +125,17 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
 
 void Vision::SampleSensors()
 {
-    m_EstimatedPose = m_PoseEstimator->Update();
+    m_EstimatedPoses.clear();
+
+    for (const std::unique_ptr<photon::PhotonPoseEstimator>& poseEstimator : m_PoseEstimators)
+    {
+        std::optional<photon::EstimatedRobotPose> estimatedPose = poseEstimator->Update();
+
+        if (estimatedPose.has_value())
+        {
+            m_EstimatedPoses.push_back(estimatedPose.value());
+        }
+    }
 }
 
 void Vision::Handle()
