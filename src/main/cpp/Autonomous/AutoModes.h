@@ -17,6 +17,7 @@
 #include "Commands/UpdateArmCommand.h"
 #include "Commands/UpdateIntakeStateCommand.h"
 #include "Commands/UpdateShooterStateCommand.h"
+#include "Commands/UpdateShooterSpeed.h"
 
 #include "../Subsystems/Shooter.h"
 #include "../Subsystems/Wrist.h"

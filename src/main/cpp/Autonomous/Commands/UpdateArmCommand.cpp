@@ -44,12 +44,12 @@ void UpdateArmCommand::Start(CowRobot *robot)
     if (m_PivotSetpoint.has_value())
     {
         robot->m_Pivot->SetAngle(m_PivotSetpoint.value());
-        printf("pivot: %f\n",m_PivotSetpoint.value());
+        // printf("pivot: %f\n",m_PivotSetpoint.value());
     }
 
     if (m_WristSetpoint.has_value())
     {
-        robot->m_Wrist->SetAngle(m_WristSetpoint.value(),robot->m_Pivot->GetSetpoint());
+        robot->m_Wrist->SetAngle(m_WristSetpoint.value() + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
     }
 }
 

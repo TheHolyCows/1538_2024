@@ -48,7 +48,7 @@ void CowBase::DisabledInit()
     m_Bot->GetDriveController()->ResetHeadingLock();
 
     m_Bot->GetDrivetrain()->SetBrakeMode(true);
-    
+
     m_Bot->m_Vision->SetLEDState(Vision::LEDState::OFF);
 }
 
@@ -126,7 +126,7 @@ void CowBase::DisabledPeriodic()
          * iterates over AutoModes
          */
         AutoModes::GetInstance()->NextMode();
-        
+
         if (m_Bot->m_Alliance.has_value())
         {
             CowLib::CowLogger::LogAutoMode(m_Bot->m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
@@ -167,7 +167,7 @@ void CowBase::DisabledPeriodic()
 
         m_Bot->m_BiasForAuto = m_ControlBoard->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
     }
-    
+
     // set wrist and pivot to current locations
     m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
     //m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);

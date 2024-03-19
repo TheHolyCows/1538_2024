@@ -1,7 +1,5 @@
 #include "Pivot.h"
 
-#include <iostream>
-
 Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double encoderOffset)
 {
     m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
@@ -18,7 +16,6 @@ Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double
     m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
     SetAngle(CONSTANT("PIVOT_STARTING_ANGLE"));
-
 
     m_FollowerRequest.MasterID = motorId1;
     m_FollowerRequest.OpposeMasterDirection = true;
@@ -145,7 +142,7 @@ void Pivot::ResetConstants()
                              CONSTANT("PIVOT_I"),
                              CONSTANT("PIVOT_D"),
                              CONSTANT("PIVOT_S"),
-                             0,
+                             CONSTANT("PIVOT_V"),
                              CowMotor::FeedForwardType::COSINE);
 
     // m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),

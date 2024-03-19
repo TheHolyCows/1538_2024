@@ -119,8 +119,17 @@ void CowRobot::SampleSensors()
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowDriveSynchronizedSignals());
     ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowBusSynchronizedSignals());
 
-    Vision::Sample sample = m_Vision->GetRobotPose();
-    m_Drivetrain->AddVisionMeasurement(sample);
+    // Sample sensors
+    m_Vision->SampleSensors();
+
+    // Feed vision sample into pose estimator
+    std::optional<Vision::Sample> sample = m_Vision->GetRobotPose();
+
+    if (sample.has_value())
+    {
+        m_Drivetrain->AddVisionMeasurement(sample.value());
+    }
+
     m_Drivetrain->SampleSensors();
 }
 
