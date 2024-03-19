@@ -13,7 +13,7 @@ Vision::Vision()
         m_PoseEstimators.push_back(std::make_unique<photon::PhotonPoseEstimator>(
             frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo),
             photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-            photon::PhotonCamera{"left"},
+            photon::PhotonCamera{cameraName},
             frc::Transform3d()));
         m_PoseEstimators.back()->SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
 
