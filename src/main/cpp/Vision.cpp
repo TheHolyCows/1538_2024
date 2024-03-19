@@ -60,6 +60,8 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
         sample.timestamp = estimatedPose.timestamp;
         sample.pose3d = estimatedPose.estimatedPose;
         sample.tagCount = estimatedPose.targetsUsed.size();
+
+        samples.push_back(sample);
     }
 
     return samples;
