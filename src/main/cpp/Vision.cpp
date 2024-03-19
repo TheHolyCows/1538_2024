@@ -9,7 +9,7 @@ Vision::Vision()
     m_PoseEstimator = std::make_unique<photon::PhotonPoseEstimator>(
         frc::LoadAprilTagLayoutField(frc::AprilTagField::k2024Crescendo),
         photon::PoseStrategy::MULTI_TAG_PNP_ON_COPROCESSOR,
-        photon::PhotonCamera{"Camera_Module_v1"},
+        photon::PhotonCamera{"center"},
         frc::Transform3d());
 
     m_PoseEstimator->SetMultiTagFallbackStrategy(photon::PoseStrategy::LOWEST_AMBIGUITY);
@@ -24,7 +24,7 @@ Vision::Vision()
 void Vision::ResetConsatnts()
 {
     frc::Transform3d robotToCamera(
-        frc::Translation3d(-11.064_in, 0.0_in, 7.956_in),
+        frc::Translation3d(-11.0387_in, 0.0_in, 6.9505_in),
         frc::Rotation3d(0_deg, 20_deg, 180_deg));
 
     m_PoseEstimator->SetRobotToCameraTransform(robotToCamera);
