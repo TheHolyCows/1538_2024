@@ -17,7 +17,7 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::DETECT_HOLD)
     {
-        ledState = Vision::LEDState::BLINK_SLOW;
+        ledState = Vision::LEDState::HOLD;
     }
 
     // if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
@@ -68,7 +68,7 @@ void OperatorController::Handle(CowRobot *bot)
             bot->GetDriveController()->IsOnTarget() &&
             bot->m_Shooter->IsReady())
         {
-            ledState = Vision::LEDState::BLINK_FAST;
+            ledState = Vision::LEDState::ON_TARGET;
         }
 
         // Record data from previous shot

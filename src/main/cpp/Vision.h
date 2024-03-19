@@ -7,6 +7,8 @@
 #include <frc/DriverStation.h>
 #include <photon/PhotonCamera.h>
 #include <photon/PhotonPoseEstimator.h>
+#include <ctre/phoenix/led/CANdle.h>
+#include <ctre/phoenix/led/RainbowAnimation.h>
 
 class Vision {
 public:
@@ -22,13 +24,16 @@ public:
     enum class LEDState
     {
         OFF,
-        BLINK_SLOW,
-        BLINK_FAST
+        HOLD,
+        ON_TARGET
     };
 
     Vision();
 
-    void ResetConsatnts();
+    ctre::phoenix::led::CANdle *m_CANdle;
+    ctre::phoenix::led::RainbowAnimation *m_Rainbow;
+
+    void ResetConstants();
 
     std::optional<Sample> GetRobotPose();
     void SetLEDState(LEDState ledState);
@@ -49,8 +54,9 @@ private:
     LEDState m_LEDState;
     LEDState m_LEDBlinkInterval;
     int m_TickCount;
-    double m_StateChangeTime;
+    double m_StateChangeTime;   
 
-    void SetLEDOn();
+    void SetLEDHold();
+    void SetLEDOnTarget();
     void SetLEDOff();
 };
