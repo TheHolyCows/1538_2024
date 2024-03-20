@@ -1,7 +1,7 @@
 #include "CowBase.h"
 
 CowBase::CowBase()
-    : TimedRobot(10_ms),  // set robot duty cycle
+    : TimedRobot(15_ms),  // set robot duty cycle
       m_ControlBoard(new CowControlBoard()),
       m_OpController(new OperatorController(m_ControlBoard)),
       m_AutoController(new AutoModeController()),
