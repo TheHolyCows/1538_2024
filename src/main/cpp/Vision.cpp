@@ -23,12 +23,12 @@ Vision::Vision()
     }
 
     m_CANdle = new ctre::phoenix::led::CANdle(31,"cowdrive");
-    
+
     m_CANdle->SetLEDs(255, 255, 255);
     m_CANdle->ConfigBrightnessScalar(0);
 
     // m_Rainbow = new ctre::phoenix::led::RainbowAnimation(0.75, 0.75);
-    
+
 
     ResetConstants();
 }
@@ -38,21 +38,21 @@ void Vision::ResetConstants()
     // Left
     frc::Transform3d robotToLeftCamera(
         frc::Translation3d(-10.527929_in, 10.527929_in, 7.950596_in),
-        frc::Rotation3d(0_deg, 20_deg, 135_deg));
+        frc::Rotation3d(0_deg, -20_deg, 135_deg));
 
     m_PoseEstimators.at(0)->SetRobotToCameraTransform(robotToLeftCamera);
 
     // Center
     frc::Transform3d robotToCenterCamera(
         frc::Translation3d(-11.064_in, 0.0_in, 6.950596_in),
-        frc::Rotation3d(0_deg, 20_deg, 180_deg));
+        frc::Rotation3d(0_deg, -20_deg, 180_deg));
 
     m_PoseEstimators.at(1)->SetRobotToCameraTransform(robotToCenterCamera);
 
     // Right
     frc::Transform3d robotToRightCamera(
         frc::Translation3d(-10.527929_in, -10.527929_in, 7.950596_in),
-        frc::Rotation3d(0_deg, 20_deg, 225_deg));
+        frc::Rotation3d(0_deg, -20_deg, 225_deg));
 
     m_PoseEstimators.at(2)->SetRobotToCameraTransform(robotToRightCamera);
 }
@@ -67,18 +67,18 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
 
         if (estimatedPose.targetsUsed.size() == 1)
         {
+            valid = false;
+
             for (const photon::PhotonTrackedTarget& target : estimatedPose.targetsUsed)
             {
-                if (target.GetFiducialId() == 5 || target.GetFiducialId() == 6 ||
-                    target.GetFiducialId() == 11 || target.GetFiducialId() == 12 || 
-                    target.GetFiducialId() == 15 || target.GetFiducialId() == 16)
+                if (target.GetFiducialId() == 13)
                 {
-                    valid = false;
+                    valid = true;
                     break;
                 }
             }
         }
-        
+
         if (valid) {
             Vision::Sample sample;
 
@@ -198,7 +198,7 @@ void Vision::Handle()
     else if (m_LEDState == LEDState::HOLD)
     {
         SetLEDHold();
-        
+
         // if (m_TickCount == 1)
         // {
         //     SetLEDOn();
@@ -215,7 +215,7 @@ void Vision::Handle()
     else if (m_LEDState == LEDState::ON_TARGET)
     {
         SetLEDOnTarget();
-        
+
         // if (m_TickCount == 1)
         // {
         //     SetLEDOn();
