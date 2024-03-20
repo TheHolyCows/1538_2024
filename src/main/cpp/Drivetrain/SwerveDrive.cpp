@@ -225,7 +225,7 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
 
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 {
-    if (sample.tagCount == 0 || sample == m_PreviousVisionSample)
+    if (sample.tagCount == 0)
     {
         return;
     }

@@ -63,13 +63,29 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
 
     for (const photon::EstimatedRobotPose& estimatedPose : m_EstimatedPoses)
     {
-        Vision::Sample sample;
+        bool valid = true;
 
-        sample.timestamp = estimatedPose.timestamp;
-        sample.pose3d = estimatedPose.estimatedPose;
-        sample.tagCount = estimatedPose.targetsUsed.size();
+        if (estimatedPose.targetsUsed.size() == 1)
+        {
+            for (const photon::PhotonTrackedTarget& target : estimatedPose.targetsUsed)
+            {
+                if (target.GetFiducialId() == 5 || target.GetFiducialId() == 6 || target.GetFiducialId() == 11 || target.GetFiducialId() == 12)
+                {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        
+        if (valid) {
+            Vision::Sample sample;
 
-        samples.push_back(sample);
+            sample.timestamp = estimatedPose.timestamp;
+            sample.pose3d = estimatedPose.estimatedPose;
+            sample.tagCount = estimatedPose.targetsUsed.size();
+
+            samples.push_back(sample);
+        }
     }
 
     return samples;
@@ -164,6 +180,9 @@ void Vision::SampleSensors()
         if (estimatedPose.has_value())
         {
             m_EstimatedPoses.push_back(estimatedPose.value());
+            // printf("%s x: %f  y: %f\n",std::string(poseEstimator->GetCamera()->GetCameraName()).c_str(),
+            //                                     estimatedPose.value().estimatedPose.X().value(),
+            //                                     estimatedPose.value().estimatedPose.Y().value());
         }
     }
 }
