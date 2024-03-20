@@ -4,7 +4,7 @@
 #include <frc/apriltag/AprilTagFieldLayout.h>
 
 Vision::Vision()
-    : m_TickCount(0)
+//    : m_TickCount(0)
 {
     std::vector<std::string> cameraNames = {"left", "center", "right"};
 
@@ -22,10 +22,18 @@ Vision::Vision()
         m_Cameras.back()->SetPipelineIndex(1);
     }
 
-    ResetConsatnts();
+    m_CANdle = new ctre::phoenix::led::CANdle(31,"cowdrive");
+    
+    m_CANdle->SetLEDs(255, 255, 255);
+    m_CANdle->ConfigBrightnessScalar(0);
+
+    // m_Rainbow = new ctre::phoenix::led::RainbowAnimation(0.75, 0.75);
+    
+
+    ResetConstants();
 }
 
-void Vision::ResetConsatnts()
+void Vision::ResetConstants()
 {
     // Left
     frc::Transform3d robotToLeftCamera(
@@ -72,16 +80,36 @@ void Vision::SetLEDState(Vision::LEDState ledState)
     m_LEDState = ledState;
 }
 
-void Vision::SetLEDOn()
+void Vision::SetLEDHold()
 {
+    if (m_LEDState == LEDState::HOLD)
+    {
+        m_CANdle->SetLEDs(CONSTANT("LED_HOLD_R"), CONSTANT("LED_HOLD_G"), CONSTANT("LED_HOLD_B"));
+        m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
+    }
     // if (m_Camera->GetLEDMode() != photon::LEDMode::kOn)
     // {
     //     m_Camera->SetLEDMode(photon::LEDMode::kOn);
     // }
 }
 
+void Vision::SetLEDOnTarget()
+{
+    if (m_LEDState == LEDState::ON_TARGET)
+    {
+        m_CANdle->SetLEDs(CONSTANT("LED_ON_TARGET_R"), CONSTANT("LED_ON_TARGET_G"), CONSTANT("LED_ON_TARGET_B"));
+        m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
+    }
+}
+
 void Vision::SetLEDOff()
 {
+    if (m_LEDState == LEDState::OFF)
+    {
+        m_CANdle->SetLEDs(255, 255, 255);
+        m_CANdle->ConfigBrightnessScalar(0);
+    }
+
     // if (m_Camera->GetLEDMode() != photon::LEDMode::kOff)
     // {
     //     m_Camera->SetLEDMode(photon::LEDMode::kOff);
@@ -146,36 +174,40 @@ void Vision::Handle()
     {
         SetLEDOff();
     }
-    else if (m_LEDState == LEDState::BLINK_SLOW)
+    else if (m_LEDState == LEDState::HOLD)
     {
-        if (m_TickCount == 1)
-        {
-            SetLEDOn();
-        }
-        else if (m_TickCount == CONSTANT("BLINK_SLOW_INTERVAL"))
-        {
-            SetLEDOff();
-        }
-        else if ( m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") * 2)
-        {
-            m_TickCount = 0;
-        }
+        SetLEDHold();
+        
+        // if (m_TickCount == 1)
+        // {
+        //     SetLEDOn();
+        // }
+        // else if (m_TickCount == CONSTANT("BLINK_SLOW_INTERVAL"))
+        // {
+        //     SetLEDOff();
+        // }
+        // else if ( m_TickCount > CONSTANT("BLINK_SLOW_INTERVAL") * 2)
+        // {
+        //     m_TickCount = 0;
+        // }
     }
-    else if (m_LEDState == LEDState::BLINK_FAST)
+    else if (m_LEDState == LEDState::ON_TARGET)
     {
-        if (m_TickCount == 1)
-        {
-            SetLEDOn();
-        }
-        else if (m_TickCount == CONSTANT("BLINK_FAST_INTERVAL"))
-        {
-            SetLEDOff();
-        }
-        else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") * 2)
-        {
-            m_TickCount = 0;
-        }
+        SetLEDOnTarget();
+        
+        // if (m_TickCount == 1)
+        // {
+        //     SetLEDOn();
+        // }
+        // else if (m_TickCount == CONSTANT("BLINK_FAST_INTERVAL"))
+        // {
+        //     SetLEDOff();
+        // }
+        // else if (m_TickCount > CONSTANT("BLINK_FAST_INTERVAL") * 2)
+        // {
+        //     m_TickCount = 0;
+        // }
     }
 
-    m_TickCount++;
+    // m_TickCount++;
 }
