@@ -116,12 +116,13 @@ AutoModes::AutoModes()
     // piece 2
     m_Modes["[5] red amp -> amp far"].push_back(pathWithEvents("red-amp_start-root",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 0.9_s, new UpdateArmCommand(1.63,  // based on distance of 12.89 above - TODO: update to use distance and read from map
+                                                  { 0.9_s, new UpdateArmCommand(12.89,  // based on distance of 12.89 above - TODO: update to use distance and read from map
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) }},
+                                                                                false,
+                                                                                true) }},
                                                 //   { 0.3_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
-                                                14_fps,
+                                                10_fps,
                                                 8_fps_sq));
     m_Modes["[5] red amp -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
@@ -138,9 +139,10 @@ AutoModes::AutoModes()
                                                                                     CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                                                     false) },
                                                     { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                    { 1.7_s, new UpdateArmCommand(0.133, // based on distance of 14.16 above
+                                                    { 1.7_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) } },
+                                                                                false,
+                                                                                true) } },
                                                 false,
                                                 21.5_fps,
                                                 14.5_fps_sq));
@@ -158,9 +160,10 @@ AutoModes::AutoModes()
                                                                               CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                                               false) },
                                                   { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 1.0_s, new UpdateArmCommand(0.133, // based on distance of 14.16 above
+                                                  { 1.0_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) } },
+                                                                                false,
+                                                                                true) } },
                                                 false,
                                                 21.5_fps,
                                                 14.5_fps_sq));
@@ -212,9 +215,10 @@ AutoModes::AutoModes()
     // piece 2
     m_Modes["[5] red source -> amp far"].push_back(pathWithEvents("red-source_get-close_start",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 0.9_s, new UpdateArmCommand(8.81,  // based on distance of 8.044
+                                                  { 0.9_s, new UpdateArmCommand(8.044,  // based on distance of 8.044
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) }},
+                                                                                false,
+                                                                                true) }},
                                                 true,
                                                 14_fps,
                                                 8_fps_sq));
@@ -231,9 +235,10 @@ AutoModes::AutoModes()
     // piece 3
     m_Modes["[5] red source -> amp far"].push_back(pathWithEvents("red_get-close_2",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 0.9_s, new UpdateArmCommand(10.63,  // based on distance of 7.28
+                                                  { 0.9_s, new UpdateArmCommand(7.28,  // based on distance of 7.28
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) }},
+                                                                                false,
+                                                                                true) }},
                                                 false,
                                                 14_fps,
                                                 8_fps_sq));
@@ -249,9 +254,10 @@ AutoModes::AutoModes()
     // piece 4
     m_Modes["[5] red source -> amp far"].push_back(pathWithEvents("red_get-close_3",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 0.9_s, new UpdateArmCommand(0.133,  // based on distance of 14.16
+                                                  { 0.9_s, new UpdateArmCommand(14.16,  // based on distance of 14.16
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) }},
+                                                                                false,
+                                                                                true) }},
                                                 false,
                                                 14_fps,
                                                 8_fps_sq));
@@ -269,9 +275,10 @@ AutoModes::AutoModes()
                                                                                     CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                                                     false) },
                                                     { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                    { 1.0_s, new UpdateArmCommand(0.133, // based on distance of 14.16 above
+                                                    { 1.0_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                                                false) } },
+                                                                                false,
+                                                                                true) } },
                                                 false,
                                                 21.5_fps,
                                                 14.5_fps_sq));

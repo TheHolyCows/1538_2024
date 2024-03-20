@@ -1,10 +1,11 @@
 #include "UpdateArmCommand.h"
 
-UpdateArmCommand::UpdateArmCommand(double wristSetpoint, double pivotSetpoint, bool waitForCompletion)
+UpdateArmCommand::UpdateArmCommand(double wristSetpoint, double pivotSetpoint, bool waitForCompletion, bool useDistForWrist)
 {
     m_WristSetpoint = wristSetpoint;
     m_PivotSetpoint = pivotSetpoint;
     m_WaitForCompletion = waitForCompletion;
+    m_UseDistForWrist = useDistForWrist;
 }
 
 // UpdateArmCommand::UpdateArmCommand(double setpoint, ARM_SUBSYS subsystem, bool waitForCompletion)
@@ -49,7 +50,14 @@ void UpdateArmCommand::Start(CowRobot *robot)
 
     if (m_WristSetpoint.has_value())
     {
-        robot->m_Wrist->SetAngle(m_WristSetpoint.value() + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+        if (m_UseDistForWrist)
+        {
+            robot->m_Wrist->SetAngle(robot->m_PivotRangeMap[m_WristSetpoint.value()] + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+        }
+        else
+        {
+            robot->m_Wrist->SetAngle(m_WristSetpoint.value() + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+        }
     }
 }
 

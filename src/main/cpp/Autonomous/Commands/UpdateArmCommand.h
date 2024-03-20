@@ -13,6 +13,7 @@ private:
     std::optional<double> m_WristSetpoint = std::nullopt;
     std::optional<double> m_PivotSetpoint = std::nullopt;
     bool m_WaitForCompletion;
+    bool m_UseDistForWrist;
 
 public:
 
@@ -22,7 +23,7 @@ public:
         SUB_PIVOT
     };
 
-    UpdateArmCommand(double wristSetpoint, double pivotSetpoint, bool waitForCompletion);
+    UpdateArmCommand(double wristSetpoint, double pivotSetpoint, bool waitForCompletion, bool useDistForWrist = false);
     // UpdateArmCommand(double setpoint, ARM_SUBSYS subsystem, bool waitForCompletion);
     ~UpdateArmCommand() = default;
 
