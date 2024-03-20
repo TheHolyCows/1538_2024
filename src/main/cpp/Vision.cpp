@@ -69,7 +69,9 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
         {
             for (const photon::PhotonTrackedTarget& target : estimatedPose.targetsUsed)
             {
-                if (target.GetFiducialId() == 5 || target.GetFiducialId() == 6 || target.GetFiducialId() == 11 || target.GetFiducialId() == 12)
+                if (target.GetFiducialId() == 5 || target.GetFiducialId() == 6 ||
+                    target.GetFiducialId() == 11 || target.GetFiducialId() == 12 || 
+                    target.GetFiducialId() == 15 || target.GetFiducialId() == 16)
                 {
                     valid = false;
                     break;
