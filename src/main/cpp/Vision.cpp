@@ -65,18 +65,10 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
     {
         bool valid = true;
 
-        if (estimatedPose.targetsUsed.size() == 1)
+        if (estimatedPose.targetsUsed.size() == 1 &&
+            (estimatedPose.targetsUsed[0].GetFiducialId() == 13 || estimatedPose.targetsUsed[0].GetFiducialId() == 14))
         {
             valid = false;
-
-            for (const photon::PhotonTrackedTarget& target : estimatedPose.targetsUsed)
-            {
-                if (target.GetFiducialId() == 13)
-                {
-                    valid = true;
-                    break;
-                }
-            }
         }
 
         if (valid) {
