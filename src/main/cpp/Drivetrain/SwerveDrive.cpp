@@ -308,8 +308,6 @@ void SwerveDrive::SampleSensors()
     m_Odometry->Update(m_Gyro->GetYawDegrees(), modulePositions);
 
     m_Pose = m_Odometry->GetWPIPose();
-
-    printf("%f %f %f\n", GetPoseX(), GetPoseY(), GetPoseRot());
 }
 
 void SwerveDrive::Handle()

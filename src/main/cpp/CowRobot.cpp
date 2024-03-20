@@ -123,11 +123,11 @@ void CowRobot::SampleSensors()
     m_Vision->SampleSensors();
 
     // Feed vision sample into pose estimator
-    std::optional<Vision::Sample> sample = m_Vision->GetRobotPose();
+    std::vector<Vision::Sample> samples = m_Vision->GetRobotPose();
 
-    if (sample.has_value())
+    for (const Vision::Sample& sample : samples)
     {
-        m_Drivetrain->AddVisionMeasurement(sample.value());
+        m_Drivetrain->AddVisionMeasurement(sample);
     }
 
     m_Drivetrain->SampleSensors();

@@ -61,7 +61,7 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Shooter->PrimeShooter(bot->m_ShooterRangeMap[dist]);
         }
 
-        printf("bias: %f, dist: %f\n", wristBias, dist);
+        // printf("bias: %f, dist: %f\n", wristBias, dist);
 
         // LED
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
