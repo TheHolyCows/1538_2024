@@ -6,7 +6,7 @@ SwerveTrajectoryCommand::SwerveTrajectoryCommand(const std::string &trajectoryNa
                                                  bool resetOdometry)
 {
     // This is to make sure that it is loading trajectories on start and not on demand
-    std::cout << "Loading swerve trajectory " << trajectoryName << std::endl;
+    // std::cout << "Loading swerve trajectory " << trajectoryName << std::endl;
 
     m_Timer         = new CowLib::CowTimer();
     m_Stop          = stopAtEnd;
@@ -17,7 +17,7 @@ SwerveTrajectoryCommand::SwerveTrajectoryCommand(const std::string &trajectoryNa
     fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
     fs::path path            = deployDirectory / "trajectories" / (trajectoryName + ".wpilib.json");
 
-    std::cout << "Got path " << path << std::endl;
+    // std::cout << "Got path " << path << std::endl;
 
     m_Trajectory = frc::TrajectoryUtil::FromPathweaverJson(path.string());
 
@@ -34,7 +34,7 @@ SwerveTrajectoryCommand::SwerveTrajectoryCommand(const std::string &trajectoryNa
 
     m_TotalTime = m_Trajectory.TotalTime().value();
 
-    std::cout << "Completed constructing swerve command for " << trajectoryName << std::endl;
+    // std::cout << "Completed constructing swerve command for " << trajectoryName << std::endl;
 }
 
 SwerveTrajectoryCommand::~SwerveTrajectoryCommand()
