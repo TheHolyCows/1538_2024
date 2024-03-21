@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.559163975470808,
-        "y": 4.7936427301426034
+        "x": 15.427953979605878,
+        "y": 5.215040042746463
       },
       "isLocked": false,
       "linkedName": "red-source-close_start_end"
@@ -20,15 +20,21 @@
         "y": 5.55593454044051
       },
       "prevControl": {
-        "x": 14.60314234914184,
-        "y": 5.233426466852934
+        "x": 15.060381381468781,
+        "y": 5.456556772126855
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "red_get-close_2_end"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": 169.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -39,7 +45,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": 168.96559577805868,
     "rotateFast": false
   },
   "reversed": false,
