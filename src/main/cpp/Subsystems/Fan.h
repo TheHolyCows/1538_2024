@@ -30,7 +30,7 @@ public:
     FanState GetFanState();
     FanState UpdateFanState(FanState newstate);
 
-    double GetFanRPM();
+    double GetFanVel();
 
     void FanOn();
     void FanOff();
@@ -42,5 +42,5 @@ private:
 
     FanState m_FanState;
 
-    double m_FanRPM;
+    double m_FanVel;
 };
