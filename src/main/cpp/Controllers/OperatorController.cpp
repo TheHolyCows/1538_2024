@@ -103,14 +103,27 @@ void OperatorController::Handle(CowRobot *bot)
         // From the driver station perspective, +x is right, +y is away from
         // the driver station, and +rotation is a counter clockwise rotation
 
-        // TODO: Flip depending on alliance color
-        SwerveDriveController::DriveManualRequest req = {
-            .inputX = m_CB->GetLeftDriveStickY(),
-            .inputY = -m_CB->GetLeftDriveStickX(),
-            .inputRotation = -m_CB->GetRightDriveStickX()
-        };
+        // Flip joysticks depending on alliance color
+        if (bot->m_Alliance.value_or(frc::DriverStation::Alliance::kRed) == frc::DriverStation::Alliance::kRed)
+        {
+            SwerveDriveController::DriveManualRequest req = {
+                .inputX = m_CB->GetLeftDriveStickY(),
+                .inputY = -m_CB->GetLeftDriveStickX(),
+                .inputRotation = -m_CB->GetRightDriveStickX()
+            };
 
-        bot->GetDriveController()->Request(req);
+            bot->GetDriveController()->Request(req);
+        }
+        else
+        {
+            SwerveDriveController::DriveManualRequest req = {
+                .inputX = -m_CB->GetLeftDriveStickY(),
+                .inputY = m_CB->GetLeftDriveStickX(),
+                .inputRotation = -m_CB->GetRightDriveStickX()
+            };
+
+            bot->GetDriveController()->Request(req);
+        }
     }
     if (m_CB->GetOperatorButton(BUTTON_AMP))
     {
