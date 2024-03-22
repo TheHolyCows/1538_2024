@@ -23,6 +23,7 @@
 #include "Subsystems/Shooter.h"
 #include "Subsystems/Elevator.h"
 #include "Subsystems/Wrist.h"
+#include "Subsystems/Fan.h"
 #include <frc/BuiltInAccelerometer.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/PowerDistribution.h>
@@ -39,6 +40,7 @@ public:
     Elevator *m_Elevator;
     Wrist *m_Wrist;
     Vision *m_Vision;
+    Fan *m_Fan;
     CowLib::interpolating_map<double, double> m_PivotRangeMap;
     CowLib::interpolating_map<double, double> m_ShooterRangeMap;
 
