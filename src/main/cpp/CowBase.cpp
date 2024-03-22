@@ -173,6 +173,8 @@ void CowBase::DisabledPeriodic()
         }
 
         m_Bot->m_BiasForAuto = m_ControlBoard->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
+        CowLib::CowLogger::LogPose(m_Bot->m_Drivetrain->GetPoseX(), m_Bot->m_Drivetrain->GetPoseY(),
+                                    m_Bot->m_Drivetrain->GetPoseRot(), true);
     }
 
     // set wrist and pivot to current locations
