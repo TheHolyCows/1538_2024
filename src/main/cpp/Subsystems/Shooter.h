@@ -65,6 +65,7 @@ public:
 
     void UpdateIntakeState(IntakeState state);
     void UpdateShooterState(ShooterState state);
+    void UpdateIntakeMoveDistance(double distance);
 
     void Handle();
 
@@ -79,6 +80,7 @@ private:
     IntakeState m_IntakeState;
     ShooterState m_ShooterState;
 
+    double m_IntakeDetectPosition;
     double m_IntakeGoalPosition;
     double m_ShooterStartTime;
     double m_ShooterRPS;
