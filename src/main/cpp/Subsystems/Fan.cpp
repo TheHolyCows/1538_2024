@@ -1,4 +1,4 @@
-#include "Fan.h" 
+#include "Fan.h"
 
 Fan::Fan(const int FanMotorID)
 {
@@ -33,12 +33,12 @@ double Fan::GetFanVel()
 
 void Fan::FanOn()
 {
-    m_FanState = FanState::IDLE;
+    m_FanState = FanState::SPIN_UP;
 }
 
 void Fan::FanOff()
 {
-    m_FanState = FanState::SPIN_UP;
+    m_FanState = FanState::IDLE;
 }
 
 void Fan::Handle()
@@ -46,7 +46,7 @@ void Fan::Handle()
 {
     switch (m_FanState)
     {
-        case FanState::IDLE;
+        case FanState::IDLE:
         {
             CowMotor::Control::TorqueCurrent request = {};
             m_FanMotor->Set(request);
@@ -72,9 +72,13 @@ void Fan::Handle()
 
         case FanState::FULL:
         {
-            // ??
+            CowMotor::Control::TorqueCurrent request = {};
+            request.MaxDutyCycle = CONSTANT("FAN_MAX_DUTY_CYCLE");
+            request.Current = CONSTANT("FAN_SPINUP_CURRENT");
+
+            m_FanMotor->Set(request);
         }
-    
+
     }
 }
 
