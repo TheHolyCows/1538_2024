@@ -77,7 +77,14 @@ void CowBase::TeleopInit()
     m_Bot->StartTime();
 
     // should set the controls correctly based on where we end up in auto
-    CowPigeon::GetInstance()->SetYaw(m_Bot->m_Drivetrain->GetPoseRot() + 180);
+    if (m_Bot->m_Alliance.value() == frc::DriverStation::Alliance::kRed)
+    {
+        CowPigeon::GetInstance()->SetYaw(m_Bot->m_Drivetrain->GetPoseRot() + 180);
+    }
+    else
+    {
+        CowPigeon::GetInstance()->SetYaw(m_Bot->m_Drivetrain->GetPoseRot());
+    }
     // m_Bot->GetGyro()->FinalizeCalibration();
 
     std::cout << "setting controller " << m_OpController << std::endl;
