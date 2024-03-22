@@ -210,9 +210,12 @@ void Shooter::Handle()
         // Shoot
         case IntakeState::SHOOT:
         {
-            CowMotor::Control::TorqueCurrent request = {};
-            request.Current = CONSTANT("INTAKE_SHOOT_CURRENT");
-            request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
+            // CowMotor::Control::TorqueCurrent request = {};
+            // request.Current = CONSTANT("INTAKE_SHOOT_CURRENT");
+            // request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
+
+            CowMotor::Control::DutyCycle request = {};
+            request.DutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
 
             m_Intake->Set(request);
 

@@ -124,7 +124,7 @@ void Wrist::Handle(Pivot *pivot)
 {
     if (pivot->GetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE"))
     {
-        m_WristPosRequest.Position = std::max(0.321, m_TargetAngle);
+        m_WristPosRequest.Position = std::max(CONSTANT("WRIST_GROUND_SETPOINT") / 360, m_TargetAngle);
     }
     else
     {

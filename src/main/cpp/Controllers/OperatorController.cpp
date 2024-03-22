@@ -35,11 +35,19 @@ void OperatorController::Handle(CowRobot *bot)
         // Drivetrain targetting
         frc::Translation2d targetXY = bot->m_Vision->GetTargetXY(bot->m_Alliance);
 
+        double angleToTarget = std::atan2(targetXY.Y().convert<units::foot>().value() - bot->m_Drivetrain->GetPoseY(),
+                                          targetXY.X().convert<units::foot>().value() - bot->m_Drivetrain->GetPoseX());
+
+        double goalXOffset = std::fabs(angleToTarget) * CONSTANT("GOAL_ANGLE_SCALE_X");
+        double goalYOffset = angleToTarget * CONSTANT("GOAL_ANGLE_SCALE_Y");
+
+        printf("offset %f\n", goalYOffset);
+
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
             .inputY = -m_CB->GetLeftDriveStickX(),
-            .targetX = units::foot_t(targetXY.X()).value(), //CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
-            .targetY = units::foot_t(targetXY.Y()).value(), //CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
+            .targetX = units::foot_t(targetXY.X()).value() + goalXOffset, //CONSTANT("GOAL_X") - CONSTANT("GOAL_X_OFFSET"),
+            .targetY = units::foot_t(targetXY.Y()).value() + goalYOffset, //CONSTANT("GOAL_Y") - CONSTANT("GOAL_Y_OFFSET"),
             .robotSide = SwerveDriveController::RobotSide::BACK,
             .lookaheadTime = CONSTANT("POSE_LOOKAHEAD_TIME")
         };
@@ -61,7 +69,7 @@ void OperatorController::Handle(CowRobot *bot)
             bot->m_Shooter->PrimeShooter(bot->m_ShooterRangeMap[dist]);
         }
 
-        printf("bias: %f, dist: %f\n", wristBias, dist);
+        // printf("bias: %f, dist: %f\n", wristBias, dist);
 
         // LED
         if (dist < CONSTANT("SHOOTING_THRESHOLD_DISTANCE") &&
