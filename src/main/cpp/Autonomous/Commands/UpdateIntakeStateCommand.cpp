@@ -39,7 +39,7 @@ void UpdateIntakeStateCommand::Start(CowRobot *robot)
         state = m_State.value();
     }
 
-    robot->m_Shooter->UpdateIntakeState(state);
+    robot->m_Shooter->UpdateIntakeState(state, CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE"));
 }
 
 void UpdateIntakeStateCommand::Handle(CowRobot *robot)

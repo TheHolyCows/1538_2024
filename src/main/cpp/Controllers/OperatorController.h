@@ -37,6 +37,8 @@ public:
     double m_LastShotDistance;
     double m_LastShotPivot;
     double m_LastShotWrist;
+
+    bool m_TrapMode;
 };
 
 #endif /* __OPERATOR_CONTROLLER_H__ */

@@ -61,9 +61,10 @@ Shooter::ShooterState Shooter::GetShooterState()
     return m_ShooterState;
 }
 
-void Shooter::UpdateIntakeState(IntakeState state)
+void Shooter::UpdateIntakeState(IntakeState state, double intakeShootRPS)
 {
     m_IntakeState = state;
+    m_IntakeShootRPS = intakeShootRPS;
 }
 
 void Shooter::UpdateShooterState(ShooterState state)
@@ -152,8 +153,10 @@ void Shooter::StopShooter()
     m_ShooterState = ShooterState::IDLE;
 }
 
-void Shooter::Shoot()
+void Shooter::Shoot(double intakeRPS)
 {
+    m_IntakeShootRPS = intakeRPS;
+
     if(IsReady())
     {
         m_IntakeState = IntakeState::SHOOT;
@@ -215,7 +218,7 @@ void Shooter::Handle()
             // request.MaxDutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
 
             CowMotor::Control::DutyCycle request = {};
-            request.DutyCycle = CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE");
+            request.DutyCycle = m_IntakeShootRPS;
 
             m_Intake->Set(request);
 

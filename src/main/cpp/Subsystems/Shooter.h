@@ -61,9 +61,9 @@ public:
     void PrimeShooter(double rps);
     void StopShooter();
 
-    void Shoot();
+    void Shoot(double intakeRPS);
 
-    void UpdateIntakeState(IntakeState state);
+    void UpdateIntakeState(IntakeState state, double intakeShootRPS);
     void UpdateShooterState(ShooterState state);
 
     void Handle();
@@ -80,6 +80,7 @@ private:
     ShooterState m_ShooterState;
 
     double m_IntakeGoalPosition;
+    double m_IntakeShootRPS;
     double m_ShooterStartTime;
     double m_ShooterRPS;
 

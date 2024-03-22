@@ -4,7 +4,8 @@ OperatorController::OperatorController(GenericControlBoard *controlboard)
     : m_CB(controlboard),
       m_LastShotDistance(0.0),
       m_LastShotPivot(0.0),
-      m_LastShotWrist(0.0)
+      m_LastShotWrist(0.0),
+      m_TrapMode(false)
 {
     m_TrackingCooldownTimer = 0.0;
     m_ClimberLatch = false;
@@ -32,6 +33,8 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (m_CB->GetVisionTargetButton())
     {
+        m_TrapMode = false;
+
         // Drivetrain targetting
         frc::Translation2d targetXY = bot->m_Vision->GetTargetXY(bot->m_Alliance);
 
@@ -112,6 +115,7 @@ void OperatorController::Handle(CowRobot *bot)
 
         bot->GetDriveController()->Request(req);
     }
+
     if (m_CB->GetOperatorButton(BUTTON_AMP))
     {
 
@@ -122,7 +126,14 @@ void OperatorController::Handle(CowRobot *bot)
     }
     else if(m_CB->GetOperatorButton(BUTTON_SHOOT))
     {
-        bot->m_Shooter->Shoot();
+        if (m_TrapMode)
+        {
+            bot->m_Shooter->Shoot(CONSTANT("INTAKE_SHOOT_TRAP_MAX_DUTY_CYCLE"));
+        }
+        else
+        {
+            bot->m_Shooter->Shoot(CONSTANT("INTAKE_SHOOT_MAX_DUTY_CYCLE"));
+        }
     }
     else if(m_CB->GetOperatorButton(BUTTON_EXHAUST))
     {
@@ -135,7 +146,11 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
-        if (!m_CB->GetVisionTargetButton())
+        if (m_TrapMode)
+        {
+            bot->m_Shooter->PrimeShooter(CONSTANT("SHOOTER_TRAP_VEL"));
+        }
+        else if (!m_CB->GetVisionTargetButton())
         {
             bot->m_Shooter->PrimeShooter(CONSTANT("SHOOTER_RANGE_VALUE_1"));
         }
@@ -151,6 +166,8 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (!m_CB->GetOperatorButton(SWITCH_CLIMB))
     {
+        m_TrapMode = false;
+
         if (!m_ClimberLatch)
         {
             m_ClimberLatch = true;
@@ -174,6 +191,7 @@ void OperatorController::Handle(CowRobot *bot)
     else if (!m_CB->GetOperatorButton(SWITCH_HI_LO))
     {
         m_ClimberLatch = false;
+        m_TrapMode = false;
 
         if (m_CB->GetOperatorButton(BUTTON_STOW))
         {
@@ -211,33 +229,47 @@ void OperatorController::Handle(CowRobot *bot)
         m_ClimberLatch = false;
         if (m_CB->GetOperatorButton(BUTTON_STOW))
         {
+            m_TrapMode = false;
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_STOW_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_STOW_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_STOW_SETPOINT"));
         } else if (m_CB->GetOperatorButton(BUTTON_GROUND))
         {
+            m_TrapMode = false;
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_GROUND_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_GROUND_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
         }
         else if (m_CB->GetOperatorButton(BUTTON_LAUNCH))
         {
+            m_TrapMode = false;
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_LAUNCH_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_LAUNCH_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
         }
         else if (m_CB->GetOperatorButton(BUTTON_HP))
         {
+            m_TrapMode = true;
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_HP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_HP_SETPOINT"), bot->m_Pivot->GetSetpoint());
-            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_LOW"));
+            bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_HP_SETPOINT"));
         }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
+            m_TrapMode = false;
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
         }
+    }
+
+    if (m_TrapMode)
+    {
+        bot->m_Fan->FanOn();
+    }
+    else
+    {
+        bot->m_Fan->FanOff();
     }
 
     if (m_CB->GetOperatorButton(BUTTON_HP))
