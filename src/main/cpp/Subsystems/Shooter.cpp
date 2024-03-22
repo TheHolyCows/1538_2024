@@ -72,6 +72,11 @@ void Shooter::UpdateShooterState(ShooterState state)
     m_ShooterState = state;
 }
 
+void Shooter::UpdateIntakeMoveDistance(double distance)
+{
+    m_IntakeGoalPosition = m_IntakeDetectPosition + distance; 
+}
+
 double Shooter::GetIntakePosition()
 {
     return m_Intake->GetPosition();
@@ -189,6 +194,7 @@ void Shooter::Handle()
             if (!m_CANCoder->GetMagnetIsHealthy())
             {
                 m_IntakeState = IntakeState::DETECT_HOLD;
+                m_IntakeDetectPosition = GetIntakePosition();
                 m_IntakeGoalPosition = GetIntakePosition() + CONSTANT("INTAKE_MOVE_DISTANCE");
             }
 

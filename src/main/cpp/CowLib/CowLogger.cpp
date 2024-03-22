@@ -187,9 +187,9 @@ namespace CowLib
      * @param y - y position of the bot on the field (left and right for field oriented)
      * @param rot - yaw of the bot
     */
-    void CowLogger::LogPose(double x, double y, double rot)
+    void CowLogger::LogPose(double x, double y, double rot, bool force)
     {
-        if ((int) CONSTANT("DEBUG") != CowLogger::LOG_DBG)
+        if (!force && (int) CONSTANT("DEBUG") != CowLogger::LOG_DBG)
         {
             return;
         }

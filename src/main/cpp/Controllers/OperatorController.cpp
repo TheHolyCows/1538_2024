@@ -44,6 +44,13 @@ void OperatorController::Handle(CowRobot *bot)
         double goalXOffset = std::fabs(angleToTarget) * CONSTANT("GOAL_ANGLE_SCALE_X");
         double goalYOffset = angleToTarget * CONSTANT("GOAL_ANGLE_SCALE_Y");
 
+        // Flip on blue side
+        if (bot->m_Alliance.value_or(frc::DriverStation::Alliance::kRed) == frc::DriverStation::Alliance::kBlue)
+        {
+            goalXOffset *= -1;
+            goalYOffset *= -1;
+        }
+
         printf("offset %f\n", goalYOffset);
 
         SwerveDriveController::DriveLookAtRequest req = {
@@ -257,6 +264,7 @@ void OperatorController::Handle(CowRobot *bot)
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
             m_TrapMode = false;
+            bot->m_Shooter->UpdateIntakeMoveDistance(CONSTANT("INTAKE_MOVE_DISTANCE_AMP"));
             bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetSetpoint());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));

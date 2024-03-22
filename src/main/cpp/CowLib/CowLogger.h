@@ -73,7 +73,7 @@ namespace CowLib
         static void LogAutoMode(frc::DriverStation::Alliance, const char *);
         static void LogAutoMode(const char *);
         static void LogGyro(CowPigeon *);
-        static void LogPose(double, double, double);
+        static void LogPose(double, double, double, bool force = false);
         static void LogMsg(CowLogLevel, const char *fmt, ...);
         static void LogState(StateLogID, uint16_t state);
 
