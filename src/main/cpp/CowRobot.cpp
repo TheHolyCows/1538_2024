@@ -33,7 +33,7 @@ CowRobot::CowRobot()
     m_Wrist = new Wrist(13, 30, CONSTANT("WRIST_ENCODER_OFFSET"));
     m_Vision = new Vision();
     m_Shooter = new Shooter(15, 16, 14, 50, m_Vision);
-    // m_Fan = new Fan(51);
+    m_Fan = new Fan(51);
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowDriveSynchronizedSignals());
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowBusSynchronizedSignals());
@@ -154,7 +154,7 @@ void CowRobot::Handle()
     m_Elevator->Handle(m_Pivot);
     m_Wrist->Handle(m_Pivot);
     m_Shooter->Handle();
-    // m_Fan->Handle();
+    m_Fan->Handle();
 
     // // logger code below should have checks for debug mode before sending out data
     CowLib::CowLogger::GetInstance()->Handle();
