@@ -25,7 +25,8 @@ public:
     {
         OFF,
         HOLD,
-        ON_TARGET
+        ON_TARGET,
+        INTAKING
     };
 
     Vision();
@@ -54,7 +55,7 @@ private:
     LEDState m_LEDState;
     LEDState m_LEDBlinkInterval;
     int m_TickCount;
-    double m_StateChangeTime;   
+    double m_StateChangeTime;
 
     void SetLEDHold();
     void SetLEDOnTarget();

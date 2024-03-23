@@ -68,7 +68,7 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
         // if (estimatedPose.targetsUsed.size() == 1 &&
         //     !estimatedPose.targetsUsed[0].GetFiducialId() == 5 &&
         //     !estimatedPose.targetsUsed[0].GetFiducialId() == 6 &&
-        //     !estimatedPose.targetsUsed[0].GetFiducialId() == 13 && 
+        //     !estimatedPose.targetsUsed[0].GetFiducialId() == 13 &&
         //     !estimatedPose.targetsUsed[0].GetFiducialId() == 14)
         // {
         //     valid = false;
@@ -223,6 +223,11 @@ void Vision::Handle()
         // {
         //     m_TickCount = 0;
         // }
+    }
+    else if (m_LEDState == LEDState::INTAKING)
+    {
+        m_CANdle->SetLEDs(CONSTANT("LED_INTAKING_R"), CONSTANT("LED_INTAKING_G"), CONSTANT("LED_INTAKING_B"));
+        m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
     }
 
     // m_TickCount++;
