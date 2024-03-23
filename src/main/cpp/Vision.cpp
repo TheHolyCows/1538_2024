@@ -65,14 +65,14 @@ std::vector<Vision::Sample> Vision::GetRobotPose()
     {
         bool valid = true;
 
-        if (estimatedPose.targetsUsed.size() == 1 &&
-            !estimatedPose.targetsUsed[0].GetFiducialId() == 5 &&
-            !estimatedPose.targetsUsed[0].GetFiducialId() == 6 &&
-            !estimatedPose.targetsUsed[0].GetFiducialId() == 13 && 
-            !estimatedPose.targetsUsed[0].GetFiducialId() == 14)
-        {
-            valid = false;
-        }
+        // if (estimatedPose.targetsUsed.size() == 1 &&
+        //     !estimatedPose.targetsUsed[0].GetFiducialId() == 5 &&
+        //     !estimatedPose.targetsUsed[0].GetFiducialId() == 6 &&
+        //     !estimatedPose.targetsUsed[0].GetFiducialId() == 13 && 
+        //     !estimatedPose.targetsUsed[0].GetFiducialId() == 14)
+        // {
+        //     valid = false;
+        // }
 
         if (valid) {
             Vision::Sample sample;
