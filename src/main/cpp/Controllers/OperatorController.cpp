@@ -48,7 +48,6 @@ void OperatorController::Handle(CowRobot *bot)
         if (bot->m_Alliance.value_or(frc::DriverStation::Alliance::kRed) == frc::DriverStation::Alliance::kBlue)
         {
             goalXOffset *= -1;
-            goalYOffset *= -1;
         }
 
         printf("offset %f\n", goalYOffset);
