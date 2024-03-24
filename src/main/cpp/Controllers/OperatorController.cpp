@@ -68,7 +68,15 @@ void OperatorController::Handle(CowRobot *bot)
         frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME"))
                                                                     .value_or(bot->GetDrivetrain()->GetPose());
         double dist = bot->m_Vision->GetTargetDist(bot->m_Alliance, lookaheadPose);
-        double wristSetpoint = bot->m_PivotRangeMap[dist] + wristBias + CONSTANT("WRIST_STATIC_BIAS");
+        // double wristSetpoint = bot->m_PivotRangeMap[dist] + wristBias + CONSTANT("WRIST_STATIC_BIAS");
+
+        double wristSetpoint = (CONSTANT("WRIST_AUTO_RANGING_A") * std::pow(dist, 3)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_B") * std::pow(dist, 2)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_C") * std::pow(dist, 1)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0)) +
+                               CONSTANT("WRIST_STATIC_BIAS");
+
+        wristSetpoint += wristBias;
 
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
         bot->m_Wrist->SetAngle(wristSetpoint, bot->m_Pivot->GetSetpoint());
