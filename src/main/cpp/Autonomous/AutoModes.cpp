@@ -99,12 +99,18 @@ AutoModes::AutoModes()
     /* [5] red amp -> amp far */
     // pre-load
     m_Modes["[5] red amp -> amp far"].push_back(new ParallelCommand(
-                                        { new UpdateArmCommand(10, 80, false),
-                                          new UpdateShooterSpeed(15) // 15 is lowest dist value in shooter range dist map
+                                        { new UpdateArmCommand(10, 85, false),
+                                          new UpdateShooterSpeed(5.65) // 15 is lowest dist value in shooter range dist map
                                         }
     ));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
-    m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(1.2_s,false));
+    m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.5_s,false));
+    m_Modes["[5] red amp -> amp far"].push_back(new UpdateArmCommand(5.65,
+                                                      CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                                      false,
+                                                      true));
+    m_Modes["[5] red amp -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
+    m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.8_s,false));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
     m_Modes["[5] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
@@ -197,11 +203,17 @@ AutoModes::AutoModes()
     // pre-load
     m_Modes["[5] !force! red amp -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(10, 80, false),
-                                          new UpdateShooterSpeed(15) // 15 is lowest dist value in shooter range dist map
+                                          new UpdateShooterSpeed(5.65) // 15 is lowest dist value in shooter range dist map
                                         }
     ));
     m_Modes["[5] !force! red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
-    m_Modes["[5] !force! red amp -> amp far"].push_back(new WaitCommand(1.2_s,false));
+    m_Modes["[5] !force! red amp -> amp far"].push_back(new WaitCommand(0.5_s,false));
+    m_Modes["[5] !force! red amp -> amp far"].push_back(new UpdateArmCommand(5.65,
+                                                      CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                                      false,
+                                                      true));
+    m_Modes["[5] !force! red amp -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
+    m_Modes["[5] !force! red amp -> amp far"].push_back(new WaitCommand(0.8_s,false));
     m_Modes["[5] !force! red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] !force! red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
     m_Modes["[5] !force! red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
@@ -279,10 +291,16 @@ AutoModes::AutoModes()
     // pre-load
     m_Modes["[5] red source -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(5, 80, false),
-                                          new UpdateShooterSpeed(15) // 15 is lowest dist value in shooter range dist map
+                                          new UpdateShooterSpeed(7.82) // 15 is lowest dist value in shooter range dist map
                                         }
     ));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
+    m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.5_s,false));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(7.82,
+                                                      CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                                      false,
+                                                      true));
+    m_Modes["[5] red source -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.8_s,false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.5_s,false));
@@ -378,11 +396,17 @@ AutoModes::AutoModes()
     // pre-load
     m_Modes["[5] blue amp -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(10, 80, false),
-                                          new UpdateShooterSpeed(15) // 15 is lowest dist value in shooter range dist map
+                                          new UpdateShooterSpeed(5.65) // 15 is lowest dist value in shooter range dist map
                                         }
     ));
     m_Modes["[5] blue amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
-    m_Modes["[5] blue amp -> amp far"].push_back(new WaitCommand(1.2_s,false));
+    m_Modes["[5] blue amp -> amp far"].push_back(new WaitCommand(0.5_s,false));
+    m_Modes["[5] blue amp -> amp far"].push_back(new UpdateArmCommand(5.65,
+                                                      CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                                      false,
+                                                      true));
+    m_Modes["[5] blue amp -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
+    m_Modes["[5] blue amp -> amp far"].push_back(new WaitCommand(0.8_s,false));
     m_Modes["[5] blue amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] blue amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
     m_Modes["[5] blue amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
@@ -476,10 +500,16 @@ AutoModes::AutoModes()
     // pre-load
     m_Modes["[5] blue source -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(5, 80, false),
-                                          new UpdateShooterSpeed(15) // 15 is lowest dist value in shooter range dist map
+                                          new UpdateShooterSpeed(7.82)
                                         }
     ));
     m_Modes["[5] blue source -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
+    m_Modes["[5] blue source -> amp far"].push_back(new WaitCommand(0.5_s,false));
+    m_Modes["[5] blue source -> amp far"].push_back(new UpdateArmCommand(7.82,
+                                                      CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                                      false,
+                                                      true));
+    m_Modes["[5] blue source -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[5] blue source -> amp far"].push_back(new WaitCommand(0.8_s,false));
     m_Modes["[5] blue source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] blue source -> amp far"].push_back(new WaitCommand(0.5_s,false));
