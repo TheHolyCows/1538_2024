@@ -30,10 +30,10 @@ public:
     void BrakeMode(bool brakeMode);
 
     bool AtTarget(void);
-    
+
     void ResetConstants(void);
 
-    void Handle(void);
+    void Handle(double elevatorPos);
 
 private:
     double m_TargetAngle;
