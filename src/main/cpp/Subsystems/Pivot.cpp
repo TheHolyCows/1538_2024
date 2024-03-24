@@ -143,7 +143,16 @@ void Pivot::ResetConstants()
                              CONSTANT("PIVOT_D"),
                              CONSTANT("PIVOT_S"),
                              CONSTANT("PIVOT_V"),
-                             CowMotor::FeedForwardType::COSINE);
+                             CowMotor::FeedForwardType::COSINE,
+                             0);
+
+    m_PivotMotor1->ConfigPID(CONSTANT("PIVOT_SLOT_1_P"),
+                             CONSTANT("PIVOT_SLOT_1_I"),
+                             CONSTANT("PIVOT_SLOT_1_D"),
+                             CONSTANT("PIVOT_SLOT_1_S"),
+                             CONSTANT("PIVOT_SLOT_1_V"),
+                             CowMotor::FeedForwardType::COSINE,
+                             1);
 
     // m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),
     //                                  CONSTANT("PIVOT_A"));
@@ -161,6 +170,15 @@ void Pivot::Handle()
 {
     double angleRad = (GetAngle() / 180) * 3.1415;
     m_PivotPosRequest.FeedForward = std::cos(angleRad) * CONSTANT("PIVOT_FF");
+
+    if (GetAngle() < CONSTANT("PIVOT_SLOT_0_ANGLE_MAX"))
+    {
+        m_PivotPosRequest.Slot = 0;
+    }
+    else
+    {
+        m_PivotPosRequest.Slot = 1;
+    }
 
     if (m_PivotMotor1)
     {
