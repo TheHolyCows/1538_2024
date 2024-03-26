@@ -2,34 +2,45 @@
 
 Pivot::Pivot(const int motorId1, const int motorId2, const int encoderId, double encoderOffset)
 {
-    m_PivotMotor1 = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
-    m_PivotMotor2 = std::make_unique<CowMotor::TalonFX>(motorId2, "cowdrive");
+    m_MotorLeft = std::make_unique<CowMotor::TalonFX>(motorId1, "cowdrive");
+    m_MotorLeft->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+    m_MotorLeft->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
 
-    m_PrevBrakeMode = true;
-    m_PivotMotor1->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
-    m_PivotMotor2->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
-
-    m_PivotMotor1->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
-    m_PivotMotor2->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
+    m_MotorRight = std::make_unique<CowMotor::TalonFX>(motorId2, "cowdrive");
+    m_MotorRight->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+    m_MotorRight->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
 
     m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowdrive");
     m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
-    SetAngle(CONSTANT("PIVOT_STARTING_ANGLE"));
-
-    m_FollowerRequest.MasterID = motorId1;
-    m_FollowerRequest.OpposeMasterDirection = true;
-
-    m_PivotMotor1->ConfigFusedCANCoder(encoderId, CONSTANT("PIVOT_GEAR_RATIO"));
-
     ResetConstants();
+}
+
+double Pivot::GetLeftMotorPosition()
+{
+    return m_MotorLeft->GetPosition() / CONSTANT("PIVOT_GEAR_RATIO");
+}
+
+double Pivot::GetRightMotorPosition()
+{
+    return m_MotorRight->GetPosition() / CONSTANT("PIVOT_GEAR_RATIO");
+}
+
+double Pivot::GetAbsoluteEncoderPosition()
+{
+    return m_Encoder->GetAbsolutePosition();
+}
+
+double Pivot::GetAbsoluteEncoderVelocity()
+{
+    return m_Encoder->GetVelocity();
 }
 
 std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
 {
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
-    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot1Signals = m_PivotMotor1->GetSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot2Signals = m_PivotMotor2->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot1Signals = m_MotorLeft->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot2Signals = m_MotorRight->GetSynchronizedSignals();
 
     signals.insert(signals.end(), pivot1Signals.begin(), pivot1Signals.end());
     signals.insert(signals.end(), pivot2Signals.begin(), pivot2Signals.end());
@@ -39,86 +50,50 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
 
 double Pivot::GetAngle()
 {
-    // return CowLib::Conversions::FalconToDegrees(m_PivotMotor1->GetPosition(), CONSTANT("PIVOT_GEAR_RATIO"));
-    return m_PivotMotor1->GetPosition() * 360.0;
+    return GetAbsoluteEncoderPosition() * 360.0;
+}
+
+double Pivot::GetAngularVelocity()
+{
+    return GetAbsoluteEncoderVelocity() * 360.0;
 }
 
 double Pivot::GetSetpoint()
 {
-    //  return CowLib::Conversions::FalconToDegrees(m_PivotPosRequest.Position, CONSTANT("PIVOT_GEAR_RATIO"));
-    return m_PivotPosRequest.Position * 360.0;
+    return m_TargetPosition * 360.0;
 }
 
 void Pivot::SetAngle(double angle)
 {
-    if (angle > CONSTANT("PIVOT_MAX_ANGLE"))
-    {
-        angle = CONSTANT("PIVOT_MAX_ANGLE");
-    }
-    else if (angle < CONSTANT("PIVOT_MIN_ANGLE"))
-    {
-        angle = CONSTANT("PIVOT_MIN_ANGLE");
-    }
-
-    if (angle / 360.0 > m_PivotPosRequest.Position)
-    {
-        // Moving up
-        m_PivotPosRequest.Velocity = CONSTANT("PIVOT_UP_V");
-        m_PivotPosRequest.Acceleration = CONSTANT("PIVOT_UP_A");
-        m_PivotPosRequest.Jerk = CONSTANT("PIVOT_UP_J");
-    }
-    else if (angle / 360.0 < m_PivotPosRequest.Position)
-    {
-        // Moving down
-        m_PivotPosRequest.Velocity = CONSTANT("PIVOT_DOWN_V");
-        m_PivotPosRequest.Acceleration = CONSTANT("PIVOT_DOWN_A");
-        m_PivotPosRequest.Jerk = CONSTANT("PIVOT_DOWN_J");
-    }
-
-    m_PivotPosRequest.Position = angle / 360.0;
+    m_State = State::POSITION;
+    m_TargetPosition = std::clamp(angle, CONSTANT("PIVOT_MIN_ANGLE"), CONSTANT("PIVOT_MAX_ANGLE")) / 360.0;
 }
 
 void Pivot::BrakeMode(bool brakeMode)
 {
     if (brakeMode)
     {
-        if (m_PivotMotor1)
+        if (m_PrevBrakeMode)
         {
-            if (m_PrevBrakeMode)
-            {
-                m_PivotMotor1->ConfigNeutralMode(CowMotor::BRAKE);
-                m_PivotMotor2->ConfigNeutralMode(CowMotor::BRAKE);
-                m_PrevBrakeMode = false;
-            }
+            m_MotorLeft->ConfigNeutralMode(CowMotor::BRAKE);
+            m_MotorRight->ConfigNeutralMode(CowMotor::BRAKE);
+            m_PrevBrakeMode = false;
         }
     }
     else
     {
-        if (m_PivotMotor1)
+        if (!m_PrevBrakeMode)
         {
-            if (!m_PrevBrakeMode)
-            {
-                m_PivotMotor1->ConfigNeutralMode(CowMotor::COAST);
-                m_PivotMotor2->ConfigNeutralMode(CowMotor::COAST);
-                m_PrevBrakeMode = true;
-            }
+            m_MotorLeft->ConfigNeutralMode(CowMotor::COAST);
+            m_MotorRight->ConfigNeutralMode(CowMotor::COAST);
+            m_PrevBrakeMode = true;
         }
     }
 }
 
 bool Pivot::AtTarget()
 {
-    double setpoint = GetSetpoint();
-    double angle = GetAngle();
-
-    if (std::abs(setpoint - angle) < 2.0)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return std::abs(GetSetpoint() - GetAngle()) < 2.0;
 
     // percent difference doesnt work well at higher values
     // double delta = std::abs(setpoint - angle);
@@ -138,54 +113,81 @@ bool Pivot::AtTarget()
 
 void Pivot::ResetConstants()
 {
-    m_PivotMotor1->ConfigPID(CONSTANT("PIVOT_P"),
-                             CONSTANT("PIVOT_I"),
-                             CONSTANT("PIVOT_D"),
-                             CONSTANT("PIVOT_S"),
-                             CONSTANT("PIVOT_V"),
-                             CowMotor::FeedForwardType::COSINE,
-                             0);
+    m_MotorLeft->ConfigPID(CONSTANT("PIVOT_P"),
+                           CONSTANT("PIVOT_I"),
+                           CONSTANT("PIVOT_D"),
+                           CONSTANT("PIVOT_S"),
+                           CONSTANT("PIVOT_V"));
 
-    m_PivotMotor1->ConfigPID(CONSTANT("PIVOT_SLOT_1_P"),
-                             CONSTANT("PIVOT_SLOT_1_I"),
-                             CONSTANT("PIVOT_SLOT_1_D"),
-                             CONSTANT("PIVOT_SLOT_1_S"),
-                             CONSTANT("PIVOT_SLOT_1_V"),
-                             CowMotor::FeedForwardType::COSINE,
-                             1);
-
-    // m_PivotMotor1->ConfigMotionMagic(CONSTANT("PIVOT_V"),
-    //                                  CONSTANT("PIVOT_A"));
-
-
-    // m_PivotMotor2->ConfigPID(CONSTANT("PIVOT_P"),
-    //                          CONSTANT("PIVOT_I"),
-    //                          CONSTANT("PIVOT_D"));
-
-    // m_PivotMotor2->ConfigMotionMagic(CONSTANT("PIVOT_V"),
-    //                                  CONSTANT("PIVOT_A"));
+    m_MotorRight->ConfigPID(CONSTANT("PIVOT_P"),
+                            CONSTANT("PIVOT_I"),
+                            CONSTANT("PIVOT_D"),
+                            CONSTANT("PIVOT_S"),
+                            CONSTANT("PIVOT_V"));
 }
 
 void Pivot::Handle(double elevatorPos)
 {
-    double angleRad = (GetAngle() / 180) * 3.1415;
-    m_PivotPosRequest.FeedForward = std::cos(angleRad) * CONSTANT("PIVOT_FF");
+    // Find the upper-edge of the backlash
+    m_LeftMotorParameters.offset = std::max(
+        m_LeftMotorParameters.offset.value_or(-std::numeric_limits<double>::infinity()),
+        -GetLeftMotorPosition() + GetAbsoluteEncoderPosition());
 
-    if (GetAngle() < CONSTANT("PIVOT_SLOT_0_ANGLE_MAX") || elevatorPos >= CONSTANT("ELEVATOR_CLIMB_UP") * 0.90)
-    {
-        m_PivotPosRequest.Slot = 0;
-    }
-    else
-    {
-        m_PivotPosRequest.Slot = 1;
-    }
+    m_RightMotorParameters.offset = std::max(
+        m_RightMotorParameters.offset.value_or(-std::numeric_limits<double>::infinity()),
+        -GetLeftMotorPosition() + GetAbsoluteEncoderPosition());
 
-    if (m_PivotMotor1)
+    if (m_State == State::IDLE)
     {
-        m_PivotMotor1->Set(m_PivotPosRequest);
+        CowMotor::Control::TorqueCurrent motorRequest = {};
+        m_MotorLeft->Set(motorRequest);
+        m_MotorRight->Set(motorRequest);
     }
-    if (m_PivotMotor2)
+    else if (m_State == State::POSITION)
     {
-        m_PivotMotor2->Set(m_FollowerRequest);
+        CowMotor::Control::DynamicMotionMagicTorqueCurrent leftMotorPositionRequest = {};
+        leftMotorPositionRequest.Position = (m_TargetPosition + m_LeftMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
+
+        CowMotor::Control::DynamicMotionMagicTorqueCurrent rightMotorPositionRequest = {};
+        rightMotorPositionRequest.Position = (m_TargetPosition + m_RightMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
+
+        // Adjust motion profile parameters based on which direction the pivot is moving
+        if (m_TargetPosition > GetAbsoluteEncoderPosition())
+        {
+            leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
+            leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_V");
+            leftMotorPositionRequest.Jerk = CONSTANT("PIVOT_UP_V");
+
+            leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
+            leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_V");
+            leftMotorPositionRequest.Jerk = CONSTANT("PIVOT_UP_V");
+        }
+        else
+        {
+            leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_DOWN_V");
+            leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_DOWN_A");
+            leftMotorPositionRequest.Jerk = CONSTANT("PIVOT_DOWN_J");
+
+            rightMotorPositionRequest.Velocity = CONSTANT("PIVOT_DOWN_V");
+            rightMotorPositionRequest.Acceleration = CONSTANT("PIVOT_DOWN_A");
+            rightMotorPositionRequest.Jerk = CONSTANT("PIVOT_DOWN_J");
+        }
+
+        // If the pivot is near the setpoint, then use one motor to pull out backlash
+        // TODO (dustinlieu): Randomly choose a motor for holding backlash to even out the long-term load on both motors
+        if (std::fabs(m_TargetPosition - GetAbsoluteEncoderPosition()) > CONSTANT("PIVOT_HOLD_BACKLASH_POS_THRESHOLD"))
+        {
+            m_MotorLeft->Set(leftMotorPositionRequest);
+            m_MotorRight->Set(rightMotorPositionRequest);
+        }
+        else
+        {
+            CowMotor::Control::TorqueCurrent holdBacklashRequest = {};
+            holdBacklashRequest.Current = CONSTANT("PIVOT_HOLD_BACKLASH_CURRENT");
+            holdBacklashRequest.MaxDutyCycle = 1.0;
+
+            m_MotorLeft->Set(leftMotorPositionRequest);
+            m_MotorRight->Set(holdBacklashRequest);
+        }
     }
 }
