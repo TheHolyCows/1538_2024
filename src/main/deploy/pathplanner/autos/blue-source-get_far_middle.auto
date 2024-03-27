@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 2.79,
+      "y": 3.04
+    },
+    "rotation": -28.680000000000007
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "blue-source-get_far-1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "blue-source-get_far-2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
