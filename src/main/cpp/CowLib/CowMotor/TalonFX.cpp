@@ -143,22 +143,43 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
-    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, FeedForwardType ffType)
+    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, FeedForwardType ffType, int slot)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
-        config.Slot0.kP = kp;
-        config.Slot0.kI = ki;
-        config.Slot0.kD = kd;
-        config.Slot0.kS = ks;
-        config.Slot0.kV = kv;
 
-        if (ffType == FeedForwardType::LINEAR)
+        if (slot == 0)
         {
-            config.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+            config.Slot0.kP = kp;
+            config.Slot0.kI = ki;
+            config.Slot0.kD = kd;
+            config.Slot0.kS = ks;
+            config.Slot0.kV = kv;
+
+            if (ffType == FeedForwardType::LINEAR)
+            {
+                config.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+            }
+            else
+            {
+                config.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+            }
         }
         else
         {
-            config.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+            config.Slot1.kP = kp;
+            config.Slot1.kI = ki;
+            config.Slot1.kD = kd;
+            config.Slot1.kS = ks;
+            config.Slot1.kV = kv;
+
+            if (ffType == FeedForwardType::LINEAR)
+            {
+                config.Slot1.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+            }
+            else
+            {
+                config.Slot1.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+            }
         }
 
         return ApplyConfig(config);
@@ -265,7 +286,8 @@ namespace CowMotor
             units::turns_per_second_t{ cowRequest.Velocity },
             units::turns_per_second_squared_t{ cowRequest.Acceleration },
             units::turns_per_second_cubed_t{ cowRequest.Jerk },
-            units::ampere_t{ cowRequest.FeedForward }
+            units::ampere_t{ cowRequest.FeedForward },
+            cowRequest.Slot
         );
 
         return m_Talon.SetControl(ctreRequest);

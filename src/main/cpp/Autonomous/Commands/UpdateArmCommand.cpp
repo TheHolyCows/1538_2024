@@ -18,7 +18,7 @@ UpdateArmCommand::UpdateArmCommand(double wristSetpoint, double pivotSetpoint, b
 //     {
 //         m_PivotSetpoint = setpoint;
 //     }
-    
+
 //     m_WaitForCompletion = waitForCompletion;
 // }
 
@@ -52,7 +52,14 @@ void UpdateArmCommand::Start(CowRobot *robot)
     {
         if (m_UseDistForWrist)
         {
-            robot->m_Wrist->SetAngle(robot->m_PivotRangeMap[m_WristSetpoint.value()] + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+            double dist = m_WristSetpoint.value();
+            double wristSetpoint = (CONSTANT("WRIST_AUTO_RANGING_A") * std::pow(dist, 3)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_B") * std::pow(dist, 2)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_C") * std::pow(dist, 1)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0)) +
+                               CONSTANT("WRIST_STATIC_BIAS");
+
+            robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
         }
         else
         {

@@ -19,6 +19,10 @@ void OperatorController::Handle(CowRobot *bot)
     {
         ledState = Vision::LEDState::HOLD;
     }
+    else if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::DETECT_ACTIVE)
+    {
+        ledState = Vision::LEDState::INTAKING;
+    }
 
     // if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
     // {

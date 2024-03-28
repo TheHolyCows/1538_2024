@@ -150,7 +150,7 @@ void CowRobot::Handle()
     m_Drivetrain->Handle();
     m_DriveController->Handle();
 
-    m_Pivot->Handle();
+    m_Pivot->Handle(m_Elevator->GetPosition());
     m_Elevator->Handle(m_Pivot);
     m_Wrist->Handle(m_Pivot);
     m_Shooter->Handle();
