@@ -72,6 +72,15 @@ void OperatorController::Handle(CowRobot *bot)
                                (CONSTANT("WRIST_AUTO_RANGING_C") * std::pow(dist, 1)) +
                                (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0));
 
+        if (dist < CONSTANT("PIVOT_RANGE_DIST_1"))
+        {
+            wristSetpoint = CONSTANT("PIVOT_RANGE_VALUE_1");
+        }
+        else if (dist > CONSTANT("PIVOT_RANGE_DIST_5"))
+        {
+            wristSetpoint = CONSTANT("PIVOT_RANGE_VALUE_5");
+        }
+
         wristSetpoint += wristBias;
 
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
