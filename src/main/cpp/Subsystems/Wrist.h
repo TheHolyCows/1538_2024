@@ -12,6 +12,7 @@
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowMotor/TalonFX.h"
 #include "../CowLib/CowCANCoder.h"
+#include "../CowLib/CowTimer.h"
 
 class Wrist
 {
@@ -35,15 +36,31 @@ public:
     void Handle(Pivot* pivot);
 
 private:
+
+    enum class WristState
+    {
+        STOW,
+        DEFAULT
+    };
+
+    WristState m_WristState;
+
     double m_TargetAngle;
     bool m_CanSetAngle;
 
     bool m_PrevBrakeMode;
+
+    bool m_ZeroFound;
+    double m_CurrentZeroOffset;
 
     std::unique_ptr<CowMotor::TalonFX> m_WristMotor;
 
     std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
 
     CowMotor::Control::MotionMagicPositionDutyCycle m_WristPosRequest = { };
+
+    double m_ZeroTime;
+    
+    CowMotor::Control::TorqueCurrent m_StowRequest = { };
 
 };

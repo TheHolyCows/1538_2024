@@ -50,6 +50,7 @@ double Wrist::GetSetpoint()
 */
 void Wrist::SetAngle(double angle, double pivotSetpoint, bool force)
 {
+    m_WristState = WristState::DEFAULT;
     m_CanSetAngle = true;
 
     if (force)
@@ -73,7 +74,7 @@ void Wrist::SetAngle(double angle, double pivotSetpoint, bool force)
         m_CanSetAngle = false;
     }
 
-    m_TargetAngle = angleSetpoint / 360.0;
+    m_TargetAngle = (angleSetpoint / 360.0) + m_CurrentZeroOffset;
 }
 
 void Wrist::BrakeMode(bool brakeMode)
@@ -109,6 +110,8 @@ bool Wrist::AtTarget()
 
 void Wrist::ResetConstants()
 {
+    m_WristState = WristState::DEFAULT;
+    
     m_WristMotor->ConfigPID(CONSTANT("WRIST_P"),
                             CONSTANT("WRIST_I"),
                             CONSTANT("WRIST_D"));
@@ -118,27 +121,62 @@ void Wrist::ResetConstants()
                                     CONSTANT("WRIST_J"));
 
     m_CanSetAngle = true;
+    m_CurrentZeroOffset = 0;
+    m_ZeroFound = true;
+
+    m_StowRequest.Current = CONSTANT("STOW_REQUEST_CURRENT");
+    m_StowRequest.MaxDutyCycle = CONSTANT("STOW_REQUEST_MAX_DUTY_CYCLE");
 }
 
 void Wrist::Handle(Pivot *pivot)
 {
-    if (pivot->GetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE"))
+    if (m_WristState == WristState::DEFAULT)
     {
-        m_WristPosRequest.Position = std::max(CONSTANT("WRIST_SAFE_WRIST_ANGLE"), m_TargetAngle);
-    }
-    else
-    {
-        m_WristPosRequest.Position = m_TargetAngle;
-    }
+        if (pivot->GetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE"))
+        {
+            m_WristPosRequest.Position = std::max(CONSTANT("WRIST_SAFE_WRIST_ANGLE"), m_TargetAngle);
+        }
+        else
+        {
+            m_WristPosRequest.Position = m_TargetAngle;
+        }
 
-    // need to divide by 360
-    // if (pivot->GetAngle() <= CONSTANT("PIVOT_WRIST_DANGER"))  // 30
+        m_WristMotor->Set(m_WristPosRequest);
+
+    }
+    else // stow
+    {
+        m_WristMotor->Set(m_StowRequest);
+
+        if (m_ZeroFound)
+        {
+            m_ZeroTime = CowLib::GetTime();
+            m_ZeroFound = false;
+        }
+
+        if (CowLib::GetTime() >= m_ZeroTime + 0.5)
+        {
+            if (m_WristMotor->GetVelocity() == 0.0)
+            {
+                m_ZeroFound = true;
+                m_WristPosRequest.Position = m_WristMotor->GetPosition();
+                m_CurrentZeroOffset = m_WristMotor->GetPosition() - CONSTANT("WRIST_ENCODER_MAX");
+                m_WristState = WristState::DEFAULT;
+            }
+        }
+
+    }
+    // current checking for zero
+    // if (GetAngle() >= (CONSTANT("WRIST_STOW_SETPOINT") - CONSTANT("WRIST_STOW_SETPOINT") * 0.1 ) && !m_ZeroFound)
     // {
-    //     if (m_WristPosRequest.Position < CONSTANT("WRIST_LOCKOUT_ANGLE")) // 90 ? 112?
+    //     if (m_WristMotor->GetCurrent() > CONSTANT("WRIST_STALL_CURRENT"))
     //     {
-    //         m_WristPosRequest.Position = CONSTANT("WRIST_LOCKOUT_ANGLE"); // 112ish at ground
+    //         m_ZeroFound = true;
+    //         m_CurrentZeroOffset = m_WristMotor->GetPosition() - CONSTANT("WRIST_ENCODER_MAX");
+    //     }
+    //     else
+    //     {
+    //         m_WristPosRequest.Position = m_WristPosRequest.Position + 0.015;
     //     }
     // }
-
-    m_WristMotor->Set(m_WristPosRequest);
 }
