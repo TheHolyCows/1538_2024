@@ -51,8 +51,6 @@ void OperatorController::Handle(CowRobot *bot)
             goalXOffset *= -1;
         }
 
-        printf("offset %f\n", goalYOffset);
-
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
             .inputY = -m_CB->GetLeftDriveStickX(),
@@ -68,23 +66,12 @@ void OperatorController::Handle(CowRobot *bot)
         frc::Pose2d lookaheadPose = bot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME"))
                                                                     .value_or(bot->GetDrivetrain()->GetPose());
         double dist = bot->m_Vision->GetTargetDist(bot->m_Alliance, lookaheadPose);
-        // double wristSetpoint = bot->m_PivotRangeMap[dist] + wristBias + CONSTANT("WRIST_STATIC_BIAS");
-
+        // double wristSetpoint = bot->m_PivotRangeMap[dist] + wristBias;
         double wristSetpoint = (CONSTANT("WRIST_AUTO_RANGING_A") * std::pow(dist, 3)) +
                                (CONSTANT("WRIST_AUTO_RANGING_B") * std::pow(dist, 2)) +
                                (CONSTANT("WRIST_AUTO_RANGING_C") * std::pow(dist, 1)) +
                                (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0));
 
-        if (dist < CONSTANT("PIVOT_RANGE_DIST_1"))
-        {
-            wristSetpoint = CONSTANT("PIVOT_RANGE_VALUE_1");
-        }
-        else if (dist > CONSTANT("PIVOT_RANGE_DIST_5"))
-        {
-            wristSetpoint = CONSTANT("PIVOT_RANGE_VALUE_5");
-        }
-
-        wristSetpoint += CONSTANT("WRIST_STATIC_BIAS");
         wristSetpoint += wristBias;
 
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
