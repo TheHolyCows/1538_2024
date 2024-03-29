@@ -39,6 +39,26 @@ AutoModes::AutoModes()
                                      new SeriesCommand(series) });
     };
 
+    auto visionPathWithEvents = [](const std::string &pathName,
+                             double startOverride,
+                             double endOverride,
+                             const std::vector<TrajectoryEvent> &events,
+                             bool overrideInitPose = false,
+                             units::feet_per_second_t speed         = 20.21_fps,
+                             units::feet_per_second_squared_t accel = 14_fps_sq)
+    {
+        std::deque<RobotCommand *> series;
+        for (const auto &event : events)
+        {
+            series.push_back(new WaitCommand(event.delay, false));
+            series.push_back(event.command);
+        }
+
+        return new ParallelCommand({ new PathplannerVisionCommand(pathName, speed, accel, startOverride,
+                                                                  endOverride, true, overrideInitPose),
+                                     new SeriesCommand(series) });
+    };
+
 
     /**
      * START AUTO MODE DEFS BELOW
