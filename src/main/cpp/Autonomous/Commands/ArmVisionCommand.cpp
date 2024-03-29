@@ -50,6 +50,8 @@ void ArmVisionCommand::Start(CowRobot *robot)
                             (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0)) +
                             CONSTANT("WRIST_STATIC_BIAS");
 
+    robot->m_Shooter->PrimeShooter(robot->m_ShooterRangeMap[dist]);
+
     robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
 }
 
