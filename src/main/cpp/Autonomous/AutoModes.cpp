@@ -39,27 +39,32 @@ AutoModes::AutoModes()
                                      new SeriesCommand(series) });
     };
 
+    auto preloadCommand = [](double distance)
+    {
+        return new SeriesCommand(
+        {
+            new UpdateArmCommand(5, 80, false),
+            new UpdateShooterSpeed(distance),
+            new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false),
+            new WaitCommand(0.5_s,false), // time to release pin
+            new UpdateArmCommand(distance,
+                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
+                                 false,
+                                 true),
+            new StationaryVisionCommand(0.5_s),
+            new WaitCommand(0.8_s,false),  // might be able to turn this down
+            new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false),
+            new WaitCommand(0.5_s,false),
+            new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false)
+        });
+    };
+
 
     /**
      * START AUTO MODE DEFS BELOW
     */
 
-    m_Modes["pit test"].push_back(new ParallelCommand(
-                                        { new UpdateArmCommand(5, 80, false),
-                                          new UpdateShooterSpeed(7.82) // 15 is lowest dist value in shooter range dist map
-                                        }
-    ));
-    m_Modes["pit test"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
-    m_Modes["pit test"].push_back(new WaitCommand(0.5_s,false));
-    m_Modes["pit test"].push_back(new UpdateArmCommand(7.82,
-                                                      CONSTANT("PIVOT_LAUNCH_SETPOINT"),
-                                                      false,
-                                                      true));
-    m_Modes["pit test"].push_back(new StationaryVisionCommand(0.5_s));
-    m_Modes["pit test"].push_back(new WaitCommand(0.8_s,false));
-    m_Modes["pit test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
-    m_Modes["pit test"].push_back(new WaitCommand(0.5_s,false));
-    m_Modes["pit test"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
+    m_Modes["pit test"].push_back(preloadCommand(7.82));
     m_Modes["pit test"].push_back(new UpdateShooterSpeed(8.044)); // distance for shot 2 in feet
     m_Modes["pit test"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
