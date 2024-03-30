@@ -54,7 +54,22 @@ AutoModes::AutoModes()
             new StationaryVisionCommand(0.5_s),
             new WaitCommand(0.8_s,false),  // might be able to turn this down
             new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false),
-            new WaitCommand(0.5_s,false),
+            new WaitCommand(0.3_s,false),
+            new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false)
+        });
+    };
+
+    auto skipPreloadCommand = [](double distance)
+    {
+        return new SeriesCommand(
+        {
+            new UpdateArmCommand(5, 80, false),
+            new UpdateShooterSpeed(distance),
+            new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false),
+            new WaitCommand(0.5_s,false), // time to release pin
+            new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
+                                 CONSTANT("PIVOT_STOW_SETPOINT"),
+                                 false),
             new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false)
         });
     };
@@ -338,20 +353,18 @@ AutoModes::AutoModes()
     // paths: red-amp-drop-start -> red-amp-drop-1 -> red-amp-drop-2
 
     // pre-load
-    m_Modes["[4] red amp skip -> amp far"].push_back(new ParallelCommand(
-                                        { new UpdateArmCommand(10, 85, false),
-                                          new UpdateShooterSpeed(14.16) // 15 is lowest dist value in shooter range dist map
-                                        }
-    ));
-    m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false));
+    m_Modes["[4] red amp skip -> amp far"].push_back(skipPreloadCommand(14.16));  // 5.65 if we are preloading
+
+    // m_Modes["[4] red amp -> amp far"].push_back(new UpdateShooterSpeed(14.16));  // if preloading
+
     m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                         false));
-
+    
     // piece 1
     m_Modes["[4] red amp skip -> amp far"].push_back(pathWithEvents("red-amp-drop-start",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                  { 3.0_s, new UpdateArmCommand(14.16,  // based on distance of 12.89 above - TODO: update to use distance and read from map
+                                                  { 3.0_s, new UpdateArmCommand(14.16,
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
                                                                                 true) }},
@@ -686,7 +699,7 @@ AutoModes::AutoModes()
                                                             CONSTANT("PIVOT_STOW_SETPOINT"),
                                                             false));
     
-    
+
     /************/
     /*** BLUE ***/
     /************/
