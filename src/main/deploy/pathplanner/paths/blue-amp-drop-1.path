@@ -12,7 +12,7 @@
         "y": 7.005529395674177
       },
       "isLocked": false,
-      "linkedName": "blue-amp-drop-start_end"
+      "linkedName": "blue-amp_far-shoot"
     },
     {
       "anchor": {
@@ -41,7 +41,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "blue-amp-drop-start_end"
+      "linkedName": "blue-amp_far-shoot"
     }
   ],
   "rotationTargets": [
