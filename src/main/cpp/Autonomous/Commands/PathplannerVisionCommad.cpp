@@ -86,15 +86,18 @@ void PathplannerVisionCommand::Handle(CowRobot *robot)
         = m_Trajectory->sample(units::second_t{ m_Timer->Get() });
 
     // this is called in the PathPlanner implementation of this method, not sure why
-    targetState = targetState.reverse();
+    // targetState = targetState.reverse();
 
     // override rotation
     double percentCompletion = m_Timer->Get() / m_TotalTime * 100;
     if (percentCompletion >= m_StartOverridePercent && percentCompletion <= m_EndOverridePercent)
     {
-        // TODO: need to also adjust heading from reference state for FeedForward ?
-        //   maybe... this whole thing does compensate if you wish to override rotation already...
-        // targetState.targetHolonomicRotation = frc::Rotation2d { };
+        frc::Translation2d targetXY = robot->m_Vision->GetTargetXY(robot->m_Alliance);
+        double angleToTarget = std::atan2(targetXY.Y().convert<units::foot>().value() - robot->m_Drivetrain->GetPoseY(),
+                                          targetXY.X().convert<units::foot>().value() - robot->m_Drivetrain->GetPoseX());
+        targetState.targetHolonomicRotation = frc::Rotation2d { units::degree_t(angleToTarget) };
+
+        // optionally include wrist?
     }
 
 
