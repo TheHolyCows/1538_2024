@@ -149,7 +149,7 @@ AutoModes::AutoModes()
     /* START 2024 AUTOS */
     // should have:
     //   x red amp to amp far 4 piece
-    //   - red amp to amp far (skip near) 4 piece
+    //   x red amp to amp far (skip near) 4 piece
     //   x red source to amp far 5 piece
     //   x red source to source far 3/4 piece
     //   x red source to mid far (mid first -> source) 3/4 piece
@@ -158,7 +158,8 @@ AutoModes::AutoModes()
 
 
 
-    /* [4] red amp -> amp far */
+    /* [4] red amp -> amp far: */
+    // paths: red-amp_start-root -> red-amp_far-1 -> red-amp_far-2
     // pre-load
     m_Modes["[4] red amp -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(10, 85, false),
@@ -332,7 +333,11 @@ AutoModes::AutoModes()
     //                                                     CONSTANT("PIVOT_STOW_SETPOINT"),
     //                                                     false));
 
+
     /* [4] red amp skip -> amp far */
+    // paths: red-amp-drop-start -> red-amp-drop-1 -> red-amp-drop-2
+
+    // pre-load
     m_Modes["[4] red amp skip -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(10, 85, false),
                                           new UpdateShooterSpeed(14.16) // 15 is lowest dist value in shooter range dist map
@@ -407,6 +412,8 @@ AutoModes::AutoModes()
 
 
     /* [5] red source -> amp far */
+    // paths: red-source_get-close_start -> red_get-close_2 -> red_get-close_3 -> red-amp_far-1_from-shoot
+
     // pre-load
     m_Modes["[5] red source -> amp far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(5, 80, false),
@@ -509,7 +516,10 @@ AutoModes::AutoModes()
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
                                                         false));
 
-    /* red source -> source far (source side first) */
+    /* [4] red source -> source far */
+    // paths: red-source-get-far_start -> red-source-get_far-1 -> red-source-get_far-2
+
+    // pre-load
     m_Modes["[4] red source -> source far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(5, 80, false),
                                           new UpdateShooterSpeed(7.82) // 15 is lowest dist value in shooter range dist map
@@ -591,7 +601,10 @@ AutoModes::AutoModes()
                                                             CONSTANT("PIVOT_STOW_SETPOINT"),
                                                             false));
 
-    /* red source -> mid far (mid first) */
+    /* [4] red source -> mid far */
+    // paths: red-source-drop-start -> red-source-get_far-1 -> red-source_get-mid-source_from-shoot
+
+    // pre-load
     m_Modes["[4] red source -> mid far"].push_back(new ParallelCommand(
                                         { new UpdateArmCommand(5, 80, false),
                                           new UpdateShooterSpeed(7.82) // 15 is lowest dist value in shooter range dist map
@@ -673,8 +686,11 @@ AutoModes::AutoModes()
                                                             CONSTANT("PIVOT_STOW_SETPOINT"),
                                                             false));
     
+    
+    /************/
+    /*** BLUE ***/
+    /************/
 
-    /* BLUE */
     /* [5] blue amp -> amp far */
     // pre-load
     m_Modes["[5] blue amp -> amp far"].push_back(new ParallelCommand(
