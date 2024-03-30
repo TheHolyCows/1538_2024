@@ -375,11 +375,11 @@ AutoModes::AutoModes()
     m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[4] red amp skip -> amp far"].push_back(new WaitCommand(0.15_s,false));
     m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
-    m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
-                                                            CONSTANT("PIVOT_GROUND_SETPOINT"),
-                                                            false));
-    m_Modes["[4] red amp skip -> amp far"].push_back(new WaitCommand(0.6_s,false));
-    // piece 3
+    m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
+                                                        CONSTANT("PIVOT_STOW_SETPOINT"),
+                                                        false));
+
+    // piece 2
     m_Modes["[4] red amp skip -> amp far"].push_back(pathWithEvents("red-amp-drop-1",
                                                   { { 0.01_s, new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                                                     CONSTANT("PIVOT_GROUND_SETPOINT"),
@@ -400,7 +400,7 @@ AutoModes::AutoModes()
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
                                                         false));
 
-    // piece 4
+    // piece 3
     m_Modes["[4] red amp skip -> amp far"].push_back(pathWithEvents("red-amp-drop-2",
                                                 { { 0.4_s, new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                                               CONSTANT("PIVOT_GROUND_SETPOINT"),
