@@ -84,7 +84,7 @@ void OperatorController::Handle(CowRobot *bot)
         wristSetpoint += wristBias;
 
         bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
-        bot->m_Wrist->SetAngle(wristSetpoint, bot->m_Pivot->GetSetpoint());
+        bot->m_Wrist->SetAngle(wristSetpoint, bot->m_Pivot->GetAngle());
 
         // Shooter
         if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))

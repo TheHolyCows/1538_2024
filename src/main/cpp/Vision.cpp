@@ -45,7 +45,7 @@ void Vision::ResetConstants()
     // Center
     frc::Transform3d robotToCenterCamera(
         frc::Translation3d(-11.064_in, 0.0_in, 6.950596_in),
-        frc::Rotation3d(0_deg, -20_deg, 180_deg));
+        frc::Rotation3d(0_deg, -25_deg, 180_deg));
 
     m_PoseEstimators.at(1)->SetRobotToCameraTransform(robotToCenterCamera);
 
