@@ -143,7 +143,7 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
-    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, FeedForwardType ffType, int slot)
+    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, double ka, FeedForwardType ffType, int slot)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
 
@@ -154,6 +154,7 @@ namespace CowMotor
             config.Slot0.kD = kd;
             config.Slot0.kS = ks;
             config.Slot0.kV = kv;
+            config.Slot0.kA = ka;
 
             if (ffType == FeedForwardType::LINEAR)
             {
@@ -171,6 +172,7 @@ namespace CowMotor
             config.Slot1.kD = kd;
             config.Slot1.kS = ks;
             config.Slot1.kV = kv;
+            config.Slot1.kA = ka;
 
             if (ffType == FeedForwardType::LINEAR)
             {

@@ -28,7 +28,7 @@ CowRobot::CowRobot()
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
     // lilly wuz here
-    m_Pivot = new Pivot(9, 10, 29, CONSTANT("PIVOT_ENCODER_OFFSET"));
+    m_Pivot = new Pivot(10, 9, 29, CONSTANT("PIVOT_ENCODER_OFFSET"));
     m_Elevator = new Elevator(11, 12);
     m_Wrist = new Wrist(13, 30, CONSTANT("WRIST_ENCODER_OFFSET"));
     m_Vision = new Vision();
