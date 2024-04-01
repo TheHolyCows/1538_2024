@@ -35,34 +35,25 @@ CowRobot::CowRobot()
     m_Shooter = new Shooter(15, 16, 14, 50, m_Vision);
     // m_Fan = new Fan(51);
 
-    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowDriveSynchronizedSignals());
-    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, GetCowBusSynchronizedSignals());
-}
-
-std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetCowDriveSynchronizedSignals()
-{
-    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    // CowDrive signals
     std::vector<ctre::phoenix6::BaseStatusSignal*> drivetrainSignals = m_Drivetrain->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> pivotSignals = m_Pivot->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> gyroSignals = m_Gyro->GetSynchronizedSignals();
-    signals.insert(signals.end(), drivetrainSignals.begin(), drivetrainSignals.end());
-    signals.insert(signals.end(), pivotSignals.begin(), pivotSignals.end());
-    signals.insert(signals.end(), gyroSignals.begin(), gyroSignals.end());
+    m_CowDriveSignals.insert(m_CowDriveSignals.end(), drivetrainSignals.begin(), drivetrainSignals.end());
+    m_CowDriveSignals.insert(m_CowDriveSignals.end(), pivotSignals.begin(), pivotSignals.end());
+    m_CowDriveSignals.insert(m_CowDriveSignals.end(), gyroSignals.begin(), gyroSignals.end());
 
-    return signals;
-}
-
-std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetCowBusSynchronizedSignals()
-{
-    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    // CowBus signals
     std::vector<ctre::phoenix6::BaseStatusSignal*> shooterSignals = m_Shooter->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> elevatorSignals = m_Elevator->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> wristSignals = m_Wrist->GetSynchronizedSignals();
-    signals.insert(signals.end(), shooterSignals.begin(), shooterSignals.end());
-    signals.insert(signals.end(), elevatorSignals.begin(), elevatorSignals.end());
-    signals.insert(signals.end(), wristSignals.begin(), wristSignals.end());
+    m_CowBusSignals.insert(m_CowBusSignals.end(), shooterSignals.begin(), shooterSignals.end());
+    m_CowBusSignals.insert(m_CowBusSignals.end(), elevatorSignals.begin(), elevatorSignals.end());
+    m_CowBusSignals.insert(m_CowBusSignals.end(), wristSignals.begin(), wristSignals.end());
 
-    return signals;
+    // Set update frequency for signals
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, m_CowDriveSignals);
+    ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(200_Hz, m_CowBusSignals);
 }
 
 /**
@@ -117,8 +108,8 @@ void CowRobot::PrintToDS()
 void CowRobot::SampleSensors()
 {
     // Synchronize and sample time-critical sensors
-    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowDriveSynchronizedSignals());
-    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, GetCowBusSynchronizedSignals());
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, m_CowDriveSignals);
+    ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, m_CowBusSignals);
 
     // Sample sensors
     m_Vision->SampleSensors();

@@ -50,6 +50,8 @@ void CowBase::DisabledInit()
     m_Bot->GetDrivetrain()->SetBrakeMode(true);
 
     m_Bot->m_Vision->SetLEDState(Vision::LEDState::OFF);
+
+    m_Bot->Reset();
 }
 
 void CowBase::AutonomousInit()
@@ -64,7 +66,6 @@ void CowBase::AutonomousInit()
     AutoModes::GetInstance()->NextMode();
 
     m_Bot->SetController(m_AutoController);
-    m_Bot->Reset();
 
     CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG, "start auto mode");
     m_AutoController->Start(m_Bot);

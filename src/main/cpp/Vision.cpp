@@ -45,7 +45,7 @@ void Vision::ResetConstants()
     // Center
     frc::Transform3d robotToCenterCamera(
         frc::Translation3d(-11.064_in, 0.0_in, 6.950596_in),
-        frc::Rotation3d(0_deg, -20_deg, 180_deg));
+        frc::Rotation3d(0_deg, -25_deg, 180_deg));
 
     m_PoseEstimators.at(1)->SetRobotToCameraTransform(robotToCenterCamera);
 
@@ -144,6 +144,11 @@ double Vision::GetTargetDist(std::optional<frc::DriverStation::Alliance> allianc
     return dist;
 }
 
+double Vision::GetPassTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose)
+{
+    return GetTargetDist(alliance, lookaheadPose) / 2.0;
+}
+
 frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Alliance> alliance)
 {
     // maybe swap this to look at which half of the field we're on
@@ -159,6 +164,28 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
         {
             return { units::foot_t(BLUE_SPEAKER.X()) - units::foot_t(CONSTANT("BLUE_GOAL_X_OFFSET")),
                      units::foot_t(BLUE_SPEAKER.Y()) - units::foot_t(CONSTANT("BLUE_GOAL_Y_OFFSET"))};
+        }
+
+    }
+
+    return { 0_ft, 0_ft };
+}
+
+frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance)
+{
+    // maybe swap this to look at which half of the field we're on
+    if (alliance.has_value())
+    {
+        if (alliance.value() == frc::DriverStation::Alliance::kRed)
+        {
+            return { units::foot_t(RED_CORNER.X()),
+                     units::foot_t(RED_CORNER.Y())};
+
+        }
+        else
+        {
+            return { units::foot_t(BLUE_CORNER.X()),
+                     units::foot_t(BLUE_CORNER.Y())};
         }
 
     }

@@ -100,6 +100,31 @@ void OperatorController::Handle(CowRobot *bot)
             m_LastShotWrist = wristSetpoint;
         }
     }
+    else if (m_CB->GetVisionTargetPassButton())
+    {
+        // Drivetrain targetting
+        frc::Translation2d targetXY = bot->m_Vision->GetPassTargetXY(bot->m_Alliance);
+
+        SwerveDriveController::DriveLookAtRequest req = {
+            .inputX = m_CB->GetLeftDriveStickY(),
+            .inputY = -m_CB->GetLeftDriveStickX(),
+            .targetX = units::foot_t(targetXY.X()).value(),
+            .targetY = units::foot_t(targetXY.Y()).value(),
+            .robotSide = SwerveDriveController::RobotSide::BACK,
+            .lookaheadTime = 0.0
+        };
+
+        bot->GetDriveController()->Request(req);
+
+        double wristBias = m_CB->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
+        double dist = bot->m_Vision->GetTargetDist(bot->m_Alliance, bot->GetDrivetrain()->GetPose());
+
+        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
+        bot->m_Wrist->SetAngle(CONSTANT("PASS_WRIST"), bot->m_Pivot->GetSetpoint());
+
+        // Shooter
+        bot->m_Shooter->PrimeShooter(CONSTANT("PASS_SHOOTER"));
+    }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {
         SwerveDriveController::DriveLockHeadingRequest req = {
@@ -148,7 +173,7 @@ void OperatorController::Handle(CowRobot *bot)
 
     if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
     {
-        if (!m_CB->GetVisionTargetButton())
+        if (!m_CB->GetVisionTargetButton() && !m_CB->GetVisionTargetPassButton())
         {
             bot->m_Shooter->PrimeShooter(CONSTANT("SHOOTER_RANGE_VALUE_1"));
         }
@@ -157,7 +182,7 @@ void OperatorController::Handle(CowRobot *bot)
     {
         bot->m_Shooter->Exhaust();
     }
-    else
+    else if (!m_CB->GetVisionTargetPassButton())
     {
         bot->m_Shooter->StopShooter();
     }

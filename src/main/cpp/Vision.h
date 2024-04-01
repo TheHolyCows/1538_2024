@@ -44,8 +44,13 @@ public:
     const frc::Translation2d BLUE_SPEAKER = { 0_ft, 18.2016666667_ft };
     const frc::Translation2d RED_SPEAKER = { 54.3941666667_ft, 18.2016666667_ft };
 
+    const frc::Translation2d BLUE_CORNER = { 0_ft, 0_ft };
+    const frc::Translation2d RED_CORNER = { 54.3941666667_ft, 26_ft };
+
     double GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
+    double GetPassTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
     frc::Translation2d GetTargetXY(std::optional<frc::DriverStation::Alliance> alliance);
+    frc::Translation2d GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance);
 private:
     std::vector<std::unique_ptr<photon::PhotonPoseEstimator>> m_PoseEstimators;
     std::vector<std::shared_ptr<photon::PhotonCamera>> m_Cameras;
