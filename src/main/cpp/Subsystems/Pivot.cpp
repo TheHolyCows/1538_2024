@@ -3,17 +3,36 @@
 Pivot::Pivot(const int motorLeftID, const int motorRightID, const int encoderId, double encoderOffset)
 {
     m_MotorLeft = std::make_unique<CowMotor::TalonFX>(motorLeftID, "cowdrive");
-    m_MotorLeft->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     m_MotorLeft->ConfigPositivePolarity(CowMotor::Direction::COUNTER_CLOCKWISE);
 
     m_MotorRight = std::make_unique<CowMotor::TalonFX>(motorRightID, "cowdrive");
-    m_MotorRight->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     m_MotorRight->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
 
     m_Encoder = std::make_unique<CowLib::CowCANCoder>(encoderId, "cowdrive");
     m_Encoder->ConfigAbsoluteOffset(encoderOffset);
 
+    ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     ResetConstants();
+}
+
+std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
+{
+    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> motorLeftSignals = m_MotorLeft->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> motorRightSignals = m_MotorRight->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> encoderSignals = m_Encoder->GetSynchronizedSignals();
+
+    signals.insert(signals.end(), motorLeftSignals.begin(), motorLeftSignals.end());
+    signals.insert(signals.end(), motorRightSignals.begin(), motorRightSignals.end());
+    signals.insert(signals.end(), encoderSignals.begin(), encoderSignals.end());
+
+    return signals;
+}
+
+void Pivot::ConfigNeutralMode(CowMotor::NeutralMode neutralMode)
+{
+    m_MotorLeft->ConfigNeutralMode(neutralMode);
+    m_MotorRight->ConfigNeutralMode(neutralMode);
 }
 
 double Pivot::GetLeftMotorPosition()
@@ -36,20 +55,6 @@ double Pivot::GetAbsoluteEncoderVelocity()
     return m_Encoder->GetVelocity();
 }
 
-std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
-{
-    std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
-    std::vector<ctre::phoenix6::BaseStatusSignal*> motorLeftSignals = m_MotorLeft->GetSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> motorRightSignals = m_MotorRight->GetSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> encoderSignals = m_Encoder->GetSynchronizedSignals();
-
-    signals.insert(signals.end(), motorLeftSignals.begin(), motorLeftSignals.end());
-    signals.insert(signals.end(), motorRightSignals.begin(), motorRightSignals.end());
-    signals.insert(signals.end(), encoderSignals.begin(), encoderSignals.end());
-
-    return signals;
-}
-
 double Pivot::GetAngle()
 {
     return GetAbsoluteEncoderPosition() * 360.0;
@@ -60,42 +65,20 @@ double Pivot::GetAngularVelocity()
     return GetAbsoluteEncoderVelocity() * 360.0;
 }
 
-double Pivot::GetSetpoint()
+double Pivot::GetTargetAngle()
 {
     return m_TargetPosition * 360.0;
 }
 
-void Pivot::SetAngle(double angle)
+void Pivot::SetTargetAngle(double angle)
 {
     m_State = State::POSITION;
     m_TargetPosition = std::clamp(angle, CONSTANT("PIVOT_MIN_ANGLE"), CONSTANT("PIVOT_MAX_ANGLE")) / 360.0;
 }
 
-void Pivot::BrakeMode(bool brakeMode)
+bool Pivot::IsOnTarget()
 {
-    if (brakeMode)
-    {
-        if (m_PrevBrakeMode)
-        {
-            m_MotorLeft->ConfigNeutralMode(CowMotor::BRAKE);
-            m_MotorRight->ConfigNeutralMode(CowMotor::BRAKE);
-            m_PrevBrakeMode = false;
-        }
-    }
-    else
-    {
-        if (!m_PrevBrakeMode)
-        {
-            m_MotorLeft->ConfigNeutralMode(CowMotor::COAST);
-            m_MotorRight->ConfigNeutralMode(CowMotor::COAST);
-            m_PrevBrakeMode = true;
-        }
-    }
-}
-
-bool Pivot::AtTarget()
-{
-    return std::abs(GetSetpoint() - GetAngle()) < 2.0;
+    return std::abs(GetTargetAngle() - GetAngle()) < 2.0;
 
     // percent difference doesnt work well at higher values
     // double delta = std::abs(setpoint - angle);

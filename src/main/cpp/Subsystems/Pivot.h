@@ -14,6 +14,7 @@
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowMotor/TalonFX.h"
 #include "../CowLib/CowCANCoder.h"
+#include "../CowLib/CowMotor/GenericMotorController.h"
 
 class Pivot
 {
@@ -22,19 +23,17 @@ public:
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
+    void ConfigNeutralMode(CowMotor::NeutralMode neutralMode);
+
     double GetAngle(void);
     double GetAngularVelocity();
 
-    double GetSetpoint(void);
+    double GetTargetAngle(void);
+    void SetTargetAngle(double angle);
 
-    void SetAngle(double angle);
-
-    void BrakeMode(bool brakeMode);
-
-    bool AtTarget(void);
+    bool IsOnTarget(void);
 
     void ResetConstants(void);
-
     void Handle(double elevatorPos);
 
 private:
@@ -60,7 +59,6 @@ private:
     MotorParameters m_RightMotorParameters;
 
     double m_TargetPosition;
-    bool m_PrevBrakeMode;
 
     double GetLeftMotorPosition();
     double GetRightMotorPosition();

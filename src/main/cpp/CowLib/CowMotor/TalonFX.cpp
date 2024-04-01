@@ -115,16 +115,20 @@ namespace CowMotor
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
 
-        if (neutralMode == NeutralMode::COAST)
+        if (neutralMode == NeutralMode::COAST && config.MotorOutput.NeutralMode != ctre::phoenix6::signals::NeutralModeValue::Coast)
         {
             config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+            return ApplyConfig(config);
         }
-        else if (neutralMode == NeutralMode::BRAKE)
+        else if (neutralMode == NeutralMode::BRAKE && config.MotorOutput.NeutralMode != ctre::phoenix6::signals::NeutralModeValue::Brake)
         {
             config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+            return ApplyConfig(config);
         }
-
-        return ApplyConfig(config);
+        else
+        {
+            return ctre::phoenix::StatusCode::OK;
+        }
     }
 
     Status TalonFX::ConfigPositivePolarity(Direction positivePolarity)

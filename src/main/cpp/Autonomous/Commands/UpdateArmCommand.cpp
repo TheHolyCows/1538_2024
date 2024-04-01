@@ -31,7 +31,7 @@ bool UpdateArmCommand::IsComplete(CowRobot *robot)
     }
 
     // gonna ignore wrist since that is less important
-    if (robot->m_Pivot->AtTarget())
+    if (robot->m_Pivot->IsOnTarget())
     {
         return true;
     }
@@ -44,7 +44,7 @@ void UpdateArmCommand::Start(CowRobot *robot)
 
     if (m_PivotSetpoint.has_value())
     {
-        robot->m_Pivot->SetAngle(m_PivotSetpoint.value());
+        robot->m_Pivot->SetTargetAngle(m_PivotSetpoint.value());
         // printf("pivot: %f\n",m_PivotSetpoint.value());
     }
 
@@ -59,11 +59,11 @@ void UpdateArmCommand::Start(CowRobot *robot)
                                (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0)) +
                                CONSTANT("WRIST_STATIC_BIAS");
 
-            robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+            robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetTargetAngle());
         }
         else
         {
-            robot->m_Wrist->SetAngle(m_WristSetpoint.value() + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+            robot->m_Wrist->SetAngle(m_WristSetpoint.value() + robot->m_BiasForAuto, robot->m_Pivot->GetTargetAngle());
         }
     }
 }
