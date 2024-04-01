@@ -13,6 +13,7 @@ public:
     virtual bool GetConstantsResetButton() = 0;
     virtual bool GetRobotRelativeButton()  = 0;
     virtual bool GetVisionTargetButton()   = 0;
+    virtual bool GetVisionTargetPassButton()   = 0;
 
     virtual bool GetDriveButton(int) = 0;
     virtual double GetDriveAxis(int) = 0;
