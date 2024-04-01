@@ -39,12 +39,12 @@ double Pivot::GetAbsoluteEncoderVelocity()
 std::vector<ctre::phoenix6::BaseStatusSignal*> Pivot::GetSynchronizedSignals()
 {
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
-    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot1Signals = m_MotorLeft->GetSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> pivot2Signals = m_MotorRight->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> motorLeftSignals = m_MotorLeft->GetSynchronizedSignals();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> motorRightSignals = m_MotorRight->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> encoderSignals = m_Encoder->GetSynchronizedSignals();
 
-    signals.insert(signals.end(), pivot1Signals.begin(), pivot1Signals.end());
-    signals.insert(signals.end(), pivot2Signals.begin(), pivot2Signals.end());
+    signals.insert(signals.end(), motorLeftSignals.begin(), motorLeftSignals.end());
+    signals.insert(signals.end(), motorRightSignals.begin(), motorRightSignals.end());
     signals.insert(signals.end(), encoderSignals.begin(), encoderSignals.end());
 
     return signals;
@@ -152,17 +152,7 @@ void Pivot::Handle(double elevatorPos)
         m_RightMotorParameters.offset = std::max(
             m_RightMotorParameters.offset.value(),
             GetRightMotorPosition() - GetAbsoluteEncoderPosition());
-
-        // m_LeftMotorParameters.offset = GetLeftMotorPosition() - GetAbsoluteEncoderPosition();
-        // m_RightMotorParameters.offset = GetRightMotorPosition() - GetAbsoluteEncoderPosition();
-
-        // printf("%f %f\n", m_LeftMotorParameters.offset.value(), GetLeftMotorPosition() + GetAbsoluteEncoderPosition());
-
-        // printf("setting\n");
     }
-
-    // printf("%f %f\n", GetLeftMotorPosition() - m_LeftMotorParameters.offset.value(), GetAbsoluteEncoderPosition());
-    // printf("%f %f\n", GetLeftMotorPosition(), GetAbsoluteEncoderPosition());
 
     if (m_State == State::IDLE)
     {
@@ -178,51 +168,15 @@ void Pivot::Handle(double elevatorPos)
         CowMotor::Control::DynamicMotionMagicTorqueCurrent rightMotorPositionRequest = {};
         rightMotorPositionRequest.Position = (m_TargetPosition + m_RightMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
 
-        // printf("%f %f\n", m_MotorLeft->GetVelocity() - leftMotorPositionRequest.Position, m_MotorRight->GetVelocity() - rightMotorPositionRequest.Position);
+        leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
+        leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_A");
+        leftMotorPositionRequest.Jerk = CONSTANT("PIVOT_UP_J");
 
-        // Adjust motion profile parameters based on which direction the pivot is moving
-        // if (m_TargetPosition > GetAbsoluteEncoderPosition())
-        // {
-            leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
-            leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_A");
-            leftMotorPositionRequest.Jerk = CONSTANT("PIVOT_UP_J");
+        rightMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
+        rightMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_A");
+        rightMotorPositionRequest.Jerk = CONSTANT("PIVOT_UP_J");
 
-            rightMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
-            rightMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_A");
-            rightMotorPositionRequest.Jerk = CONSTANT("PIVOT_UP_J");
-        // }
-        // else
-        // {
-        //     leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_DOWN_V");
-        //     leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_DOWN_A");
-        //     leftMotorPositionRequest.Jerk = CONSTANT("PIVOT_DOWN_J");
-
-        //     rightMotorPositionRequest.Velocity = CONSTANT("PIVOT_DOWN_V");
-        //     rightMotorPositionRequest.Acceleration = CONSTANT("PIVOT_DOWN_A");
-        //     rightMotorPositionRequest.Jerk = CONSTANT("PIVOT_DOWN_J");
-        // }
-
-        // If the pivot is near the setpoint, then use one motor to pull out backlash
-        // TODO (dustinlieu): Randomly choose a motor for holding backlash to even out the long-term load on both motors
-        // if (std::fabs(m_TargetPosition - GetAbsoluteEncoderPosition()) > CONSTANT("PIVOT_HOLD_BACKLASH_POS_THRESHOLD"))
-        // {
-            m_MotorLeft->Set(leftMotorPositionRequest);
-            m_MotorRight->Set(rightMotorPositionRequest);
-
-            // printf("%f\n", leftMotorPositionRequest.Velocity);
-
-            // printf("%f %f %f\n", GetAbsoluteEncoderPosition(), m_MotorLeft->GetPosition(), leftMotorPositionRequest.Position);
-        // }
-        // else
-        // {
-        //     CowMotor::Control::TorqueCurrent holdBacklashRequest = {};
-        //     holdBacklashRequest.Current = CONSTANT("PIVOT_HOLD_BACKLASH_CURRENT");
-        //     holdBacklashRequest.MaxDutyCycle = 0.125;
-
-        //     m_MotorLeft->Set(leftMotorPositionRequest);
-        //     m_MotorRight->Set(holdBacklashRequest);
-
-        //     printf("holding backlash\n");
-        // }
+        m_MotorLeft->Set(leftMotorPositionRequest);
+        m_MotorRight->Set(rightMotorPositionRequest);
     }
 }
