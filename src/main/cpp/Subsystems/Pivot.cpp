@@ -122,6 +122,7 @@ void Pivot::Handle(double elevatorPos)
         m_RightMotorParameters.offset = GetRightMotorPosition() - GetAbsoluteEncoderPosition();
     }
 
+    // TODO (dustinlieu): Do we really need to wait for it to stop moving?
     if (fabs(GetAbsoluteEncoderVelocity()) == 0.0 &&
         fabs(m_MotorLeft->GetVelocity()) == 0.0 &&
         fabs(m_MotorRight->GetVelocity()) == 0.0 &&

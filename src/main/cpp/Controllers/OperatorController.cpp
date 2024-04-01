@@ -39,9 +39,6 @@ void OperatorController::Handle(CowRobot *bot)
         // Drivetrain targetting
         frc::Translation2d targetXY = bot->m_Vision->GetTargetXY(bot->m_Alliance);
 
-        double angleToTarget = std::atan2(targetXY.Y().convert<units::foot>().value() - bot->m_Drivetrain->GetPoseY(),
-                                          targetXY.X().convert<units::foot>().value() - bot->m_Drivetrain->GetPoseX());
-
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
             .inputY = -m_CB->GetLeftDriveStickX(),
@@ -77,7 +74,7 @@ void OperatorController::Handle(CowRobot *bot)
         wristSetpoint += wristBias;
 
         bot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
-        bot->m_Wrist->SetAngle(wristSetpoint, bot->m_Pivot->GetTargetAngle());
+        bot->m_Wrist->SetAngle(wristSetpoint, bot->m_Pivot->GetAngle());
 
         // Shooter
         if (!m_CB->GetOperatorButton(SWITCH_SHOOTER))
