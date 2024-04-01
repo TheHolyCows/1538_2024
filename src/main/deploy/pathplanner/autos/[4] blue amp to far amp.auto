@@ -14,19 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "blue-amp-start-to_far"
+            "pathName": "blue-amp_start-root"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "blue-amp_far-1"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "blue-amp_far-2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "blue-amp_far-3"
           }
         }
       ]
