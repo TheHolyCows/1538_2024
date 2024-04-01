@@ -119,8 +119,8 @@ void OperatorController::Handle(CowRobot *bot)
         double wristBias = m_CB->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
         double dist = bot->m_Vision->GetTargetDist(bot->m_Alliance, bot->GetDrivetrain()->GetPose());
 
-        bot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
-        bot->m_Wrist->SetAngle(CONSTANT("PASS_WRIST"), bot->m_Pivot->GetSetpoint());
+        bot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
+        bot->m_Wrist->SetAngle(CONSTANT("PASS_WRIST"), bot->m_Pivot->GetTargetAngle());
 
         // Shooter
         bot->m_Shooter->PrimeShooter(CONSTANT("PASS_SHOOTER"));
