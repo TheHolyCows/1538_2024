@@ -37,7 +37,14 @@ void StationaryVisionCommand::Handle(CowRobot *robot)
     double dist = robot->m_Vision->GetTargetDist(robot->m_Alliance, lookaheadPose);
 
     double wristBias = robot->m_BiasForAuto;
-    double wristSetpoint = robot->m_PivotRangeMap[dist] + wristBias;
+
+    double wristSetpoint = (CONSTANT("WRIST_AUTO_RANGING_A") * std::pow(dist, 3)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_B") * std::pow(dist, 2)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_C") * std::pow(dist, 1)) +
+                               (CONSTANT("WRIST_AUTO_RANGING_D") * std::pow(dist, 0)) +
+                               CONSTANT("WRIST_STATIC_BIAS");
+
+    robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetAngle());
 
     robot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
     // robot->m_Wrist->SetAngle(rangePivot + CONSTANT("WRIST_OFFSET_BIAS"), robot->m_Pivot->GetSetpoint());
