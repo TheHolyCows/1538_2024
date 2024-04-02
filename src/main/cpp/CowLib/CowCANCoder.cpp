@@ -16,8 +16,7 @@ namespace CowLib
         m_SynchronizedSignals.MagnetHealth = &m_CANCoder->GetMagnetHealth();
         m_SynchronizedSignals.Position = &m_CANCoder->GetPosition();
         m_SynchronizedSignals.AbsolutePosition = &m_CANCoder->GetPosition();
-
-        m_UnsynchronizedSignals.Velocity = &m_CANCoder->GetVelocity();
+        m_SynchronizedSignals.Velocity = &m_CANCoder->GetVelocity();
 
         // This is what 1678 uses for swerve so okay
         // TODO: check if this is correct
@@ -30,7 +29,8 @@ namespace CowLib
         std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
             m_SynchronizedSignals.MagnetHealth,
             m_SynchronizedSignals.Position,
-            m_SynchronizedSignals.AbsolutePosition
+            m_SynchronizedSignals.AbsolutePosition,
+            m_SynchronizedSignals.Velocity
         };
 
         return signals;
@@ -88,7 +88,7 @@ namespace CowLib
 
     double CowCANCoder::GetVelocity()
     {
-        return m_UnsynchronizedSignals.Velocity->GetValue().value();
+        return m_SynchronizedSignals.Velocity->GetValue().value();
     }
 
     /// @brief Gets internal CANCoder

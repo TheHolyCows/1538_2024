@@ -162,13 +162,13 @@ void CowBase::DisabledPeriodic()
 
         if (m_ControlBoard->GetOperatorButton(2)) // climb down
         {
-            m_Bot->m_Pivot->BrakeMode(false);
+            m_Bot->m_Pivot->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
             m_Bot->m_Wrist->BrakeMode(false);
             m_Bot->m_Elevator->BrakeMode(false);
         }
         else
         {
-            m_Bot->m_Pivot->BrakeMode(true);
+            m_Bot->m_Pivot->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
             m_Bot->m_Wrist->BrakeMode(true);
             m_Bot->m_Elevator->BrakeMode(true);
         }
@@ -179,7 +179,7 @@ void CowBase::DisabledPeriodic()
     }
 
     // set wrist and pivot to current locations
-    m_Bot->m_Pivot->SetAngle(m_Bot->m_Pivot->GetAngle());
+    m_Bot->m_Pivot->SetTargetAngle(m_Bot->m_Pivot->GetAngle());
     //m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
 }
 

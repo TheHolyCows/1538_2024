@@ -115,16 +115,20 @@ namespace CowMotor
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
 
-        if (neutralMode == NeutralMode::COAST)
+        if (neutralMode == NeutralMode::COAST && config.MotorOutput.NeutralMode != ctre::phoenix6::signals::NeutralModeValue::Coast)
         {
             config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
+            return ApplyConfig(config);
         }
-        else if (neutralMode == NeutralMode::BRAKE)
+        else if (neutralMode == NeutralMode::BRAKE && config.MotorOutput.NeutralMode != ctre::phoenix6::signals::NeutralModeValue::Brake)
         {
             config.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+            return ApplyConfig(config);
         }
-
-        return ApplyConfig(config);
+        else
+        {
+            return ctre::phoenix::StatusCode::OK;
+        }
     }
 
     Status TalonFX::ConfigPositivePolarity(Direction positivePolarity)
@@ -143,7 +147,7 @@ namespace CowMotor
         return ApplyConfig(config);
     }
 
-    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, FeedForwardType ffType, int slot)
+    Status TalonFX::ConfigPID(double kp, double ki, double kd, double ks, double kv, double ka, FeedForwardType ffType, int slot)
     {
         ctre::phoenix6::configs::TalonFXConfiguration config = m_Config;
 
@@ -154,6 +158,7 @@ namespace CowMotor
             config.Slot0.kD = kd;
             config.Slot0.kS = ks;
             config.Slot0.kV = kv;
+            config.Slot0.kA = ka;
 
             if (ffType == FeedForwardType::LINEAR)
             {
@@ -171,6 +176,7 @@ namespace CowMotor
             config.Slot1.kD = kd;
             config.Slot1.kS = ks;
             config.Slot1.kV = kv;
+            config.Slot1.kA = ka;
 
             if (ffType == FeedForwardType::LINEAR)
             {
