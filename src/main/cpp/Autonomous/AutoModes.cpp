@@ -163,7 +163,7 @@ AutoModes::AutoModes()
     /* START 2024 AUTOS */
     // should have:
     //   x red amp to amp far 4 piece - tuned
-    //   x red amp to amp far (skip near) 4 piece
+    //   x red amp to amp far (skip near) 4 piece - tuning
     //   x red source to amp far 5 piece - tuned
     //   x red source to source far 3/4 piece
     //   x red source to mid far (mid first -> source) 3/4 piece
@@ -399,7 +399,7 @@ AutoModes::AutoModes()
                                                                                 false,
                                                                                 true) } },
                                                 false,
-                                                16_fps,
+                                                10.66_fps,
                                                 14_fps_sq));
     m_Modes["[4] red amp skip -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[4] red amp skip -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
