@@ -8,44 +8,61 @@
 #pragma once
 
 #include <cmath>
+#include <optional>
 
 #include "../CowConstants.h"
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowMotor/TalonFX.h"
 #include "../CowLib/CowCANCoder.h"
+#include "../CowLib/CowMotor/GenericMotorController.h"
 
 class Pivot
 {
 public:
-
-    Pivot(const int motorId1, const int motorId2, const int encoderId, double encoderOffset);
+    Pivot(const int motorLeftID, const int motorRightID, const int encoderId, double encoderOffset);
 
     std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals();
 
+    void ConfigNeutralMode(CowMotor::NeutralMode neutralMode);
+
     double GetAngle(void);
-    double GetSetpoint(void);
+    double GetAngularVelocity();
 
-    void SetAngle(double angle);
+    double GetTargetAngle(void);
+    void SetTargetAngle(double angle);
 
-    void BrakeMode(bool brakeMode);
-
-    bool AtTarget(void);
+    bool IsOnTarget(void);
 
     void ResetConstants(void);
-
     void Handle(double elevatorPos);
 
 private:
-    double m_TargetAngle;
+    enum class State
+    {
+        IDLE,
+        POSITION
+    };
 
-    bool m_PrevBrakeMode;
+    struct MotorParameters
+    {
+        std::optional<double> offset;
+        std::optional<double> backlash;
+    };
 
-    std::unique_ptr<CowMotor::TalonFX> m_PivotMotor1;
-    std::unique_ptr<CowMotor::TalonFX> m_PivotMotor2;
-
+    std::unique_ptr<CowMotor::TalonFX> m_MotorLeft;
+    std::unique_ptr<CowMotor::TalonFX> m_MotorRight;
     std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
 
-    CowMotor::Control::DynamicMotionMagicTorqueCurrent m_PivotPosRequest = { };
-    CowMotor::Control::Follower m_FollowerRequest = { };
+    State m_State;
 
+    MotorParameters m_LeftMotorParameters;
+    MotorParameters m_RightMotorParameters;
+
+    double m_TargetPosition;
+
+    double GetLeftMotorPosition();
+    double GetRightMotorPosition();
+
+    double GetAbsoluteEncoderPosition();
+    double GetAbsoluteEncoderVelocity();
 };

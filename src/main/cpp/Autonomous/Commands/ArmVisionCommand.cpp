@@ -28,7 +28,7 @@ bool ArmVisionCommand::IsComplete(CowRobot *robot)
     }
 
     // gonna ignore wrist since that is less important
-    if (robot->m_Pivot->AtTarget())
+    if (robot->m_Pivot->IsOnTarget())
     {
         return true;
     }
@@ -38,11 +38,11 @@ bool ArmVisionCommand::IsComplete(CowRobot *robot)
 
 void ArmVisionCommand::Start(CowRobot *robot)
 {
-    robot->m_Pivot->SetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
+    robot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
 
     frc::Pose2d lookaheadPose = robot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME"))
                                                                     .value_or(robot->GetDrivetrain()->GetPose());
-    
+
     double dist = robot->m_Vision->GetTargetDist(robot->m_Alliance, lookaheadPose);
     double wristSetpoint = (CONSTANT("WRIST_AUTO_RANGING_A") * std::pow(dist, 3)) +
                             (CONSTANT("WRIST_AUTO_RANGING_B") * std::pow(dist, 2)) +
@@ -52,7 +52,7 @@ void ArmVisionCommand::Start(CowRobot *robot)
 
     robot->m_Shooter->PrimeShooter(robot->m_ShooterRangeMap[dist]);
 
-    robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetSetpoint());
+    robot->m_Wrist->SetAngle(wristSetpoint + robot->m_BiasForAuto, robot->m_Pivot->GetTargetAngle());
 }
 
 void ArmVisionCommand::Handle(CowRobot *robot)

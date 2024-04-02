@@ -41,7 +41,12 @@ bool CowControlBoard::GetRobotRelativeButton()
 
 bool CowControlBoard::GetVisionTargetButton()
 {
-    return GetDriveAxis(5) > 0.85 || GetDriveAxis(6) > 0.85;
+    return GetDriveAxis(5) > 0.85;
+}
+
+bool CowControlBoard::GetVisionTargetPassButton()
+{
+    return GetDriveAxis(6) > 0.85;
 }
 
 bool CowControlBoard::GetDriveButton(int button)

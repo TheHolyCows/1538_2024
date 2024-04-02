@@ -30,6 +30,7 @@ public:
     bool GetConstantsResetButton() override;
     bool GetRobotRelativeButton() override;
     bool GetVisionTargetButton() override;
+    bool GetVisionTargetPassButton() override;
 
     bool GetDriveButton(int) override;
     double GetDriveAxis(int) override;

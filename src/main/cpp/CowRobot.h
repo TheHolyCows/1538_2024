@@ -49,9 +49,6 @@ public:
     double m_BiasForAuto = 0.0;
 
 private:
-    std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowDriveSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> GetCowBusSynchronizedSignals();
-
     int m_DSUpdateCount;
 
     GenericController *m_Controller = nullptr;
@@ -70,10 +67,8 @@ private:
     // display on rio removed
     CowLib::CowAlphaNum *m_LEDDisplay;
 
-    double m_LeftDriveValue;
-    double m_RightDriveValue;
-
-    double m_PreviousDriveError;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> m_CowDriveSignals;
+    std::vector<ctre::phoenix6::BaseStatusSignal*> m_CowBusSignals;
 
     double m_MatchTime;
     double m_StartTime;

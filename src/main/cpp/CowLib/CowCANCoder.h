@@ -16,18 +16,13 @@ namespace CowLib
             ctre::phoenix6::StatusSignal<ctre::phoenix6::signals::MagnetHealthValue> *MagnetHealth;
             ctre::phoenix6::StatusSignal<units::turn_t> *Position;
             ctre::phoenix6::StatusSignal<units::turn_t> *AbsolutePosition;
-        };
-
-        struct UnsynchronizedSignals
-        {
             ctre::phoenix6::StatusSignal<units::turns_per_second_t> *Velocity;
         };
 
         ctre::phoenix6::hardware::CANcoder *m_CANCoder;
         ctre::phoenix6::configs::CANcoderConfiguration m_Config;
-        
+
         SynchronizedSignals m_SynchronizedSignals;
-        UnsynchronizedSignals m_UnsynchronizedSignals;
 
         void ApplyConfig();
 
