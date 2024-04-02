@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 11.051398928827744,
-        "y": 6.593376844587645
+        "x": 11.1832445698287,
+        "y": 6.884968591063747
       },
       "isLocked": false,
       "linkedName": "red-amp_far-shoot"
     },
     {
       "anchor": {
-        "x": 8.655444029782736,
-        "y": 5.766381774155331
+        "x": 8.658671025692213,
+        "y": 5.833805154963905
       },
       "prevControl": {
-        "x": 9.033488895762577,
-        "y": 5.818817527378486
+        "x": 8.197258314808142,
+        "y": 5.609873151592607
       },
       "nextControl": {
-        "x": 8.111044007180178,
-        "y": 5.690872151333499
+        "x": 9.153128223897598,
+        "y": 6.07377425066424
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 6.201097997757132
       },
       "prevControl": {
-        "x": 11.04555300929564,
-        "y": 6.5808217165202505
+        "x": 11.226431684865592,
+        "y": 6.822267421039285
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +46,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.75,
-      "rotationDegrees": -156.0,
+      "waypointRelativePos": 0.7,
+      "rotationDegrees": -163.0,
       "rotateFast": false
     }
   ],

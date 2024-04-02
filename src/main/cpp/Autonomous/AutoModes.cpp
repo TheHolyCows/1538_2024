@@ -162,7 +162,7 @@ AutoModes::AutoModes()
 
     /* START 2024 AUTOS */
     // should have:
-    //   x red amp to amp far 4 piece - tuning
+    //   x red amp to amp far 4 piece - tuned
     //   x red amp to amp far (skip near) 4 piece
     //   x red source to amp far 5 piece - tuned
     //   x red source to source far 3/4 piece
