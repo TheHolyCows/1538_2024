@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 12.5361,
-        "y": 6.640734424325992
+        "x": 15.327956223501605,
+        "y": 6.9679477447399965
       },
       "prevControl": null,
       "nextControl": {
-        "x": 11.53483756424978,
-        "y": 6.8968033087975895
+        "x": 13.994122801676326,
+        "y": 5.066764086371122
       },
       "isLocked": false,
-      "linkedName": "red-amp_start-root_end"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.309672921429176,
-        "y": 7.109820640069521
+        "x": 8.733796941218781,
+        "y": 7.412277348826218
       },
       "prevControl": {
-        "x": 8.643457501086246,
-        "y": 7.268537462997673
+        "x": 7.205694489824898,
+        "y": 7.412277348826218
       },
       "nextControl": {
-        "x": 7.79238726680957,
-        "y": 6.863847816124554
+        "x": 9.878362307272589,
+        "y": 7.412277348826218
       },
       "isLocked": false,
       "linkedName": null
@@ -36,32 +36,43 @@
         "y": 6.117504542701393
       },
       "prevControl": {
-        "x": 11.218899603856897,
-        "y": 6.318384263832942
+        "x": 11.654370957972683,
+        "y": 6.196440085187864
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "red-amp_far-shoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 165.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 0.15,
+      "rotationDegrees": -180.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 6.5,
-    "maxAcceleration": 4.25,
+    "maxVelocity": 4.27,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 164.8759926916895,
+    "rotation": 174.59804712476094,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 164.07,
+    "rotation": 135.16215091348164,
     "velocity": 0
   },
   "useDefaultConstraints": false

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2,
-      "y": 2
+      "x": 15.34,
+      "y": 6.94
     },
-    "rotation": 0
+    "rotation": 135.0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "blue-source_get-far_start"
+            "pathName": "red-amp_start-root"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "blue-amp_far-1"
+            "pathName": "red-amp_far-1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "red-amp_far-2"
           }
         }
       ]
