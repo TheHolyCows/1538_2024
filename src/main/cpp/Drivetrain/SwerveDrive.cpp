@@ -34,7 +34,7 @@ SwerveDrive::SwerveDrive(ModuleConstants moduleConstants[4], double wheelBase)
         }
     }
 
-    ResetOdometry(frc::Pose2d(40_ft, 20_ft, 180_deg));
+    ResetOdometry(frc::Pose2d(50_ft, 20_ft, 180_deg));
     Reset();
 }
 
