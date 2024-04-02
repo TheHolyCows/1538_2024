@@ -23,6 +23,10 @@ void OperatorController::Handle(CowRobot *bot)
     {
         ledState = Vision::LEDState::INTAKING;
     }
+    else if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::EXHAUST)
+    {
+        ledState = Vision::LEDState::EXHAUSTING;
+    }
 
     // if (m_CB->GetDriveAxis(2) > 0.8 && m_CB->GetDriveAxis(6) > 0.8)
     // {

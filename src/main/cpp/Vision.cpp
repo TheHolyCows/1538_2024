@@ -256,6 +256,11 @@ void Vision::Handle()
         m_CANdle->SetLEDs(CONSTANT("LED_INTAKING_R"), CONSTANT("LED_INTAKING_G"), CONSTANT("LED_INTAKING_B"));
         m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
     }
+    else if (m_LEDState == LEDState::EXHAUSTING)
+    {
+        m_CANdle->SetLEDs(255, 0, 0);
+        m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
+    }
 
     // m_TickCount++;
 }

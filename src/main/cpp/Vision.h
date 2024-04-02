@@ -26,7 +26,8 @@ public:
         OFF,
         HOLD,
         ON_TARGET,
-        INTAKING
+        INTAKING,
+        EXHAUSTING
     };
 
     Vision();
