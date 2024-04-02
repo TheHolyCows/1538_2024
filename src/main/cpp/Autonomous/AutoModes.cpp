@@ -172,11 +172,11 @@ AutoModes::AutoModes()
     // then same for blue
 
     /* all paths */
-    // red-amp_start-root -> red-amp_far-1 -> red-amp_far-2
-    // red-amp-drop-start -> red-amp-drop-1 -> red-amp-drop-2
-    // red-source_get-close_start -> red_get-close_2 -> red_get-close_3 -> red-amp_far-1_from-shoot
-    // red-source-get-far_start -> red-source-get_far-1 -> red-source-get_far-2
-    // red-source-drop-start -> red-source-get_far-1 -> red-source_get-mid-source_from-shoot
+    // [4] red amp -> amp far: red-amp_start-root -> red-amp_far-1 -> red-amp_far-2
+    // [4] red amp skip -> amp far: red-amp-drop-start -> red-amp-drop-1 -> red-amp-drop-2
+    // [5] red source -> amp far: red-source_get-close_start -> red_get-close_2 -> red_get-close_3 -> red-amp_far-1_from-shoot
+    // [4] red source -> source far: red-source-get-far_start -> red-source-get_far-1 -> red-source-get_far-2
+    // [4] red source -> mid far: red-source-drop-start -> red-source-get_far-1 -> red-source_get-mid-source_from-shoot
 
 
 

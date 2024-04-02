@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 13.77054390394371,
-        "y": 3.0441434288539875
+        "x": 12.94546985390267,
+        "y": 2.3989729883394952
       },
       "prevControl": {
-        "x": 13.245399962054263,
-        "y": 2.2882378251735673
+        "x": 12.420325912013224,
+        "y": 1.643067384659075
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "red-source-far-2_end"
+      "linkedName": "red-source-far_shoot"
     }
   ],
   "rotationTargets": [
