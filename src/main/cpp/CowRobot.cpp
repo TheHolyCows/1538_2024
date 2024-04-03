@@ -108,9 +108,6 @@ void CowRobot::PrintToDS()
 void CowRobot::SampleSensors()
 {
     // Synchronize and sample time-critical sensors
-    // ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, m_CowDriveSignals);
-    // ctre::phoenix6::BaseStatusSignal::WaitForAll(0_ms, m_CowBusSignals);
-
     ctre::phoenix6::BaseStatusSignal::RefreshAll(m_CowDriveSignals);
     ctre::phoenix6::BaseStatusSignal::RefreshAll(m_CowBusSignals);
 
