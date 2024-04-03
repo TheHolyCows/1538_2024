@@ -122,7 +122,7 @@ void Wrist::ResetConstants()
 
 void Wrist::Handle(Pivot *pivot)
 {
-    if (pivot->GetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE"))
+    if (pivot->GetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE") || pivot->GetTargetAngle() < CONSTANT("WRIST_SAFE_PIVOT_ANGLE"))
     {
         m_WristPosRequest.Position = std::max(CONSTANT("WRIST_SAFE_WRIST_ANGLE"), m_TargetAngle);
     }
