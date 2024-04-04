@@ -45,7 +45,7 @@ public:
     const frc::Translation2d BLUE_SPEAKER = { 0_ft, 18.2016666667_ft };
     const frc::Translation2d RED_SPEAKER = { 54.3941666667_ft, 18.2016666667_ft };
 
-    const frc::Translation2d BLUE_CORNER = { 0_ft, 0_ft };
+    const frc::Translation2d BLUE_CORNER = { 0_ft, 3_ft };
     const frc::Translation2d RED_CORNER = { 52_ft, 23_ft };
 
     double GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
