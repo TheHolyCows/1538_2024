@@ -8,43 +8,49 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.025162435750218,
-        "y": 6.8968033087975895
+        "x": 4.669997357666361,
+        "y": 7.345714390918887
       },
       "isLocked": false,
       "linkedName": "blue-amp_start-root_end"
     },
     {
       "anchor": {
-        "x": 8.250327078570823,
-        "y": 7.109820640069521
+        "x": 8.245191595027272,
+        "y": 7.243726488475291
       },
       "prevControl": {
-        "x": 7.916542498913753,
-        "y": 7.268537462997673
+        "x": 7.911407015370202,
+        "y": 7.402443311403443
       },
       "nextControl": {
-        "x": 8.767612733190429,
-        "y": 6.863847816124554
+        "x": 8.762477249646878,
+        "y": 6.997753664530324
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.639221586135481,
-        "y": 6.117504542701393
+        "x": 4.177458790328458,
+        "y": 6.646903639365728
       },
       "prevControl": {
-        "x": 5.341100396143101,
-        "y": 6.318384263832942
+        "x": 4.879337600336079,
+        "y": 6.847783360497277
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "blue-amp_far-shoot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 0.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {

@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.187266463400114,
-        "y": 1.9428508595153768
+        "x": 3.051519848346409,
+        "y": 3.27468007952509
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.001539255664596,
-        "y": 1.0565056137346078
+        "x": 3.8657926406108913,
+        "y": 2.388334833744321
       },
       "isLocked": false,
       "linkedName": "blue-source-far_shoot"
     },
     {
       "anchor": {
-        "x": 8.042771690144075,
-        "y": 0.8737798825424042
+        "x": 8.658391471594863,
+        "y": 0.396627332968208
       },
       "prevControl": {
-        "x": 7.846570779592628,
-        "y": 0.41681270061917575
+        "x": 8.462190561043418,
+        "y": -0.06033984895502048
       },
       "nextControl": {
-        "x": 8.339815132682928,
-        "y": 1.5656171653778497
+        "x": 8.955434914133715,
+        "y": 1.0884646158036537
       },
       "isLocked": false,
       "linkedName": "blue-source-far_start"
     },
     {
       "anchor": {
-        "x": 4.187266463400114,
-        "y": 1.9428508595153768
+        "x": 3.051519848346409,
+        "y": 3.27468007952509
       },
       "prevControl": {
-        "x": 4.872128865459988,
-        "y": 1.5952147105393748
+        "x": 3.736382250406283,
+        "y": 2.927043930549088
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.75,
-      "rotationDegrees": 0,
+      "rotationDegrees": -0.0,
       "rotateFast": false
     }
   ],
@@ -61,13 +61,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -37.94993369122828,
+    "rotation": -37.949933691228296,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -38.607997477480886,
+    "rotation": -38.60799747748089,
     "velocity": 0
   },
   "useDefaultConstraints": true
