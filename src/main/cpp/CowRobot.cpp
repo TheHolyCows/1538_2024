@@ -6,13 +6,13 @@ CowRobot::CowRobot()
     m_StartTime     = 0;
     m_DSUpdateCount = 0;
 
-    m_PowerDistributionPanel = new frc::PowerDistribution(1, frc::PowerDistribution::ModuleType::kRev);
-
     // mxp board was removed from robot - can remove this code
     m_LEDDisplay = nullptr;
 
     m_Gyro = CowPigeon::GetInstance();
     m_Accelerometer = new frc::BuiltInAccelerometer(frc::BuiltInAccelerometer::kRange_4G);
+
+    m_LoadManager = new LoadManager();
 
     // Set up drivetrain
     // TODO: reset constants needs to reset this
@@ -123,6 +123,11 @@ void CowRobot::SampleSensors()
     }
 
     m_Drivetrain->SampleSensors();
+
+    // Load Manager
+    m_LoadManager->Handle();
+
+    printf("WATT-HOURS CONSUMED: %f\n", (m_LoadManager->GetEnergyConsumed() / 3600_s).value());
 }
 
 // Used to handle the recurring logic funtions inside the robot.

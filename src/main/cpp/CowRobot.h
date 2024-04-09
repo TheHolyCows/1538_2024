@@ -19,6 +19,7 @@
 #include "frc/controller/PIDController.h"
 #include "Vision.h"
 
+#include "LoadManager.h"
 #include "Subsystems/Pivot.h"
 #include "Subsystems/Shooter.h"
 #include "Subsystems/Elevator.h"
@@ -33,6 +34,8 @@
 class CowRobot
 {
 public:
+    LoadManager* m_LoadManager;
+
     // Drive Motors
     SwerveDrive *m_Drivetrain;
     Pivot *m_Pivot;
@@ -61,9 +64,6 @@ private:
     frc::LinearFilter<double> m_ZFilter = frc::LinearFilter<double>::MovingAverage(12);
     double m_PrevZ;
 
-    // PDP
-    frc::PowerDistribution *m_PowerDistributionPanel;
-
     // display on rio removed
     CowLib::CowAlphaNum *m_LEDDisplay;
 
@@ -82,8 +82,6 @@ public:
     void StartTime();
 
     CowLib::CowAlphaNum *GetDisplay() { return m_LEDDisplay; }
-
-    frc::PowerDistribution *GetPowerDistributionPanel() { return m_PowerDistributionPanel; }
 
     CowPigeon *GetGyro() { return CowPigeon::GetInstance(); }
 
