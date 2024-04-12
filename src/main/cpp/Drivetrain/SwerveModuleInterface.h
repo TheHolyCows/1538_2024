@@ -4,6 +4,7 @@
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
 
 #include <ctre/phoenix6/StatusSignal.hpp>
+#include <units/current.h>
 
 class SwerveModuleInterface
 {
@@ -45,6 +46,7 @@ public:
     virtual void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) = 0;
 
     virtual void SetBrakeMode(bool brakeMode);
+    virtual void SetCurrentLimit(units::ampere_t limit);
 
     virtual void ResetConstants() = 0;
     virtual void ResetEncoders()  = 0;

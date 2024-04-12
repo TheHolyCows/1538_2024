@@ -19,21 +19,22 @@ SwerveModule::SwerveModule(const int id,
 
     m_DriveMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_DriveMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
-    m_DriveMotor->ConfigStatorCurrentLimit(CONSTANT("SWERVE_DRIVE_CURRENT_LIMIT"));
 
     m_RotationMotor->ConfigPositivePolarity(CowMotor::Direction::CLOCKWISE);
     m_RotationMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
     m_RotationMotor->ConfigFusedCANCoder(encoderId, CONSTANT("SWERVE_ROTATION_GEAR_RATIO"));
     m_RotationMotor->ConfigContinuousWrap(true);
 
-    m_DriveControlRequest.EnableFOC = true;
-    m_DriveControlRequest.DutyCycle = 0;
+    m_DriveControlRequest.Current = 0;
+    m_DriveControlRequest.MaxDutyCycle = 0;
+    m_DriveControlRequest.Deadband = 1;
 
     m_RotationControlRequest.EnableFOC = true;
     m_RotationControlRequest.Position = 0;
     m_RotationControlRequest.FeedForward = 0;
 
     m_BrakeMode = true;
+    m_CurrentLimit = 0_A;
 
     ResetConstants();
     ResetEncoders();
@@ -108,11 +109,18 @@ void SwerveModule::SetBrakeMode(bool brakeMode)
     }
 }
 
+void SwerveModule::SetCurrentLimit(units::ampere_t limit)
+{
+    m_CurrentLimit = limit;
+}
+
 void SwerveModule::ResetConstants()
 {
     m_DriveMotor->ConfigStatorCurrentLimit(CONSTANT("SWERVE_DRIVE_CURRENT_LIMIT"));
     m_DriveMotor->ConfigPID(CONSTANT("SWERVE_DRIVE_P"), CONSTANT("SWERVE_DRIVE_I"), CONSTANT("SWERVE_DRIVE_D"));
     m_RotationMotor->ConfigPID(CONSTANT("SWERVE_ANGLE_P"), CONSTANT("SWERVE_ANGLE_I"), CONSTANT("SWERVE_ANGLE_D"));
+
+    m_CurrentLimit = units::ampere_t(CONSTANT("SWERVE_DRIVE_CURRENT_LIMIT"));
 }
 
 void SwerveModule::ResetEncoders()
@@ -135,7 +143,8 @@ void SwerveModule::Handle()
 {
     CowLib::CowSwerveModuleState optimized = Optimize(m_TargetState, m_PrevTargetState.angle);
 
-    m_DriveControlRequest.DutyCycle = optimized.velocity / CONSTANT("SWERVE_MAX_SPEED");
+    m_DriveControlRequest.Current = std::copysign(m_CurrentLimit.value(), optimized.velocity);
+    m_DriveControlRequest.MaxDutyCycle = std::abs(optimized.velocity / CONSTANT("SWERVE_MAX_SPEED"));
     m_RotationControlRequest.Position = optimized.angle / 360.0;
 
     m_DriveMotor->Set(m_DriveControlRequest);

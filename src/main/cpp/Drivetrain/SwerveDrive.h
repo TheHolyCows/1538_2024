@@ -76,6 +76,7 @@ public:
     void SetLocked(bool isLocked);
 
     void SetBrakeMode(bool brakeMode);
+    void SetCurrentLimit(units::ampere_t current);
 
     void AddVisionMeasurement(Vision::Sample sample);
 

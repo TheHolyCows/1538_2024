@@ -3,6 +3,8 @@
 #include <frc/PowerDistribution.h>
 #include <units/energy.h>
 #include <units/power.h>
+#include <units/current.h>
+
 
 class LoadManager
 {
@@ -11,6 +13,8 @@ public:
 
     units::joule_t GetEnergyConsumed();
     units::watt_t GetInstantaneousLoad();
+
+    units::ampere_t GetSwerveDriveBudget();
 
     void Handle();
 private:

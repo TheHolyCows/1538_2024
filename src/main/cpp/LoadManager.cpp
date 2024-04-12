@@ -5,6 +5,9 @@
 #include <units/power.h>
 #include <units/energy.h>
 #include <units/frequency.h>
+#include <units/time.h>
+
+#include "CowConstants.h"
 
 LoadManager::LoadManager()
     : m_PDH(1, frc::PowerDistribution::ModuleType::kRev),
@@ -21,7 +24,13 @@ units::joule_t LoadManager::GetEnergyConsumed()
 
 units::watt_t LoadManager::GetInstantaneousLoad()
 {
+    return m_InstantaneousLoad;
+}
 
+units::ampere_t LoadManager::GetSwerveDriveBudget()
+{
+    double limit = ((m_EnergyConsumed / 3600_s).value() * CONSTANT("LOAD_MANAGER_SWERVE_M")) + CONSTANT("LOAD_MANAGER_SWERVE_B");
+    return units::ampere_t(std::clamp(limit, CONSTANT("LOAD_MANAGER_SWERVE_MIN"), CONSTANT("LOAD_MANAGER_SWERVE_MAX")));
 }
 
 void LoadManager::Handle()
