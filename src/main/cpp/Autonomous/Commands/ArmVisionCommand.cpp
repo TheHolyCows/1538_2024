@@ -38,7 +38,7 @@ bool ArmVisionCommand::IsComplete(CowRobot *robot)
 
 void ArmVisionCommand::Start(CowRobot *robot)
 {
-    robot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT"));
+    robot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AUTORANGING_SETPOINT_HI"));
 
     frc::Pose2d lookaheadPose = robot->GetDrivetrain()->Odometry()->Lookahead(CONSTANT("POSE_LOOKAHEAD_TIME"))
                                                                     .value_or(robot->GetDrivetrain()->GetPose());
