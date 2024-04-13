@@ -247,7 +247,11 @@ void OperatorController::Handle(CowRobot *bot)
         }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
-            bot->m_Shooter->UpdateIntakeMoveDistance(CONSTANT("INTAKE_MOVE_DISTANCE_AMP"));
+            if (bot->m_Pivot->GetAngle() > CONSTANT("PIVOT_AMP_MOVE_MIN_ANGLE"))
+            {
+                bot->m_Shooter->UpdateIntakeMoveDistance(CONSTANT("INTAKE_MOVE_DISTANCE_AMP"));
+            }
+
             bot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetTargetAngle());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
@@ -281,10 +285,14 @@ void OperatorController::Handle(CowRobot *bot)
         }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
-            bot->m_Shooter->UpdateIntakeMoveDistance(CONSTANT("INTAKE_MOVE_DISTANCE_AMP"));
             bot->m_Pivot->SetTargetAngle(CONSTANT("PIVOT_AMP_SETPOINT"));
             bot->m_Wrist->SetAngle(CONSTANT("WRIST_AMP_SETPOINT"), bot->m_Pivot->GetTargetAngle());
             bot->m_Elevator->SetExtension(CONSTANT("ELEVATOR_AMP_SETPOINT"));
+
+            if (bot->m_Pivot->GetAngle() > CONSTANT("PIVOT_AMP_MOVE_MIN_ANGLE"))
+            {
+                bot->m_Shooter->UpdateIntakeMoveDistance(CONSTANT("INTAKE_MOVE_DISTANCE_AMP"));
+            }
         }
     }
 

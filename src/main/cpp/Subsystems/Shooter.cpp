@@ -73,7 +73,7 @@ void Shooter::UpdateShooterState(ShooterState state)
 
 void Shooter::UpdateIntakeMoveDistance(double distance)
 {
-    m_IntakeGoalPosition = m_IntakeDetectPosition + distance; 
+    m_IntakeGoalPosition = m_IntakeDetectPosition + distance;
 }
 
 double Shooter::GetIntakePosition()
@@ -108,10 +108,11 @@ double Shooter::GetShooterCurrent()
 
 bool Shooter::IsReady()
 {
-    if (m_ShooterState == ShooterState::READY)
+    if (m_ShooterState == ShooterState::READY && GetShooterVelocity() > CONSTANT("SHOOTER_READY_THRESHOLD") * m_ShooterRPS)
     {
         return true;
     }
+
     return false;
 }
 
