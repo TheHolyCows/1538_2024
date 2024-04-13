@@ -54,6 +54,7 @@ AutoModes::AutoModes()
             new StationaryVisionCommand(1.35_s),
             new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false),
             new WaitCommand(0.20_s,false),
+            new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false),
             new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false),
             new UpdateShooterSpeed(preloadDist)
         });
@@ -65,7 +66,6 @@ AutoModes::AutoModes()
         {
             new UpdateArmCommand(5, 80, false),
             new UpdateShooterSpeed(nextShotDist),
-            new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false),
             new WaitCommand(0.5_s,false), // time to release pin
             new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                  CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -193,14 +193,15 @@ AutoModes::AutoModes()
                                                   { 0.9_s, new UpdateArmCommand(12.89,  // based on distance of 12.89 above - TODO: update to use distance and read from map
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
-                                                //   { 0.3_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 12_fps,
                                                 8_fps_sq));
     m_Modes["[4] red amp -> amp far"].push_back(new StationaryVisionCommand(0.6_s));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[4] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateShooterSpeed(18.54)); // distance for shot 3 and 4 in feet
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
@@ -216,13 +217,15 @@ AutoModes::AutoModes()
                                                     { 1.7_s, new UpdateArmCommand(18.54, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) } },
+                                                                                true) },
+                                                    { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 16_fps,
                                                 15_fps_sq));
     m_Modes["[4] red amp -> amp far"].push_back(new StationaryVisionCommand(0.6_s));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[4] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -237,7 +240,8 @@ AutoModes::AutoModes()
                                                   { 1.3_s, new UpdateArmCommand(18.54, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) } },
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 16_fps,
                                                 15_fps_sq));
@@ -246,6 +250,7 @@ AutoModes::AutoModes()
     m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
 
     // end
+    m_Modes["[4] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -355,13 +360,15 @@ AutoModes::AutoModes()
                                                   { 3.0_s, new UpdateArmCommand(14.16,
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 18_fps,
                                                 18_fps_sq));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -376,13 +383,15 @@ AutoModes::AutoModes()
                                                     { 1.8_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) } },
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 18_fps,
                                                 18_fps_sq));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -397,7 +406,8 @@ AutoModes::AutoModes()
                                                   { 1.8_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) } },
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 14_fps,
                                                 14_fps_sq));
@@ -406,6 +416,7 @@ AutoModes::AutoModes()
     m_Modes["[3] red amp no preload -> amp far"].push_back(new WaitCommand(0.15_s,false));
 
     // end
+    m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[3] red amp no preload -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -428,13 +439,15 @@ AutoModes::AutoModes()
                                                   { 1.15_s, new UpdateArmCommand(8.044,  // based on distance of 8.044
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 18_fps,
                                                 14_fps_sq));
     m_Modes["[5] red source -> amp far"].push_back(new StationaryVisionCommand(0.9_s));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterSpeed(7.28)); // distance for shot 3 in feet
     m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
@@ -448,13 +461,15 @@ AutoModes::AutoModes()
                                                   { 1.5_s, new UpdateArmCommand(7.28,  // based on distance of 7.28
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 18_fps,
                                                 14_fps_sq));
     m_Modes["[5] red source -> amp far"].push_back(new StationaryVisionCommand(0.9_s));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterSpeed(14.16)); // distance for shot 4 in feet
     m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
@@ -467,13 +482,15 @@ AutoModes::AutoModes()
                                                   { 1.3_s, new UpdateArmCommand(14.16,  // based on distance of 14.16
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 14_fps,
                                                 14_fps_sq));
     m_Modes["[5] red source -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterSpeed(14.16)); // distance for shot 5 in feet
     m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
@@ -484,18 +501,21 @@ AutoModes::AutoModes()
                                                 { { 0.5_s, new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                                                     CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                                                     false) },
-                                                    { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
-                                                    { 1.0_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
+                                                  { 0.2_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
+                                                  { 1.0_s, new UpdateArmCommand(14.16, // based on distance of 14.16 above
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) } },
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 false,
                                                 21.5_fps,
                                                 14.5_fps_sq));
     m_Modes["[5] red source -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[5] red source -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    
     // end
+    m_Modes["[5] red source -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[5] red source -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                         CONSTANT("PIVOT_STOW_SETPOINT"),
@@ -517,13 +537,15 @@ AutoModes::AutoModes()
                                                   { 3.8_s, new UpdateArmCommand(17.68, // orig 3.0_s
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 14_fps,
                                                 16_fps_sq));
     m_Modes["[3] red source -> source far"].push_back(new StationaryVisionCommand(0.6_s));
     m_Modes["[3] red source -> source far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[3] red source -> source far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[3] red source -> source far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red source -> source far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
 
     // piece 3
@@ -535,13 +557,15 @@ AutoModes::AutoModes()
                                                   { 3.3_s, new UpdateArmCommand(17.68,  // orig 2.4s
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 12_fps,
                                                 14_fps_sq));
     m_Modes["[3] red source -> source far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[3] red source -> source far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[3] red source -> source far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[3] red source -> source far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red source -> source far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
 
     // piece 4
@@ -590,13 +614,15 @@ AutoModes::AutoModes()
                                                   { 2.2_s, new UpdateArmCommand(17.68,  // was 1.5
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 12_fps,
                                                 12_fps_sq));
     m_Modes["[3] red source -> mid far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[3] red source -> mid far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[3] red source -> mid far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[3] red source -> mid far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red source -> mid far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
 
     // piece 3
@@ -608,13 +634,15 @@ AutoModes::AutoModes()
                                                   { 3.5_s, new UpdateArmCommand(17.68,
                                                                                 CONSTANT("PIVOT_LAUNCH_SETPOINT"),
                                                                                 false,
-                                                                                true) }},
+                                                                                true) },
+                                                  { 0.01_s, new UpdateShooterStateCommand(Shooter::ShooterState::SPIN_UP, false) }},
                                                 true,
                                                 12_fps,
                                                 8_fps_sq));
     m_Modes["[3] red source -> mid far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[3] red source -> mid far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
     m_Modes["[3] red source -> mid far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[3] red source -> mid far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red source -> mid far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
 
     // piece 4
@@ -635,6 +663,7 @@ AutoModes::AutoModes()
     // m_Modes["[3] red source -> mid far"].push_back(new WaitCommand(0.15_s,false));
 
     // end
+    m_Modes["[3] red source -> mid far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[3] red source -> mid far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[3] red source -> mid far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
                                                             CONSTANT("PIVOT_STOW_SETPOINT"),
