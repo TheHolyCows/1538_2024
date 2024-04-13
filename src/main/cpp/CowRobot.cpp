@@ -1,18 +1,20 @@
 #include "CowRobot.h"
 
+int log_count = 0;
+
 CowRobot::CowRobot()
 {
     m_MatchTime     = 0;
     m_StartTime     = 0;
     m_DSUpdateCount = 0;
 
-    m_PowerDistributionPanel = new frc::PowerDistribution(1, frc::PowerDistribution::ModuleType::kRev);
-
     // mxp board was removed from robot - can remove this code
     m_LEDDisplay = nullptr;
 
     m_Gyro = CowPigeon::GetInstance();
     m_Accelerometer = new frc::BuiltInAccelerometer(frc::BuiltInAccelerometer::kRange_4G);
+
+    m_LoadManager = new LoadManager();
 
     // Set up drivetrain
     // TODO: reset constants needs to reset this
@@ -123,6 +125,16 @@ void CowRobot::SampleSensors()
     }
 
     m_Drivetrain->SampleSensors();
+
+    // Load Manager
+    m_LoadManager->Handle();
+
+    if (log_count == 0)
+    {
+        printf("WATT-HOURS CONSUMED: %f, INSTANTANEOUS LOAD %f, LIMIT %f\n", (m_LoadManager->GetEnergyConsumed() / 3600_s).value(), m_LoadManager->GetInstantaneousLoad().value(), m_LoadManager->GetSwerveDriveBudget().value());
+    }
+
+    log_count = (log_count + 1) % 20;
 }
 
 // Used to handle the recurring logic funtions inside the robot.
@@ -136,6 +148,8 @@ void CowRobot::Handle()
         printf("No controller for CowRobot!!\n");
         return;
     }
+
+    m_Drivetrain->SetCurrentLimit(m_LoadManager->GetSwerveDriveBudget());
 
     m_Controller->Handle(this);
     m_Drivetrain->Handle();

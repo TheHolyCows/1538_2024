@@ -69,3 +69,7 @@ CowLib::CowSwerveModuleState SwerveModuleInterface::Optimize(CowLib::CowSwerveMo
 void SwerveModuleInterface::SetBrakeMode(bool brakeMode)
 {
 }
+
+void SwerveModuleInterface::SetCurrentLimit(units::ampere_t limit)
+{
+}

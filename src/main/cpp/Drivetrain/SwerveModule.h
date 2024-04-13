@@ -32,11 +32,12 @@ private:
 
     CowLib::CowSwerveModuleState m_TargetState;
     CowLib::CowSwerveModuleState m_PrevTargetState;
-    
-    CowMotor::Control::DutyCycle m_DriveControlRequest;
+
+    CowMotor::Control::TorqueCurrent m_DriveControlRequest;
     CowMotor::Control::PositionDutyCycle m_RotationControlRequest;
 
     bool m_BrakeMode;
+    units::ampere_t m_CurrentLimit;
     double m_InitialRotation;
 
 public:
@@ -68,6 +69,7 @@ public:
     void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) override;
 
     void SetBrakeMode(bool brakeMode) override;
+    void SetCurrentLimit(units::ampere_t limit) override;
 
     void ResetConstants() override;
 

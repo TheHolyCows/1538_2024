@@ -223,6 +223,14 @@ void SwerveDrive::SetBrakeMode(bool brakeMode)
     }
 }
 
+void SwerveDrive::SetCurrentLimit(units::ampere_t current)
+{
+    for (auto module : m_Modules)
+    {
+        module->SetCurrentLimit(current);
+    }
+}
+
 void SwerveDrive::AddVisionMeasurement(Vision::Sample sample)
 {
     if (sample.tagCount == 0)
