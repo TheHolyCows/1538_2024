@@ -28,7 +28,7 @@ CowRobot::CowRobot()
     m_Drivetrain = new SwerveDrive(swerveModuleConstants, CONSTANT("WHEEL_BASE"));
     m_DriveController = new SwerveDriveController(*m_Drivetrain);
 
-    m_Shooter = new Shooter(11, 12, 9, 10, 13);
+    // m_Shooter = new Shooter(11, 12, 9, 10, 13);
 
     ctre::phoenix6::BaseStatusSignal::SetUpdateFrequencyForAll(100_Hz, GetSynchronizedSignals());
 }
@@ -38,10 +38,10 @@ std::vector<ctre::phoenix6::BaseStatusSignal*> CowRobot::GetSynchronizedSignals(
     std::vector<ctre::phoenix6::BaseStatusSignal*> signals;
     std::vector<ctre::phoenix6::BaseStatusSignal*> drivetrainSignals = m_Drivetrain->GetSynchronizedSignals();
     std::vector<ctre::phoenix6::BaseStatusSignal*> gyroSignals = m_Gyro->GetSynchronizedSignals();
-    std::vector<ctre::phoenix6::BaseStatusSignal*> shooterSignals = m_Shooter->GetSynchronizedSignals();
+    // std::vector<ctre::phoenix6::BaseStatusSignal*> shooterSignals = m_Shooter->GetSynchronizedSignals();
     signals.insert(signals.end(), drivetrainSignals.begin(), drivetrainSignals.end());
     signals.insert(signals.end(), gyroSignals.begin(), gyroSignals.end());
-    signals.insert(signals.end(), shooterSignals.begin(), shooterSignals.end());
+    // signals.insert(signals.end(), shooterSignals.begin(), shooterSignals.end());
 
     return signals;
 }
@@ -55,7 +55,7 @@ void CowRobot::Reset()
 
     m_Drivetrain->ResetConstants();
     m_DriveController->ResetConstants();
-    m_Shooter->ResetConstants();
+    // m_Shooter->ResetConstants();
     // m_Controller->ResetConstants(); TODO: error
 
     // Vision::GetInstance()->Reset();
@@ -98,7 +98,7 @@ void CowRobot::Handle()
 
     m_Controller->Handle(this);
     m_Drivetrain->Handle();
-    m_Shooter->Handle();
+    // m_Shooter->Handle();
 
     // logger code below should have checks for debug mode before sending out data
     CowLib::CowLogger::GetInstance()->Handle();

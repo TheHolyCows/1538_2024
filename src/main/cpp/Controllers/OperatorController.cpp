@@ -36,32 +36,5 @@ void OperatorController::Handle(CowRobot *bot)
                                          m_CB->GetRightDriveStickX() * -1,
                                          true);
     }
-   
-    if (m_CB->GetDriveButton(1))
-    {
-        bot->m_Shooter->Intake();
-    }
-    else if(m_CB->GetDriveButton(2))
-    {
-        bot->m_Shooter->Outtake();
-    }
-    else if (!m_CB->GetDriveButton(3))
-    {
-        bot->m_Shooter->StopIntake();
-    }
-
-    if(m_CB->GetDriveButton(5))
-    {
-        bot->m_Shooter->PrimeShooter();
-
-        if(m_CB->GetDriveButton(3))
-        {
-            bot->m_Shooter->Shoot();
-        }
-    }
-    else
-    {
-        bot->m_Shooter->StopShooter();
-    }
     
 }

@@ -21,6 +21,9 @@ SwerveModule::SwerveModule(const int id,
     m_RotationMotor->FuseCANCoder(encoderId, CONSTANT("SWERVE_ROTATION_GEAR_RATIO"));
     m_RotationMotor->ConfigContinuousWrap(true);
 
+    m_DriveMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+    m_RotationMotor->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+
     m_DriveControlRequest.EnableFOC = true;
     m_DriveControlRequest.DutyCycle = 0;
 

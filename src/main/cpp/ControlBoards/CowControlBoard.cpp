@@ -61,12 +61,12 @@ double CowControlBoard::GetLeftDriveStickX()
 
 double CowControlBoard::GetLeftDriveStickY()
 {
-    return m_DriverControlStick->GetRawAxis(1) * -1;
+    return m_DriverControlStick->GetRawAxis(1);
 }
 
 double CowControlBoard::GetRightDriveStickX()
 {
-    return m_DriverControlStick->GetRawAxis(2);
+    return m_DriverControlStick->GetRawAxis(4);
 }
 
 double CowControlBoard::GetRightDriveStickY()
