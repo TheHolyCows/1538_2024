@@ -185,7 +185,7 @@ AutoModes::AutoModes()
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_GROUND_SETPOINT"),
                                                         CONSTANT("PIVOT_GROUND_SETPOINT"),
                                                         false));
-    m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.6_s,false));
+    m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.5_s,false));
     // piece 2
     m_Modes["[4] red amp -> amp far"].push_back(pathWithEvents("red-amp_start-root",
                                                 { { 0.01_s, new UpdateIntakeStateCommand(Shooter::IntakeState::DETECT_ACTIVE, false) },
@@ -221,9 +221,9 @@ AutoModes::AutoModes()
                                                 false,
                                                 16_fps,
                                                 15_fps_sq));
-    m_Modes["[4] red amp -> amp far"].push_back(new StationaryVisionCommand(0.6_s));
+    m_Modes["[4] red amp -> amp far"].push_back(new StationaryVisionCommand(0.5_s));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::SHOOT, false));
-    m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.15_s,false));
+    m_Modes["[4] red amp -> amp far"].push_back(new WaitCommand(0.25_s,false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateShooterStateCommand(Shooter::ShooterState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateIntakeStateCommand(Shooter::IntakeState::IDLE, false));
     m_Modes["[4] red amp -> amp far"].push_back(new UpdateArmCommand(CONSTANT("WRIST_STOW_SETPOINT"),
