@@ -131,7 +131,7 @@ void CowRobot::SampleSensors()
 
     if (log_count == 0)
     {
-        printf("WATT-HOURS CONSUMED: %f, INSTANTANEOUS LOAD %f, LIMIT %f\n", (m_LoadManager->GetEnergyConsumed() / 3600_s).value(), m_LoadManager->GetInstantaneousLoad().value(), m_LoadManager->GetSwerveDriveBudget().value());
+        // printf("WATT-HOURS CONSUMED: %f, INSTANTANEOUS LOAD %f, LIMIT %f\n", (m_LoadManager->GetEnergyConsumed() / 3600_s).value(), m_LoadManager->GetInstantaneousLoad().value(), m_LoadManager->GetSwerveDriveBudget().value());
     }
 
     log_count = (log_count + 1) % 20;
