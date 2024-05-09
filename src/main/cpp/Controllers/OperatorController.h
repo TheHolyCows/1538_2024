@@ -13,7 +13,7 @@
 #include "../CowLib/CowLib.h"
 #include "../CowRobot.h"
 #include "../Declarations.h"
-#include "../Subsystems/Vision.h"
+// #include "../Subsystems/Vision.h"
 #include "frc/controller/PIDController.h"
 
 #include <iostream>
@@ -26,22 +26,17 @@ private:
     OperatorController();
     GenericControlBoard *m_CB;
 
-    // enum Wheel
-    // {
-    //     NONE = -1,
-    //     FRONT_LEFT,
-    //     FRONT_RIGHT,
-    //     BACK_LEFT,
-    //     BACK_RIGHT
-    // };
-
-    // Wheel m_EvasiveSwerveWheel;
+    bool m_ClimberLatch;
 
 public:
     OperatorController(GenericControlBoard *controlboard);
     void Handle(CowRobot *bot);
 
     double m_TrackingCooldownTimer;
+
+    double m_LastShotDistance;
+    double m_LastShotPivot;
+    double m_LastShotWrist;
 };
 
 #endif /* __OPERATOR_CONTROLLER_H__ */

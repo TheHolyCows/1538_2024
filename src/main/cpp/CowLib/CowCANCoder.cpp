@@ -5,27 +5,46 @@ namespace CowLib
 
     /// @brief Creates a new CowCANCoder. Defaults to unsigned absolute
     /// @param deviceId
-    CowCANCoder::CowCANCoder(int deviceId)
+    CowCANCoder::CowCANCoder(int deviceId, std::string canbus)
     {
-        m_Cancoder = new ctre::phoenix6::hardware::CANcoder(deviceId, "cowdrive");
+        m_CANCoder = new ctre::phoenix6::hardware::CANcoder(deviceId, canbus);
 
         // Default config
         m_Config = ctre::phoenix6::configs::CANcoderConfiguration{};
         ApplyConfig();
 
+        m_SynchronizedSignals.MagnetHealth = &m_CANCoder->GetMagnetHealth();
+        m_SynchronizedSignals.Position = &m_CANCoder->GetPosition();
+        m_SynchronizedSignals.AbsolutePosition = &m_CANCoder->GetPosition();
+        m_SynchronizedSignals.Velocity = &m_CANCoder->GetVelocity();
+
         // This is what 1678 uses for swerve so okay
         // TODO: check if this is correct
         // m_Cancoder->SetStatusFramePeriod(CANCoderStatusFrame::CANCoderStatusFrame_SensorData, 255);
         // m_Cancoder->SetStatusFramePeriod(CANCoderStatusFrame::CANCoderStatusFrame_VbatAndFaults, 255);
+    }
 
-        m_PositionSupplier         = m_Cancoder->GetPosition().AsSupplier();
-        m_AbsolutePositionSupplier = m_Cancoder->GetAbsolutePosition().AsSupplier();
-        m_VelocitySupplier         = m_Cancoder->GetVelocity().AsSupplier();
+    std::vector<ctre::phoenix6::BaseStatusSignal*> CowCANCoder::GetSynchronizedSignals()
+    {
+        std::vector<ctre::phoenix6::BaseStatusSignal*> signals = {
+            m_SynchronizedSignals.MagnetHealth,
+            m_SynchronizedSignals.Position,
+            m_SynchronizedSignals.AbsolutePosition,
+            m_SynchronizedSignals.Velocity
+        };
+
+        return signals;
     }
 
     void CowCANCoder::ApplyConfig()
     {
-        m_Cancoder->GetConfigurator().Apply(m_Config);
+        m_CANCoder->GetConfigurator().Apply(m_Config);
+    }
+
+    void CowCANCoder::ConfigAbsoluteOffset(double offset)
+    {
+        m_Config.MagnetSensor.MagnetOffset = offset;
+        ApplyConfig();
     }
 
     /// @brief Sets whether the sensor direction is inverted
@@ -35,13 +54,14 @@ namespace CowLib
         m_Config.MagnetSensor.SensorDirection
             = isInverted ? ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive
                          : ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
+
+        ApplyConfig();
     }
 
     /// @brief Sets whether the output is signed [-180, 180] or unsigned [0, 360]
     /// @param isSigned
     void CowCANCoder::SetSigned(bool isSigned)
     {
-        // auto conf = m_Cancoder->GetConfigurator();
         m_Config.MagnetSensor.AbsoluteSensorRange
             = isSigned ? ctre::phoenix6::signals::AbsoluteSensorRangeValue::Signed_PlusMinusHalf
                        : ctre::phoenix6::signals::AbsoluteSensorRangeValue::Unsigned_0To1;
@@ -49,38 +69,38 @@ namespace CowLib
         ApplyConfig();
     }
 
+    bool CowCANCoder::GetMagnetIsHealthy()
+    {
+        return m_SynchronizedSignals.MagnetHealth->GetValue() == ctre::phoenix6::signals::MagnetHealthValue::Magnet_Green;
+    }
+
     double CowCANCoder::GetPosition()
     {
-        // m_Signals.positionRefresh();
-        return m_PositionSupplier().value();
+        return m_SynchronizedSignals.Position->GetValue().value();
     }
 
     /// @brief Gets the absolute position in degrees
     /// @return rotation
     double CowCANCoder::GetAbsolutePosition()
     {
-        // m_Signals.absolutePosition->Refresh();
-        // return m_Signals.absolutePosition->GetValue().value();
-        return m_AbsolutePositionSupplier().value() * 360;
+        return m_SynchronizedSignals.AbsolutePosition->GetValue().value();
     }
 
     double CowCANCoder::GetVelocity()
     {
-        // m_Signals.velocity->Refresh();
-        // return m_Signals.velocity->GetValue().value();
-        return m_VelocitySupplier().value();
+        return m_SynchronizedSignals.Velocity->GetValue().value();
     }
 
     /// @brief Gets internal CANCoder
     /// @return Pointer to internal CANCoder
     ctre::phoenix6::hardware::CANcoder *CowCANCoder::GetInternalCANCoder()
     {
-        return m_Cancoder;
+        return m_CANCoder;
     }
 
     CowCANCoder::~CowCANCoder()
     {
-        delete m_Cancoder;
+        delete m_CANCoder;
     }
 
 } // namespace CowLib

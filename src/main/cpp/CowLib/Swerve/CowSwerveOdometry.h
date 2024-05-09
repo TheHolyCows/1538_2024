@@ -4,6 +4,7 @@
 #include "./CowSwerveKinematics.h"
 #include "./CowSwerveModulePosition.h"
 #include "./CowSwerveModuleState.h"
+#include "CowLib/Swerve/PoseBuffer.h"
 #include "frc/smartdashboard/Field2d.h"
 #include "frc/smartdashboard/SmartDashboard.h"
 
@@ -12,8 +13,10 @@
 #include <frc/estimator/SwerveDrivePoseEstimator.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Rotation2d.h>
+#include <frc/Timer.h>
 #include <units/angle.h>
 #include <units/length.h>
+#include <optional>
 
 namespace CowLib
 {
@@ -26,6 +29,7 @@ namespace CowLib
         frc::Pose2d m_Pose;
 
         CowSwerveKinematics *m_Kinematics;
+        PoseBuffer m_PoseBuffer;
 
         frc::Pose2d CreateWPIPose(double x, double y, double rotation);
         std::array<frc::SwerveModulePosition, 4>
@@ -36,7 +40,8 @@ namespace CowLib
                           double gyroAngle,
                           double initialX,
                           double initialY,
-                          double initialRotation);
+                          double initialRotation,
+                          size_t poseBufferSize);
         ~CowSwerveOdometry();
 
         void Reset(double newX,
@@ -49,6 +54,8 @@ namespace CowLib
         double GetX();
         double GetY();
         double GetRotation();
+
+        std::optional<frc::Pose2d> Lookahead(double lookahead);
 
         frc::Pose2d GetWPIPose();
 

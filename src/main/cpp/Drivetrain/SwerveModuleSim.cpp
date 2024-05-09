@@ -21,6 +21,19 @@ SwerveModuleSim::SwerveModuleSim(const int id,
     ResetEncoders();
 }
 
+std::vector<ctre::phoenix6::BaseStatusSignal*> SwerveModuleSim::GetSynchronizedSignals()
+{
+    return std::vector<ctre::phoenix6::BaseStatusSignal*>();
+}
+
+CowLib::CowSwerveModulePosition SwerveModuleSim::GetPosition()
+{
+    return CowLib::CowSwerveModulePosition{
+        .distance = m_Position,
+        .angle = m_Angle
+    };
+}
+
 void SwerveModuleSim::SetTargetState(CowLib::CowSwerveModuleState state, bool force)
 {
     CowLib::CowSwerveModuleState optimized = Optimize(state, m_Angle);

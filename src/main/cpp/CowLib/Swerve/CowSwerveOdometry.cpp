@@ -17,7 +17,9 @@ namespace CowLib
                                          double gyroAngle,
                                          double initialX,
                                          double initialY,
-                                         double initialRotation)
+                                         double initialRotation,
+                                         size_t poseBufferSize)
+        : m_PoseBuffer(poseBufferSize)
     {
         // frc::SmartDashboard::PutData("field", &m_Field);
 
@@ -131,6 +133,11 @@ namespace CowLib
         return m_Pose.Rotation().Degrees().value();
     }
 
+    std::optional<frc::Pose2d> CowSwerveOdometry::Lookahead(double lookahead)
+    {
+        return m_PoseBuffer.Extrapolate(frc::Timer::GetFPGATimestamp() + units::second_t{ lookahead });
+    }
+
     /**
      * @brief Gets a WPILib Pose2d object of the robot's position
      * @return WPILib Pose2d
@@ -152,6 +159,8 @@ namespace CowLib
         m_Pose = m_PoseEstimator->Update(frc::Rotation2d(units::degree_t{ gyroAngle }), WPIModulePositions);
 
         m_Field.SetRobotPose(m_Pose);
+
+        m_PoseBuffer.Update(frc::Timer::GetFPGATimestamp(), m_Pose);
     }
 
     /**

@@ -3,16 +3,14 @@
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
 
+#include <ctre/phoenix6/StatusSignal.hpp>
+#include <units/current.h>
+
 class SwerveModuleInterface
 {
 protected:
     const int m_Id;
     const double m_EncoderOffset;
-
-    double m_Velocity;
-    double m_Position;
-    double m_Angle;
-    double m_AngularVelocity;
 
     /**
      * @brief Helper function for optimize
@@ -39,15 +37,16 @@ public:
 
     virtual ~SwerveModuleInterface() = default;
 
+    virtual std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() = 0;
+
     inline int GetID() const { return m_Id; }
 
-    inline CowLib::CowSwerveModuleState GetState() const { return { m_Velocity, m_Angle, m_AngularVelocity }; }
-
-    inline CowLib::CowSwerveModulePosition GetPosition() const { return { m_Position, m_Angle }; }
+    virtual CowLib::CowSwerveModulePosition GetPosition() = 0;
 
     virtual void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) = 0;
 
     virtual void SetBrakeMode(bool brakeMode);
+    virtual void SetCurrentLimit(units::ampere_t limit);
 
     virtual void ResetConstants() = 0;
     virtual void ResetEncoders()  = 0;

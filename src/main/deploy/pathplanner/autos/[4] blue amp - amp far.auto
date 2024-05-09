@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.22,
+      "y": 6.94
+    },
+    "rotation": 45.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "blue-amp_start-root"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "blue-amp_far-1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "blue-amp_far-2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

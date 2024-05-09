@@ -1,9 +1,8 @@
 #include "RaceCommand.h"
 
-RaceCommand::RaceCommand(RobotCommand* leadCommand, std::vector<RobotCommand*> otherCommands)
+RaceCommand::RaceCommand(std::vector<RobotCommand*> commands)
 {
-    m_LeadCommand = leadCommand;
-    m_OtherCommands = otherCommands;
+    m_Commands = commands;
 }
 
 RaceCommand::~RaceCommand()
@@ -19,29 +18,31 @@ RaceCommand::~RaceCommand()
 
 bool RaceCommand::IsComplete(CowRobot *robot)
 {
-    return m_LeadCommand->IsComplete(robot);
+    for (RobotCommand* command : m_Commands) {
+        if (command->IsComplete(robot)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void RaceCommand::Start(CowRobot* robot)
 {
-    m_LeadCommand->Start(robot);
-    for (RobotCommand* command : m_OtherCommands) {
+    for (RobotCommand* command : m_Commands) {
         command->Start(robot);
     }
 }
 
 void RaceCommand::Handle(CowRobot* robot)
 {
-    m_LeadCommand->Handle(robot);
-    for (RobotCommand* command : m_OtherCommands) {
+    for (RobotCommand* command : m_Commands) {
         command->Handle(robot);
     }
 }
 
 void RaceCommand::Finish(CowRobot* robot)
 {
-    m_LeadCommand->Finish(robot);
-    for (RobotCommand* command : m_OtherCommands) {
+    for (RobotCommand* command : m_Commands) {
         command->Finish(robot);
     }
 }

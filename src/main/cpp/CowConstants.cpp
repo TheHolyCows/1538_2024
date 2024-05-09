@@ -48,9 +48,11 @@ bool CowConstants::DoesKeyExist(std::string key)
 
 double CowConstants::GetValueForKey(const char *key)
 {
-    if (DoesKeyExist(std::string(key)))
+    std::map<std::string, CowConstant>::iterator it = m_Data.find(std::string(key));
+
+    if (it != m_Data.end())
     {
-        return m_Data[std::string(key)].numeric;
+        return it->second.numeric;
     }
     else
     {

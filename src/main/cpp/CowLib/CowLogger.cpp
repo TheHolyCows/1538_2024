@@ -87,7 +87,7 @@ namespace CowLib
      * CowLogger::RegisterMotor
      * saves motor info to an array for use by the motor and PID debug logging functions
      */
-    void CowLogger::RegisterMotor(uint32_t motorId, CowLib::CowMotorController *motorController)
+    void CowLogger::RegisterMotor(uint32_t motorId, CowMotor::GenericMotorController *motorController)
     {
         if (m_Instance == NULL)
         {
@@ -121,6 +121,24 @@ namespace CowLib
         logPacket.hdr.msgLen  = sizeof(logPacket);
 
         logPacket.alliance = alliance;
+
+        // sub 1 from len to allow space for '\0'
+        memset(logPacket.name, 0x0, sizeof(logPacket.name));
+        strncpy(logPacket.name, name, sizeof(logPacket.name) - 1);
+
+        SendLog(&logPacket, sizeof(logPacket));
+    }
+
+    /**
+     * override of CowLogger::LogAutoMode()
+    */
+    void CowLogger::LogAutoMode(const char *name)
+    {
+        CowAutoLog logPacket;
+        logPacket.hdr.msgType = CowLogger::AUTO_LOG;
+        logPacket.hdr.msgLen  = sizeof(logPacket);
+
+        logPacket.alliance = 3;
 
         // sub 1 from len to allow space for '\0'
         memset(logPacket.name, 0x0, sizeof(logPacket.name));
@@ -169,9 +187,9 @@ namespace CowLib
      * @param y - y position of the bot on the field (left and right for field oriented)
      * @param rot - yaw of the bot
     */
-    void CowLogger::LogPose(double x, double y, double rot)
+    void CowLogger::LogPose(double x, double y, double rot, bool force)
     {
-        if ((int) CONSTANT("DEBUG") != CowLogger::LOG_DBG)
+        if (!force && (int) CONSTANT("DEBUG") != CowLogger::LOG_DBG)
         {
             return;
         }
@@ -277,6 +295,29 @@ namespace CowLib
     }
 
     /**
+     * CowLogger::LogState
+     * logs current state of up to 4 different mechanisms
+     * @param id corresponds to subsystem ID defined in StateLogID enum
+     * @param state current state
+     */
+    void CowLogger::LogState(StateLogID id, uint16_t state)
+    {
+        if ((int) CONSTANT("DEBUG") != CowLogger::LOG_INFO)
+        {
+            return;
+        }
+
+        CowStateLog logPacket;
+
+        logPacket.hdr.msgType = CowLogger::STATE_LOG;
+        logPacket.hdr.msgLen = sizeof(CowStateLog);
+        logPacket.id = id;
+        logPacket.state = state;
+
+        SendLog(&logPacket, sizeof(logPacket));
+    }
+
+    /**
      * CowLogger::Handle
      * handler to be called every cycle for logging within CowRobot, strictly used
      * to log registered motors, therefore, this function can safely
@@ -311,7 +352,7 @@ namespace CowLib
         //     }
         // }
 
-        if (m_TickCount++ % 10 == 0) // 200 miliseconds
+        if (m_TickCount++ % 20 == 0) // 200 miliseconds
         {
             m_TickCount = 1;
 

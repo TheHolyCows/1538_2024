@@ -32,16 +32,17 @@ private:
 
     int m_DisabledCount = 0;
 
-    // no more kInvaid
-    frc::DriverStation::Alliance m_Alliance = frc::DriverStation::Alliance::kRed;
-
 public:
     CowBase();
     ~CowBase() override;
+
     void RobotInit() override;
     void DisabledInit() override;
     void AutonomousInit() override;
     void TeleopInit() override;
+
+    void RobotPeriodic();
+    void RobotEnabledPeriodic();
     void DisabledPeriodic() override;
     void AutonomousPeriodic() override;
     void TeleopPeriodic() override;

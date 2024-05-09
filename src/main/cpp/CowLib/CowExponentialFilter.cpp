@@ -24,4 +24,14 @@ namespace CowLib
         m_Exponent = newExponent;
     }
 
+    double ExponentialFilter(double input, double exponent)
+    {
+        if (input == 0.0)
+        {
+            return 0.0;
+        }
+
+        return pow(abs(input), exponent) * input / abs(input);
+    }
+
 } /* namespace CowLib */

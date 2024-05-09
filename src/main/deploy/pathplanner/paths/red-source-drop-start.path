@@ -1,0 +1,122 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 15.299999999999999,
+        "y": 3.43
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 14.833297375651464,
+        "y": 3.0281996512343725
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 12.942652807469967,
+        "y": 2.970552266263676
+      },
+      "prevControl": {
+        "x": 13.442749068223831,
+        "y": 2.8317468499086305
+      },
+      "nextControl": {
+        "x": 12.479022234991385,
+        "y": 3.0992363611033524
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 10.74141402398835,
+        "y": 4.0643856009934245
+      },
+      "prevControl": {
+        "x": 11.22319298776329,
+        "y": 3.950008505268747
+      },
+      "nextControl": {
+        "x": 10.146926076664725,
+        "y": 4.205520457371183
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.698382646620617,
+        "y": 4.139146357466616
+      },
+      "prevControl": {
+        "x": 9.382224379683135,
+        "y": 4.114629888150112
+      },
+      "nextControl": {
+        "x": 8.0897953984512,
+        "y": 4.1609648717145555
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 10.736751422432242,
+        "y": 4.037171317940726
+      },
+      "prevControl": {
+        "x": 10.341125683297411,
+        "y": 4.165657818104848
+      },
+      "nextControl": {
+        "x": 10.965123326948044,
+        "y": 3.963003477366909
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 13.50848015165359,
+        "y": 3.27468007952509
+      },
+      "prevControl": {
+        "x": 13.197961094706912,
+        "y": 2.6452121675944738
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "red-source-far_shoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": -168.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.66,
+    "maxAcceleration": 3.66,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -137.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -124.87532834460217,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

@@ -1,43 +1,91 @@
 #pragma once
 
 #include "../CowLib/CowExponentialFilter.h"
+#include "../CowLib/CowLPF.h"
 #include "../CowPigeon.h"
-#include "../Subsystems/Vision.h"
 #include "SwerveDrive.h"
 
 #include <frc/controller/ProfiledPIDController.h>
 #include <memory>
+#include <optional>
+#include <variant>
 
 class SwerveDriveController
 {
 public:
+    enum class RobotSide
+    {
+        FRONT,
+        RIGHT,
+        BACK,
+        LEFT
+    };
+
+    struct DriveManualRequest
+    {
+        double inputX = 0;
+        double inputY = 0;
+        double inputRotation = 0;
+    };
+
+    struct DriveLockHeadingRequest
+    {
+        double inputX = 0;
+        double inputY = 0;
+    };
+
+    struct DriveLookAtRequest
+    {
+        double inputX = 0;
+        double inputY = 0;
+        double targetX = 0;
+        double targetY = 0;
+        RobotSide robotSide = RobotSide::FRONT;
+        double lookaheadTime = 0;
+    };
+
     SwerveDriveController(SwerveDrive &drivetrain);
     ~SwerveDriveController() = default;
 
-    void Drive(double x, double y, double rotation, bool fieldRelative);
-
-    // 2023
-    // void CubeAlign(double x);
-    // void ConeAlign(double x, double yInput);
-
-    void LockHeading(double x, double y, bool useRawInputs=false);
-
+    void ResetConstants();
     void ResetHeadingLock();
 
-    void ResetConstants();
+    bool IsOnTarget();
+
+    void Request(DriveManualRequest req);
+    void Request(DriveLockHeadingRequest req);
+    void Request(DriveLookAtRequest req);
+
+    void Handle();
 
 private:
-    double ProcessDriveAxis(double input, double scale, bool reverse);
+    struct IdleState
+    {
+
+    };
+
+    struct DriveManualState
+    {
+        DriveManualRequest req;
+        std::optional<double> targetHeading;
+    };
+
+    struct DriveLockHeadingState
+    {
+        DriveLockHeadingRequest req;
+        std::optional<double> targetHeading;
+    };
+
+    struct DriveLookAtState
+    {
+        DriveLookAtRequest req;
+    };
 
     SwerveDrive &m_Drivetrain;
-
     CowPigeon &m_Gyro;
 
-    std::unique_ptr<CowLib::CowExponentialFilter> m_ExponentialFilter;
-
-    std::unique_ptr<frc::ProfiledPIDController<units::meters>> m_HeadingPIDController;
-
-    bool m_HeadingLocked;
-    double m_TargetHeading;
-    double m_PrevHeading;
+    std::variant<IdleState, DriveManualState, DriveLockHeadingState, DriveLookAtState> m_State;
+    frc::ProfiledPIDController<units::degrees> m_HeadingPIDController;
+    CowLib::CowLPF m_LPF;
+    bool m_IsOnTarget;
 };

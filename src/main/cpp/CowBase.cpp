@@ -42,12 +42,16 @@ void CowBase::RobotInit()
 
 void CowBase::DisabledInit()
 {
-    CowConstants::GetInstance()->RestoreData();
+    // CowConstants::GetInstance()->RestoreData();
     printf("DISABLED INIT -------------------\n");
 
     m_Bot->GetDriveController()->ResetHeadingLock();
 
     m_Bot->GetDrivetrain()->SetBrakeMode(true);
+
+    m_Bot->m_Vision->SetLEDState(Vision::LEDState::OFF);
+
+    m_Bot->Reset();
 }
 
 void CowBase::AutonomousInit()
@@ -62,7 +66,6 @@ void CowBase::AutonomousInit()
     AutoModes::GetInstance()->NextMode();
 
     m_Bot->SetController(m_AutoController);
-    m_Bot->Reset();
 
     CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_DBG, "start auto mode");
     m_AutoController->Start(m_Bot);
@@ -70,20 +73,44 @@ void CowBase::AutonomousInit()
 
 void CowBase::TeleopInit()
 {
-    m_Bot->GetDrivetrain()->SetBrakeMode(false);
+    m_Bot->GetDrivetrain()->SetBrakeMode(true);
 
     m_Bot->StartTime();
+
+    // should set the controls correctly based on where we end up in auto
+    if (m_Bot->m_Alliance.value() == frc::DriverStation::Alliance::kRed)
+    {
+        CowPigeon::GetInstance()->SetYaw(m_Bot->m_Drivetrain->GetPoseRot() + 180);
+    }
+    else
+    {
+        CowPigeon::GetInstance()->SetYaw(m_Bot->m_Drivetrain->GetPoseRot());
+    }
     // m_Bot->GetGyro()->FinalizeCalibration();
+
     std::cout << "setting controller " << m_OpController << std::endl;
     m_Bot->SetController(m_OpController);
     std::cout << "controller set successfully" << std::endl;
     // m_Bot->GetArm()->SetBrakeMode(); TODO: add back in
 }
 
+void CowBase::RobotPeriodic()
+{
+    m_Bot->SampleSensors();
+    m_Bot->m_Vision->Handle();
+}
+
+void CowBase::RobotEnabledPeriodic()
+{
+    m_Bot->Handle();
+}
+
 void CowBase::DisabledPeriodic()
 {
+    RobotPeriodic();
+
     // log motor info
-    // CowLib::CowLogger::GetInstance()->Handle();
+    CowLib::CowLogger::GetInstance()->Handle();
 
     // m_Bot->GyroHandleCalibration();
 
@@ -92,51 +119,85 @@ void CowBase::DisabledPeriodic()
     //     m_Display->DisplayPeriodic();
     // }
 
-    // if (m_ControlBoard->GetConstantsResetButton())
-    // {
-    //     printf("RESETTING CONSTANTS\n");
-    //     CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_OFF, "RESETTING CONSTANTS");
-    //     m_Constants->RestoreData();
-    //     m_Bot->Reset();
-    // }
-
-    // if (m_ControlBoard->GetAutoSelectButton())
-    // {
-    //     /*
-    //      * POSITION FIRST_OWNERSHIP SECOND_OWNERSHIP DRIVE
-    //      * iterates over AutoModes
-    //      */
-    //     AutoModes::GetInstance()->NextMode();
-    //     CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
-    //     printf("%s\n", AutoModes::GetInstance()->GetName().c_str());
-    // }
-
-    if (m_Bot)
+    if (m_ControlBoard->GetConstantsResetButton())
     {
-        // TODO: add this back in
-        // m_Bot->GetArm()->DisabledCalibration();
+        printf("RESETTING CONSTANTS\n");
+        CowLib::CowLogger::LogMsg(CowLib::CowLogger::LOG_OFF, "RESETTING CONSTANTS");
+        m_Constants->RestoreData();
+        m_Bot->Reset();
     }
 
-    if (m_DisabledCount++ % 35 == 0)
+    if (m_ControlBoard->GetAutoSelectButton())
     {
-        // m_Alliance = frc::DriverStation::GetAlliance();
-        // CowLib::CowLogger::LogAutoMode(m_Alliance, AutoModes::GetInstance()->GetName().c_str());
+        /*
+         * POSITION FIRST_OWNERSHIP SECOND_OWNERSHIP DRIVE
+         * iterates over AutoModes
+         */
+        AutoModes::GetInstance()->NextMode();
+
+        if (m_Bot->m_Alliance.has_value())
+        {
+            CowLib::CowLogger::LogAutoMode(m_Bot->m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
+        }
+        else
+        {
+            CowLib::CowLogger::LogAutoMode(AutoModes::GetInstance()->GetName().c_str());
+        }
+
+        printf("%s\n", AutoModes::GetInstance()->GetName().c_str());
+    }
+
+    if (m_DisabledCount++ % 50 == 0) // update every .5 seconds
+    {
+        m_Bot->m_Alliance = frc::DriverStation::GetAlliance();
+        if (m_Bot->m_Alliance.has_value())
+        {
+            CowLib::CowLogger::LogAutoMode(m_Bot->m_Alliance.value(), AutoModes::GetInstance()->GetName().c_str());
+        }
+        else
+        {
+            CowLib::CowLogger::LogAutoMode(AutoModes::GetInstance()->GetName().c_str());
+        }
         m_DisabledCount = 1;
+
+        if (m_ControlBoard->GetOperatorButton(2)) // climb down
+        {
+            m_Bot->m_Pivot->ConfigNeutralMode(CowMotor::NeutralMode::COAST);
+            m_Bot->m_Wrist->BrakeMode(false);
+            m_Bot->m_Elevator->BrakeMode(false);
+        }
+        else
+        {
+            m_Bot->m_Pivot->ConfigNeutralMode(CowMotor::NeutralMode::BRAKE);
+            m_Bot->m_Wrist->BrakeMode(true);
+            m_Bot->m_Elevator->BrakeMode(true);
+        }
+
+        m_Bot->m_BiasForAuto = m_ControlBoard->GetBiasSwitch() * CONSTANT("WRIST_BIAS_STEP");
+        CowLib::CowLogger::LogPose(m_Bot->m_Drivetrain->GetPoseX(), m_Bot->m_Drivetrain->GetPoseY(),
+                                    m_Bot->m_Drivetrain->GetPoseRot(), true);
     }
+
+    // set wrist and pivot to current locations
+    m_Bot->m_Pivot->SetTargetAngle(m_Bot->m_Pivot->GetAngle());
+    //m_Bot->m_Wrist->SetAngle(m_Bot->m_Wrist->GetAngle(),true);
 }
 
 void CowBase::AutonomousPeriodic()
 {
-    m_Bot->Handle();
+    RobotPeriodic();
+    RobotEnabledPeriodic();
 }
 
 void CowBase::TeleopPeriodic()
 {
-    m_Bot->Handle();
+    RobotPeriodic();
+    RobotEnabledPeriodic();
 }
 
+#ifndef RUNNING_FRC_TESTS
 int main()
 {
-    
     return frc::StartRobot<CowBase>();
 }
+#endif

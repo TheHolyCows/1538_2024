@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 15.3,
+      "y": 3.43
+    },
+    "rotation": -120.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "red-source_get-close_start"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "red_get-close_2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "red_get-close_3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "red-amp_far-1_from-shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

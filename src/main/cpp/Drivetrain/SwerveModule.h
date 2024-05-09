@@ -5,7 +5,7 @@
 #include "../CowLib/Conversions.h"
 #include "../CowLib/CowCANCoder.h"
 #include "../CowLib/CowLogger.h"
-#include "../CowLib/CowMotorController.h"
+#include "../CowLib/CowMotor/TalonFX.h"
 #include "../CowLib/Swerve/CowSwerveKinematics.h"
 #include "../CowLib/Swerve/CowSwerveModulePosition.h"
 #include "../CowLib/Swerve/CowSwerveModuleState.h"
@@ -26,17 +26,19 @@
 class SwerveModule : public SwerveModuleInterface
 {
 private:
-    double m_PreviousAngle;
-
-    std::unique_ptr<CowLib::CowMotorController> m_DriveMotor;
-    std::unique_ptr<CowLib::CowMotorController> m_RotationMotor;
-
-    CowMotor::PercentOutput m_DriveControlRequest;
-    CowMotor::PositionPercentOutput m_RotationControlRequest;
-
+    std::unique_ptr<CowMotor::TalonFX> m_DriveMotor;
+    std::unique_ptr<CowMotor::TalonFX> m_RotationMotor;
     std::unique_ptr<CowLib::CowCANCoder> m_Encoder;
 
+    CowLib::CowSwerveModuleState m_TargetState;
+    CowLib::CowSwerveModuleState m_PrevTargetState;
+
+    CowMotor::Control::TorqueCurrent m_DriveControlRequest;
+    CowMotor::Control::PositionDutyCycle m_RotationControlRequest;
+
     bool m_BrakeMode;
+    units::ampere_t m_CurrentLimit;
+    double m_InitialRotation;
 
 public:
     /**
@@ -55,6 +57,10 @@ public:
                  const int encoderId,
                  const double encoderOffset);
 
+    std::vector<ctre::phoenix6::BaseStatusSignal*> GetSynchronizedSignals() override;
+
+    CowLib::CowSwerveModulePosition GetPosition() override;
+
     /**
      * @brief Sets the desired module state to the given state after optimizing
      * @param state Target state
@@ -63,6 +69,7 @@ public:
     void SetTargetState(CowLib::CowSwerveModuleState state, bool force = false) override;
 
     void SetBrakeMode(bool brakeMode) override;
+    void SetCurrentLimit(units::ampere_t limit) override;
 
     void ResetConstants() override;
 

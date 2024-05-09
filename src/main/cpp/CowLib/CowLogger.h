@@ -10,7 +10,7 @@
 
 #include "../CowConstants.h"
 #include "../CowPigeon.h"
-#include "CowMotorController.h"
+#include "CowMotor/GenericMotorController.h"
 
 #include <algorithm>
 #include <arpa/inet.h>
@@ -45,7 +45,11 @@ namespace CowLib
             BATT_LOG,
             AUTO_LOG,
             GYRO_LOG,
-            POSE_LOG
+            POSE_LOG,
+            VAR_LOG,
+            BOOL_LOG,
+            VAL_LOG,
+            STATE_LOG
         };
 
         enum CowLogLevel : uint16_t
@@ -57,13 +61,21 @@ namespace CowLib
             LOG_DBG
         };
 
+        enum StateLogID : uint16_t
+        {
+            SHOOTER = 0,
+            INTAKE
+        };
+
         const static int REGISTERED_MOTORS_MAX = 24;
 
-        void RegisterMotor(uint32_t, CowLib::CowMotorController *);
+        void RegisterMotor(uint32_t, CowMotor::GenericMotorController *);
         static void LogAutoMode(frc::DriverStation::Alliance, const char *);
+        static void LogAutoMode(const char *);
         static void LogGyro(CowPigeon *);
-        static void LogPose(double, double, double);
+        static void LogPose(double, double, double, bool force = false);
         static void LogMsg(CowLogLevel, const char *fmt, ...);
+        static void LogState(StateLogID, uint16_t state);
 
         void Handle();
         void Reset();
@@ -91,7 +103,7 @@ namespace CowLib
         uint32_t m_LogServerIP;
 
         // assuming we don't have more than 24 motors ever
-        CowLib::CowMotorController *m_RegisteredMotors[REGISTERED_MOTORS_MAX];
+        CowMotor::GenericMotorController *m_RegisteredMotors[REGISTERED_MOTORS_MAX];
 
         struct CowLogHdr
         {
@@ -152,6 +164,13 @@ namespace CowLib
             double x;
             double y;
             double rot;
+        };
+
+        struct CowStateLog
+        {
+            CowLogHdr hdr;
+            uint16_t id;
+            uint16_t state;
         };
     };
 

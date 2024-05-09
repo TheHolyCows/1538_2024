@@ -1,0 +1,74 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.177458790328458,
+        "y": 6.646903639365728
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.052898651812928,
+        "y": 7.246595853000734
+      },
+      "isLocked": false,
+      "linkedName": "blue-amp_far-shoot"
+    },
+    {
+      "anchor": {
+        "x": 8.083038937851603,
+        "y": 5.693544978742156
+      },
+      "prevControl": {
+        "x": 8.544451648735672,
+        "y": 5.469612975370858
+      },
+      "nextControl": {
+        "x": 7.588581739646218,
+        "y": 5.933514074442491
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.177458790328458,
+        "y": 6.646903639365728
+      },
+      "prevControl": {
+        "x": 5.019738043969721,
+        "y": 7.190163064136892
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "blue-amp_far-shoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7,
+      "rotationDegrees": -21.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 6.5,
+    "maxAcceleration": 4.25,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 15.120000000000005,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 15.120000000000005,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -14,23 +14,23 @@ CowControlBoard::CowControlBoard()
 bool CowControlBoard::GetAutoSelectButton()
 {
     // TODO: change this
-    if (GetOperatorButton(BT_SELECT_AUTO) && !m_PreviousAuto)
+    if (GetOperatorButton(BUTTON_AUTO_SELECT) && !m_PreviousAuto)
     {
-        m_PreviousAuto = GetOperatorButton(BT_SELECT_AUTO);
+        m_PreviousAuto = GetOperatorButton(BUTTON_AUTO_SELECT);
         return true;
     }
-    m_PreviousAuto = GetOperatorButton(BT_SELECT_AUTO);
+    m_PreviousAuto = GetOperatorButton(BUTTON_AUTO_SELECT);
     return false;
 }
 
 bool CowControlBoard::GetConstantsResetButton()
 {
-    if (GetOperatorButton(BT_CONST_RESET) && !m_PreviousReset)
+    if (GetOperatorButton(BUTTON_RST_CONST) && !m_PreviousReset)
     {
-        m_PreviousReset = GetOperatorButton(BT_CONST_RESET);
+        m_PreviousReset = GetOperatorButton(BUTTON_RST_CONST);
         return true;
     }
-    m_PreviousReset = GetOperatorButton(BT_CONST_RESET);
+    m_PreviousReset = GetOperatorButton(BUTTON_RST_CONST);
     return false;
 }
 
@@ -41,7 +41,12 @@ bool CowControlBoard::GetRobotRelativeButton()
 
 bool CowControlBoard::GetVisionTargetButton()
 {
-    return (GetDriveAxis(5) > 0.85);
+    return GetDriveAxis(5) > 0.85;
+}
+
+bool CowControlBoard::GetVisionTargetPassButton()
+{
+    return GetDriveAxis(6) > 0.85;
 }
 
 bool CowControlBoard::GetDriveButton(int button)
@@ -56,7 +61,7 @@ double CowControlBoard::GetDriveAxis(int axis)
 
 double CowControlBoard::GetLeftDriveStickX()
 {
-    return m_DriverControlStick->GetRawAxis(0) * -1;
+    return m_DriverControlStick->GetRawAxis(0);
 }
 
 double CowControlBoard::GetLeftDriveStickY()
@@ -82,6 +87,22 @@ bool CowControlBoard::GetOperatorButton(int button)
 double CowControlBoard::GetOperatorAxis(int axis)
 {
     return m_OperatorControlStick->GetRawAxis(axis);
+}
+
+double CowControlBoard::GetBiasSwitch()
+{
+    double rawValue = -m_OperatorPanel->GetRawAxis(0);
+    double initValue = rawValue * 5;
+    double roundedValue = round(initValue);
+
+    if (abs(roundedValue - initValue) < CONSTANT("WRIST_ERROR_THRESHOLD"))
+    {
+        return roundedValue;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 CowControlBoard::~CowControlBoard()
