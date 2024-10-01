@@ -69,6 +69,19 @@ double Elevator::GetCurrent()
 void Elevator::SetExtension(double extensionLength)
 {
     m_TargetExtensionLength = std::clamp(extensionLength, CONSTANT("ELEVATOR_MIN_EXTENSION"), CONSTANT("ELEVATOR_MAX_EXTENSION"));
+
+    if (m_TargetExtensionLength != extensionLength)
+    {
+        if (m_TargetExtensionLength <= 0) {
+            m_Motor1->ConfigStatorCurrentLimit(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
+            m_Motor2->ConfigStatorCurrentLimit(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
+        }
+        else
+        {
+            m_Motor1->ConfigStatorCurrentLimit(300);
+            m_Motor2->ConfigStatorCurrentLimit(300);
+        }
+    }
 }
 
 
@@ -105,15 +118,6 @@ void Elevator::Handle(Pivot *pivot)
         m_PositionRequest.Position = m_TargetExtensionLength / CONSTANT("ELEVATOR_INCHES_PER_TURN");
     }
 
-    if (m_PositionRequest.Position <= 0) {
-        m_Motor1->ConfigStatorCurrentLimit(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
-        m_Motor2->ConfigStatorCurrentLimit(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
-    }
-    else
-    {
-        m_Motor1->ConfigStatorCurrentLimit(300);
-        m_Motor2->ConfigStatorCurrentLimit(300);
-    }
 
     m_Motor1->Set(m_PositionRequest);
     m_Motor2->Set(m_FollowerRequest);
