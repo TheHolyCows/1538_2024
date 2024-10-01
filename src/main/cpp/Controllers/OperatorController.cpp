@@ -105,7 +105,7 @@ void OperatorController::Handle(CowRobot *bot)
     else if (m_CB->GetVisionTargetPassButton())
     {
         // Drivetrain targetting
-        frc::Translation2d targetXY = bot->m_Vision->GetPassTargetXY(bot->m_Alliance);
+        frc::Translation2d targetXY = bot->m_Vision->GetPassTargetXY(bot->m_Alliance, bot->GetDrivetrain()->GetPose());
 
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
