@@ -176,19 +176,22 @@ frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::All
     // maybe swap this to look at which half of the field we're on
     if (alliance.has_value())
     {
+        printf("alliance %d\n", alliance.value());
         if (alliance.value() == frc::DriverStation::Alliance::kRed)
         {
-            return { units::foot_t(RED_CORNER.X()),
-                     units::foot_t(RED_CORNER.Y())};
+            return { units::foot_t(CONSTANT("PASS_RED_CORNER_X")),
+                     units::foot_t(CONSTANT("PASS_RED_CORNER_Y"))};
 
         }
         else
         {
-            return { units::foot_t(BLUE_CORNER.X()),
-                     units::foot_t(BLUE_CORNER.Y())};
+            return { units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")),
+                     units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))};
         }
 
     }
+
+    printf("no alliance\n");
 
     return { 0_ft, 0_ft };
 }
