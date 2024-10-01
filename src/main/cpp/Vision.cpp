@@ -181,8 +181,8 @@ frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::All
         {
             if(fieldpose.X() < units::foot_t(18.15))
             {
-                return { units::foot_t(27.2), 
-                         units::foot_t(12.5)};
+                return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
+                         units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
             }
             else
             {
@@ -195,15 +195,15 @@ frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::All
         {
             if(fieldpose.X() > units::length::foot_t(36.26))
             {
-                return { units::foot_t(27.2), 
-                         units::foot_t(12.5)};
+                return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
+                         units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
             }
             else
             {
                 return { units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")),
                          units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))};
             }
-            
+
         }
 
     }
