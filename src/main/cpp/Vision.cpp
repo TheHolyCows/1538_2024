@@ -177,33 +177,25 @@ frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::All
     if (alliance.has_value())
     {
         printf("alliance %d\n", alliance.value());
-        if (alliance.value() == frc::DriverStation::Alliance::kRed)
+        if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() < units::foot_t(18.15))
         {
-            if(fieldpose.X() < units::foot_t(18.15))
-            {
-                return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
-                         units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
-            }
-            else
-            {
-                return { units::foot_t(CONSTANT("PASS_RED_CORNER_X")),
-                         units::foot_t(CONSTANT("PASS_RED_CORNER_Y"))};
-            }
-
+            return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
+                     units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))}; 
         }
-        else
+        else if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() > units::foot_t(18.15))
         {
-            if(fieldpose.X() > units::length::foot_t(36.26))
-            {
-                return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
-                         units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
-            }
-            else
-            {
-                return { units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")),
-                         units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))};
-            }
-
+            return { units::foot_t(CONSTANT("PASS_RED_CORNER_X")),
+                     units::foot_t(CONSTANT("PASS_RED_CORNER_Y"))};
+        }
+        else if (alliance.value() == frc::DriverStation::Alliance::kBlue && fieldpose.X() > units::length::foot_t(36.26))
+        {
+            return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
+                     units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
+        }
+        else if (alliance.value() == frc::DriverStation::Alliance::kBlue && fieldpose.X() < units::length::foot_t(36.26))
+        {
+            return { units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")),
+                     units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))};
         }
 
     }
