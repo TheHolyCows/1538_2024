@@ -158,7 +158,6 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
         {
             return { units::foot_t(RED_SPEAKER.X()) - units::foot_t(CONSTANT("RED_GOAL_X_OFFSET")),
                      units::foot_t(RED_SPEAKER.Y()) - units::foot_t(CONSTANT("RED_GOAL_Y_OFFSET"))};
-
         }
         else
         {
@@ -166,24 +165,34 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
                      units::foot_t(BLUE_SPEAKER.Y()) - units::foot_t(CONSTANT("BLUE_GOAL_Y_OFFSET"))};
         }
 
+
     }
 
     return { 0_ft, 0_ft };
 }
 
-frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance)
+frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d fieldpose)
 {
     // maybe swap this to look at which half of the field we're on
     if (alliance.has_value())
     {
         printf("alliance %d\n", alliance.value());
-        if (alliance.value() == frc::DriverStation::Alliance::kRed)
+        if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() < units::foot_t(18.15))
+        {
+            return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
+                     units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))}; 
+        }
+        else if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() > units::foot_t(18.15))
         {
             return { units::foot_t(CONSTANT("PASS_RED_CORNER_X")),
                      units::foot_t(CONSTANT("PASS_RED_CORNER_Y"))};
-
         }
-        else
+        else if (alliance.value() == frc::DriverStation::Alliance::kBlue && fieldpose.X() > units::length::foot_t(36.26))
+        {
+            return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
+                     units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
+        }
+        else if (alliance.value() == frc::DriverStation::Alliance::kBlue && fieldpose.X() < units::length::foot_t(36.26))
         {
             return { units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")),
                      units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))};
