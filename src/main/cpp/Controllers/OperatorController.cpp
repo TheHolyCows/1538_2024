@@ -105,7 +105,10 @@ void OperatorController::Handle(CowRobot *bot)
     else if (m_CB->GetVisionTargetPassButton())
     {
         // Drivetrain targetting
-        frc::Translation2d targetXY = bot->m_Vision->GetPassTargetXY(bot->m_Alliance, bot->GetDrivetrain()->GetPose());
+        std::tuple<frc::Translation2d, double> targetTuple = bot->m_Vision->GetPassTargetXY(bot->m_Alliance, bot->GetDrivetrain()->GetPose());
+
+        frc::Translation2d targetXY = std::get<0>(targetTuple);
+        double shooterPower = std::get<1>(targetTuple);
 
         SwerveDriveController::DriveLookAtRequest req = {
             .inputX = m_CB->GetLeftDriveStickY(),
@@ -131,7 +134,7 @@ void OperatorController::Handle(CowRobot *bot)
         }
 
         // Shooter
-        bot->m_Shooter->PrimeShooter(CONSTANT("PASS_SHOOTER"));
+        bot->m_Shooter->PrimeShooter(shooterPower);
     }
     else if (m_CB->GetDriveAxis(3) > 0.8) // Align heading
     {

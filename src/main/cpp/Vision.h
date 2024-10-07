@@ -51,7 +51,7 @@ public:
     double GetTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
     double GetPassTargetDist(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d lookaheadPose);
     frc::Translation2d GetTargetXY(std::optional<frc::DriverStation::Alliance> alliance);
-    frc::Translation2d GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d fieldpose);
+    std::tuple<frc::Translation2d, double> GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d fieldpose);
 private:
     std::vector<std::unique_ptr<photon::PhotonPoseEstimator>> m_PoseEstimators;
     std::vector<std::shared_ptr<photon::PhotonCamera>> m_Cameras;

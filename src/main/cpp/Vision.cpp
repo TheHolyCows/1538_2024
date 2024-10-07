@@ -171,38 +171,54 @@ frc::Translation2d Vision::GetTargetXY(std::optional<frc::DriverStation::Allianc
     return { 0_ft, 0_ft };
 }
 
-frc::Translation2d Vision::GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d fieldpose)
+std::tuple<frc::Translation2d, double> Vision::GetPassTargetXY(std::optional<frc::DriverStation::Alliance> alliance, frc::Pose2d fieldpose)
 {
     // maybe swap this to look at which half of the field we're on
     if (alliance.has_value())
     {
-        printf("alliance %d\n", alliance.value());
-        if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() < units::foot_t(18.15))
+        if (alliance.value() == frc::DriverStation::Alliance::kRed)
         {
-            return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
-                     units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))}; 
+            if (fieldpose.X() < units::foot_t(18.15))
+            {
+                return {
+                    frc::Translation2d(units::foot_t(CONSTANT("PASS_MID_FIELD_X")), units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))),
+                    CONSTANT("PASS_MID_FIELD_SHOOTER")
+                };
+            }
+            else
+            {
+                return {
+                    frc::Translation2d(units::foot_t(CONSTANT("PASS_RED_CORNER_X")), units::foot_t(CONSTANT("PASS_RED_CORNER_Y"))),
+                    CONSTANT("PASS_CORNER_SHOOTER")
+                };
+            }
+
         }
         else if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() > units::foot_t(18.15))
         {
-            return { units::foot_t(CONSTANT("PASS_RED_CORNER_X")),
-                     units::foot_t(CONSTANT("PASS_RED_CORNER_Y"))};
-        }
-        else if (alliance.value() == frc::DriverStation::Alliance::kBlue && fieldpose.X() > units::length::foot_t(36.26))
-        {
-            return { units::foot_t(CONSTANT("PASS_MID_FIELD_X")),
-                     units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))};
-        }
-        else if (alliance.value() == frc::DriverStation::Alliance::kBlue && fieldpose.X() < units::length::foot_t(36.26))
-        {
-            return { units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")),
-                     units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))};
+            if (fieldpose.X() > units::length::foot_t(36.26))
+            {
+                return {
+                    frc::Translation2d(units::foot_t(CONSTANT("PASS_MID_FIELD_X")), units::foot_t(CONSTANT("PASS_MID_FIELD_Y"))),
+                    CONSTANT("PASS_MID_FIELD_SHOOTER")
+                };
+            }
+            else
+            {
+                return {
+                    frc::Translation2d(units::foot_t(CONSTANT("PASS_BLUE_CORNER_X")), units::foot_t(CONSTANT("PASS_BLUE_CORNER_Y"))),
+                    CONSTANT("PASS_CORNER_SHOOTER")
+                };
+            }
+
         }
 
     }
 
-    printf("no alliance\n");
-
-    return { 0_ft, 0_ft };
+    return {
+        frc::Translation2d(0_ft, 0_ft),
+        0
+    };
 }
 
 void Vision::SampleSensors()
