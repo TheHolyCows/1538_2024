@@ -250,6 +250,13 @@ void OperatorController::Handle(CowRobot *bot)
         }
         else if (m_CB->GetOperatorButton(BUTTON_AMP))
         {
+            if (bot->m_Shooter->GetIntakeState() == Shooter::IntakeState::IDLE)
+            {
+                bot->m_Shooter->UpdateIntakeState(Shooter::IntakeState::DETECT_HOLD);
+                bot->m_Shooter->UpdateIntakeDetectPosition(bot->m_Shooter->GetIntakePosition());
+                bot->m_Shooter->UpdateIntakeMoveDistance(0.0);
+            }
+
             if (bot->m_Pivot->GetAngle() > CONSTANT("PIVOT_AMP_MOVE_MIN_ANGLE"))
             {
                 bot->m_Shooter->UpdateIntakeMoveDistance(CONSTANT("INTAKE_MOVE_DISTANCE_AMP"));

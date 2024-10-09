@@ -66,7 +66,7 @@ double CowControlBoard::GetLeftDriveStickX()
 
 double CowControlBoard::GetLeftDriveStickY()
 {
-    return m_DriverControlStick->GetRawAxis(1) * -1;
+    return m_DriverControlStick->GetRawAxis(1);
 }
 
 double CowControlBoard::GetRightDriveStickX()
@@ -76,7 +76,7 @@ double CowControlBoard::GetRightDriveStickX()
 
 double CowControlBoard::GetRightDriveStickY()
 {
-    return m_DriverControlStick->GetRawAxis(5);
+    return m_DriverControlStick->GetRawAxis(7);
 }
 
 bool CowControlBoard::GetOperatorButton(int button)

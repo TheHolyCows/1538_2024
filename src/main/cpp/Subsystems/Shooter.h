@@ -66,6 +66,7 @@ public:
     void UpdateIntakeState(IntakeState state);
     void UpdateShooterState(ShooterState state);
     void UpdateIntakeMoveDistance(double distance);
+    void UpdateIntakeDetectPosition(double position);
 
     void Handle();
 

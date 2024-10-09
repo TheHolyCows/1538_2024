@@ -76,6 +76,11 @@ void Shooter::UpdateIntakeMoveDistance(double distance)
     m_IntakeGoalPosition = m_IntakeDetectPosition + distance;
 }
 
+void Shooter::UpdateIntakeDetectPosition(double position)
+{
+    m_IntakeDetectPosition = position;
+}
+
 double Shooter::GetIntakePosition()
 {
     return m_Intake->GetPosition();

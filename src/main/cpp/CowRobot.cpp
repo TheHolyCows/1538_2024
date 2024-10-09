@@ -14,7 +14,7 @@ CowRobot::CowRobot()
     m_Gyro = CowPigeon::GetInstance();
     m_Accelerometer = new frc::BuiltInAccelerometer(frc::BuiltInAccelerometer::kRange_4G);
 
-    m_LoadManager = new LoadManager();
+    // m_LoadManager = new LoadManager();
 
     // Set up drivetrain
     // TODO: reset constants needs to reset this
@@ -127,7 +127,7 @@ void CowRobot::SampleSensors()
     m_Drivetrain->SampleSensors();
 
     // Load Manager
-    m_LoadManager->Handle();
+    // m_LoadManager->Handle();
 
     if (log_count == 0)
     {
@@ -149,7 +149,7 @@ void CowRobot::Handle()
         return;
     }
 
-    m_Drivetrain->SetCurrentLimit(m_LoadManager->GetSwerveDriveBudget());
+    m_Drivetrain->SetCurrentLimit(200.0_A);
 
     m_Controller->Handle(this);
     m_Drivetrain->Handle();

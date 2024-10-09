@@ -34,7 +34,7 @@
 class CowRobot
 {
 public:
-    LoadManager* m_LoadManager;
+    // LoadManager* m_LoadManager;
 
     // Drive Motors
     SwerveDrive *m_Drivetrain;
