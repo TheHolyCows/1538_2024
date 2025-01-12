@@ -194,7 +194,7 @@ std::tuple<frc::Translation2d, double> Vision::GetPassTargetXY(std::optional<frc
             }
 
         }
-        else if (alliance.value() == frc::DriverStation::Alliance::kRed && fieldpose.X() > units::foot_t(18.15))
+        else if (alliance.value() == frc::DriverStation::Alliance::kBlue)
         {
             if (fieldpose.X() > units::length::foot_t(36.26))
             {
@@ -278,6 +278,25 @@ void Vision::Handle()
         // {
         //     m_TickCount = 0;
         // }
+    }
+    else if (m_LEDState == LEDState::IMPOSSIBLE_SHOT)
+    {
+        if (m_TickCount < 5)
+        {
+            m_CANdle->SetLEDs(255, 0, 0);
+            m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
+        }
+        else if (m_TickCount < 10)
+        {
+            m_CANdle->SetLEDs(0, 0, 255);
+            m_CANdle->ConfigBrightnessScalar(CONSTANT("LED_BRIGHTNESS"));
+        }
+        else
+        {
+            m_TickCount = 0;
+        }
+
+        m_TickCount++;
     }
     else if (m_LEDState == LEDState::INTAKING)
     {

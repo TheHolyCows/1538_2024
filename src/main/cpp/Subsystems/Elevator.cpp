@@ -20,6 +20,11 @@ Elevator::Elevator(const int motorID1, const int motorID2)
     m_TargetExtensionLength = 0;
 
     m_PrevBrakeMode = true;
+    m_CurrentLimit = 300.0_A;
+    m_Motor1->ConfigStatorCurrentLimit(m_CurrentLimit.value());
+    m_Motor2->ConfigStatorCurrentLimit(m_CurrentLimit.value());
+
+    m_SkipCurrentLimit = false;
 
     ResetConstants();
 }
@@ -66,22 +71,10 @@ double Elevator::GetCurrent()
     return m_Motor1->GetCurrent() + m_Motor2->GetCurrent();
 }
 
-void Elevator::SetExtension(double extensionLength)
+void Elevator::SetExtension(double extensionLength, bool skipCurrentLimit)
 {
     m_TargetExtensionLength = std::clamp(extensionLength, CONSTANT("ELEVATOR_MIN_EXTENSION"), CONSTANT("ELEVATOR_MAX_EXTENSION"));
-
-    if (m_TargetExtensionLength != extensionLength)
-    {
-        if (m_TargetExtensionLength <= 0) {
-            m_Motor1->ConfigStatorCurrentLimit(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
-            m_Motor2->ConfigStatorCurrentLimit(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
-        }
-        else
-        {
-            m_Motor1->ConfigStatorCurrentLimit(300);
-            m_Motor2->ConfigStatorCurrentLimit(300);
-        }
-    }
+    m_SkipCurrentLimit = skipCurrentLimit;
 }
 
 
@@ -109,6 +102,19 @@ void Elevator::BrakeMode(bool brakeMode)
 
 void Elevator::Handle(Pivot *pivot)
 {
+    if (GetPosition() <= 3.0 && m_TargetExtensionLength <= 0.0 && m_CurrentLimit == 300.0_A)
+    {
+        m_CurrentLimit = units::ampere_t(CONSTANT("ELEVATOR_BOTTOM_CURRENT_LIMIT"));
+        m_Motor1->ConfigStatorCurrentLimit(m_CurrentLimit.value());
+        m_Motor2->ConfigStatorCurrentLimit(m_CurrentLimit.value());
+    }
+    else if ((m_TargetExtensionLength > 0.0 || m_SkipCurrentLimit) && m_CurrentLimit != 300.0_A)
+    {
+        m_CurrentLimit = 300.0_A;
+        m_Motor1->ConfigStatorCurrentLimit(m_CurrentLimit.value());
+        m_Motor2->ConfigStatorCurrentLimit(m_CurrentLimit.value());
+    }
+
     if (pivot->GetAngle() <= CONSTANT("PREVENT_EXTENSION_UNDER_ANGLE"))
     {
         // m_PositionRequest.Position = CONSTANT("ELEVATOR_MIN_EXTENSION");
@@ -117,7 +123,6 @@ void Elevator::Handle(Pivot *pivot)
     {
         m_PositionRequest.Position = m_TargetExtensionLength / CONSTANT("ELEVATOR_INCHES_PER_TURN");
     }
-
 
     m_Motor1->Set(m_PositionRequest);
     m_Motor2->Set(m_FollowerRequest);

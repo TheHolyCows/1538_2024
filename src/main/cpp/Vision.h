@@ -26,6 +26,7 @@ public:
         OFF,
         HOLD,
         ON_TARGET,
+        IMPOSSIBLE_SHOT,
         INTAKING,
         EXHAUSTING
     };

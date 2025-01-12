@@ -27,12 +27,12 @@ public:
     double GetAcceleration();
     double GetCurrent();
 
-    void SetExtension(double extensionLength);
+    void SetExtension(double extensionLength, bool skipCurrentLimit);
 
     void BrakeMode(bool brakeMode);
 
     void Handle(Pivot *pivot);
-    
+
 private:
     std::unique_ptr<CowMotor::TalonFX> m_Motor1;
     std::unique_ptr<CowMotor::TalonFX> m_Motor2;
@@ -42,4 +42,6 @@ private:
 
     double m_TargetExtensionLength;
     bool m_PrevBrakeMode;
+    units::ampere_t m_CurrentLimit;
+    bool m_SkipCurrentLimit;
 };

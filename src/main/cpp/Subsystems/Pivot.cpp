@@ -146,11 +146,20 @@ void Pivot::Handle(double elevatorPos)
     }
     else if (m_State == State::POSITION)
     {
+        double target_angle = GetTargetAngle();
+
+        if (GetAngle() < CONSTANT("PIVOT_SAFE_PIVOT_ANGLE") && GetTargetAngle() < CONSTANT("PIVOT_SAFE_PIVOT_ANGLE") && elevatorPos > CONSTANT("PIVOT_SAFE_ELEVATOR_POS"))
+        {
+            target_angle = std::max(target_angle, CONSTANT("PIVOT_SAFE_PIVOT_ANGLE"));
+        }
+
+        double target_position = target_angle / 360.0;
+
         CowMotor::Control::DynamicMotionMagicTorqueCurrent leftMotorPositionRequest = {};
-        leftMotorPositionRequest.Position = (m_TargetPosition + m_LeftMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
+        leftMotorPositionRequest.Position = (target_position + m_LeftMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
 
         CowMotor::Control::DynamicMotionMagicTorqueCurrent rightMotorPositionRequest = {};
-        rightMotorPositionRequest.Position = (m_TargetPosition + m_RightMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
+        rightMotorPositionRequest.Position = (target_position + m_RightMotorParameters.offset.value()) * CONSTANT("PIVOT_GEAR_RATIO");
 
         leftMotorPositionRequest.Velocity = CONSTANT("PIVOT_UP_V");
         leftMotorPositionRequest.Acceleration = CONSTANT("PIVOT_UP_A");
